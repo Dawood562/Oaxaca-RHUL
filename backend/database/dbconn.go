@@ -1,12 +1,18 @@
 package database
 
 import (
+	"bufio"
 	"fmt"
 	"log"
+	"os"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
+
+var dbUsername string
+var dbPassword string
+var dbFetchedAuth bool
 
 // TESTING PURPOSES
 type Customer struct {
@@ -41,11 +47,14 @@ func QueryDB(stmt string) Customer {
 	}
 	var data Customer
 	db.Raw(stmt).Scan(&data)
+	closeDB(db)
 	return data
 }
 
 func openDB() *gorm.DB {
-	db, err := gorm.Open(postgres.Open("postgres://USERNAME_HERE:PASSWORD_HERE@localhost:PORT_HERE/DB_NAME_HERE"), &gorm.Config{})
+	fetchDBAuth()
+	url := "postgres://" + dbUsername + ":" + dbPassword + "@localhost:5432/teamproject30"
+	db, err := gorm.Open(postgres.Open(url), &gorm.Config{})
 	if err != nil {
 		log.Fatal(err)
 		return nil
@@ -62,4 +71,30 @@ func openDB() *gorm.DB {
 func closeDB(db *gorm.DB) {
 	conn, _ := db.DB()
 	conn.Close()
+}
+
+/*
+Fetches database login details from db_details.txt file
+db_details.txt should be in database folder with following content structure:
+<username>
+<password>
+*/
+func fetchDBAuth() (string, string) {
+	if dbFetchedAuth {
+		return "-1", "-1"
+	}
+
+	file, err := os.Open("db_details.txt")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+	reader := bufio.NewScanner(file)
+
+	reader.Scan()
+	dbUsername = reader.Text()
+	reader.Scan()
+	dbPassword = reader.Text()
+	dbFetchedAuth = true
+	return dbUsername, dbPassword
 }

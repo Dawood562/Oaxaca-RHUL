@@ -16,3 +16,10 @@ func TestQueryDB(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestDBAuth(t *testing.T) {
+	user, pass := fetchDBAuth()
+	if user == "-1" || pass == "-1" {
+		t.Fail()
+	}
+}
