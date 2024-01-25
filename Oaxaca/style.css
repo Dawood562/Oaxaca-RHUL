@@ -146,6 +146,41 @@ strong {
     font-size: smaller;
     background-color: #13092D;
 }
+/*menu section*/
+
+#menuPage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+#menuTitle,
+#menuDescription {
+  margin-bottom: 10px;
+}
+
+.menuSection {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  margin-bottom: 30px;
+}
+
+.menuSection h2 {
+  border-bottom: 2px solid #EFA00B;
+  margin-bottom: 10px;
+}
+
+.menuSection ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.menuSection ul li {
+  margin-bottom: 10px;
+}
 @media only screen and (max-width: 800px) {
     #flex {
         flex-wrap: wrap;
