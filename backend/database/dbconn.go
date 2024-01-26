@@ -45,7 +45,7 @@ If entire table required then leave clause empty
 Returns struct of example customer for now
 Returns -1 in customerID if unable to access database
 */
-func QueryMenu(clause ...string) []MenuItem {
+func QueryMenu(clause ...string) []*MenuItem {
 	dbTable := db.Table("menuitem")
 	// If clause provided, use it
 	if len(clause) > 0 {
@@ -56,14 +56,14 @@ func QueryMenu(clause ...string) []MenuItem {
 		log.Fatal(err)
 	}
 
-	var data []MenuItem
+	var data []*MenuItem
 	for rows.Next() {
 		var _menuitemid string
 		var _itemname string
 		var _price float64
 		var _calories float64
 		rows.Scan(&_menuitemid, &_itemname, &_price, &_calories)
-		data = append(data, MenuItem{MenuItemId: _menuitemid, ItemName: _itemname, Price: _price, Calories: _calories})
+		data = append(data, &MenuItem{MenuItemId: _menuitemid, ItemName: _itemname, Price: _price, Calories: _calories})
 	}
 
 	return data
