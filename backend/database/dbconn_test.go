@@ -1,14 +1,10 @@
+//go:build integration
+
 package database
 
 import (
 	"testing"
 )
-
-// func TestUpdateDB(t *testing.T) {
-// 	if !UpdateDB("INSERT INTO Customers VALUES (1, 'John', 'Dont kick his dog')") {
-// 		t.Fail()
-// 	}
-// }
 
 func TestQueryMenuGeneric(t *testing.T) {
 	retrieved := QueryMenu()

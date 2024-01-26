@@ -15,10 +15,10 @@ var dbPassword string
 var dbFetchedAuth bool
 
 type MenuItem struct {
-	MenuItemId string
-	ItemName   string
-	Price      float64
-	Calories   float64
+	MenuItemId string  `json:"menu_item_id"`
+	ItemName   string  `json:"item_name"`
+	Price      float64 `json:"price"`
+	Calories   float64 `json:"calories"`
 }
 
 /*
@@ -45,7 +45,7 @@ Returns -1 in customerID if unable to access database
 func QueryMenu(clause ...string) []MenuItem {
 	db := openDB()
 	if db == nil {
-		return []MenuItem{MenuItem{MenuItemId: "-1"}}
+		return []MenuItem{{MenuItemId: "-1"}}
 	}
 
 	dbTable := db.Table("menuitem")
