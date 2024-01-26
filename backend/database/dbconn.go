@@ -10,9 +10,7 @@ import (
 	"gorm.io/gorm"
 )
 
-var dbUsername string
-var dbPassword string
-var dbFetchedAuth bool
+var db *gorm.DB
 
 type MenuItem struct {
 	MenuItemId string  `json:"menu_item_id"`
@@ -21,18 +19,23 @@ type MenuItem struct {
 	Calories   float64 `json:"calories"`
 }
 
+func init() {
+	dbUsername, dbPassword := fetchDBAuth()
+	url := "postgres://" + dbUsername + ":" + dbPassword + "@localhost:5432/teamproject30"
+	dbLocal, err := gorm.Open(postgres.Open(url), &gorm.Config{})
+	db = dbLocal
+	if err != nil {
+		log.Fatal(err)
+	} else {
+		fmt.Println("Successfully connected to database!")
+	}
+}
+
 /*
 Executes SQL query provided
-returns true if query exeucted successfully
 */
-func UpdateDB(stmt string) bool {
-	db := openDB()
-	if db == nil {
-		return false
-	}
-	//db.Exec(stmt)
-	closeDB(db)
-	return true
+func UpdateDB(stmt string) {
+	db.Exec(stmt)
 }
 
 /*
@@ -43,11 +46,6 @@ Returns struct of example customer for now
 Returns -1 in customerID if unable to access database
 */
 func QueryMenu(clause ...string) []MenuItem {
-	db := openDB()
-	if db == nil {
-		return []MenuItem{{MenuItemId: "-1"}}
-	}
-
 	dbTable := db.Table("menuitem")
 	// If clause provided, use it
 	if len(clause) > 0 {
@@ -68,27 +66,7 @@ func QueryMenu(clause ...string) []MenuItem {
 		data = append(data, MenuItem{MenuItemId: _menuitemid, ItemName: _itemname, Price: _price, Calories: _calories})
 	}
 
-	closeDB(db)
 	return data
-}
-
-func openDB() *gorm.DB {
-	fetchDBAuth()
-	url := "postgres://" + dbUsername + ":" + dbPassword + "@localhost:5432/teamproject30"
-	db, err := gorm.Open(postgres.Open(url), &gorm.Config{})
-	if err != nil {
-		log.Fatal(err)
-		return nil
-	} else {
-		fmt.Println("Successfully connected to database!")
-	}
-
-	return db
-}
-
-func closeDB(db *gorm.DB) {
-	conn, _ := db.DB()
-	conn.Close()
 }
 
 /*
@@ -98,9 +76,6 @@ db_details.txt should be in database folder with following content structure:
 <password>
 */
 func fetchDBAuth() (string, string) {
-	if dbFetchedAuth {
-		return dbUsername, dbPassword
-	}
 
 	file, err := os.Open("db_details.txt")
 	if err != nil {
@@ -110,9 +85,8 @@ func fetchDBAuth() (string, string) {
 	reader := bufio.NewScanner(file)
 
 	reader.Scan()
-	dbUsername = reader.Text()
+	dbUsername := reader.Text()
 	reader.Scan()
-	dbPassword = reader.Text()
-	dbFetchedAuth = true
+	dbPassword := reader.Text()
 	return dbUsername, dbPassword
 }

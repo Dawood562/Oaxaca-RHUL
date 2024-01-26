@@ -6,6 +6,18 @@ import (
 	"testing"
 )
 
+func TestUpdateMenu(t *testing.T) {
+	UpdateDB("DELETE FROM menuitem WHERE itemname = 'TESTFOOD';")
+	UpdateDB("INSERT INTO menuitem VALUES ('999', 'TESTFOOD', 4.20, 450)")
+
+	retrieved := QueryMenu("itemname='TESTFOOD'")[0]
+	if retrieved.ItemName != "TESTFOOD" {
+		t.Fail()
+	}
+
+	UpdateDB("DELETE FROM menuitem WHERE itemname = 'TESTFOOD';")
+}
+
 func TestQueryMenuGeneric(t *testing.T) {
 	retrieved := QueryMenu()
 	if retrieved[0].MenuItemId == "-1" {
