@@ -14,12 +14,11 @@ var dbUsername string
 var dbPassword string
 var dbFetchedAuth bool
 
-// TESTING PURPOSES
-type Customer struct {
-	gorm.Model
-	CustomerID   int
-	Name         string
-	Instructions string
+type MenuItem struct {
+	MenuItemId string
+	ItemName   string
+	Price      float64
+	Calories   float64
 }
 
 /*
@@ -31,22 +30,44 @@ func UpdateDB(stmt string) bool {
 	if db == nil {
 		return false
 	}
-	db.Exec(stmt)
+	//db.Exec(stmt)
 	closeDB(db)
 	return true
 }
 
 /*
+Takes in clause to retrieve specific items from menu table.
+Example: "itemname = 'chicken korma'"
+If entire table required then leave clause empty
 Returns struct of example customer for now
-Returns -1 in customerID if query unsuccessful
+Returns -1 in customerID if unable to access database
 */
-func QueryDB(stmt string) Customer {
+func QueryMenu(clause ...string) []MenuItem {
 	db := openDB()
 	if db == nil {
-		return Customer{CustomerID: -1}
+		return []MenuItem{MenuItem{MenuItemId: "-1"}}
 	}
-	var data Customer
-	db.Raw(stmt).Scan(&data)
+
+	dbTable := db.Table("menuitem")
+	// If clause provided, use it
+	if len(clause) > 0 {
+		dbTable.Where(clause[0])
+	}
+	rows, err := dbTable.Rows()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var data []MenuItem
+	for rows.Next() {
+		var _menuitemid string
+		var _itemname string
+		var _price float64
+		var _calories float64
+		rows.Scan(&_menuitemid, &_itemname, &_price, &_calories)
+		data = append(data, MenuItem{MenuItemId: _menuitemid, ItemName: _itemname, Price: _price, Calories: _calories})
+	}
+
 	closeDB(db)
 	return data
 }
@@ -61,9 +82,6 @@ func openDB() *gorm.DB {
 	} else {
 		fmt.Println("Successfully connected to database!")
 	}
-
-	// USED IN TESTING - TO BE CHANGED WHEN ACTUAL DATABASE USED
-	db.AutoMigrate(&Customer{})
 
 	return db
 }
@@ -81,7 +99,7 @@ db_details.txt should be in database folder with following content structure:
 */
 func fetchDBAuth() (string, string) {
 	if dbFetchedAuth {
-		return "-1", "-1"
+		return dbUsername, dbPassword
 	}
 
 	file, err := os.Open("db_details.txt")
