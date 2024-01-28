@@ -9,6 +9,7 @@
 </head>
 
 <body>
+
   <div id="container">
     <div id="headerArea">
       <div id="header"></div>
@@ -16,10 +17,10 @@
       <nav id="navbar">
         <ul>
           <li><a href="index.html">Home</a></li>
-          <li><a href="menu.html">Menu</a></li>
-          <li><a href="#">Link</a></li>
-          <li><a href="#">Link</a></li>
-          <li><a href="#">Link</a></li>
+					<li><a href="menu.html">Menu</a></li>
+					<li><a href="order.html">Order</a></li>
+					<li><a href="#">Link</a></li>
+					<li><a href="#">Link</a></li>
         </ul>
       </nav>
 
@@ -29,7 +30,15 @@
       <main id="menuPage">
         <h1>Menu</h1>
         <p>This is the menu page content. basic model of what it would look like </p>
-        <!-- Adding the your menu items  -->
+
+        <!-- Displaying the menu using main.go? -->
+        <ul>
+          {{range .}}
+          <li>{{.ItemName}} - ${{.Price}} - {{.Calories}} calories</li>
+          {{end}}
+        </ul>
+
+        <!-- Adding the menu items  -->
         <ul>
           <li>Appetizer 1</li>
           <li>Appetizer 2</li>
