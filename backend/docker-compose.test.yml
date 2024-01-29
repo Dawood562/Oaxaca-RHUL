@@ -1,0 +1,24 @@
+services:
+  bot:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    container_name: teamproject_test
+    depends_on:
+      db:
+        condition: service_healthy
+  db:
+    build: deploy/database
+    container_name: teamproject_test_db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=pass
+      - POSTGRES_DB=teamprojecttest
+    healthcheck:
+      test: pg_isready --dbname=teamprojecttest --host=127.0.0.1 --username=postgres
+      start_period: 20s
+      interval: 5s
+      timeout: 5s
+      retries: 3
+    expose:
+      - "5432"
