@@ -47,11 +47,14 @@ Returns -1 in customerID if unable to access database
 */
 func QueryMenu(clause ...string) []MenuItem {
 
-	if len(clause) > 0 {
-		db.Where(clause[0])
-	}
 	var data []MenuItem
-	db.Table("menuitem").Model(&MenuItem{}).Find(&data)
+	db = db.Table("menuitem").Model(&MenuItem{})
+
+	if len(clause) > 0 {
+		db = db.Where(clause[0])
+	}
+
+	db.Find(&data)
 	return data
 }
 
