@@ -13,10 +13,10 @@ import (
 var db *gorm.DB
 
 type MenuItem struct {
-	MenuItemId string  `json:"menu_item_id"`
-	ItemName   string  `json:"item_name"`
-	Price      float64 `json:"price"`
-	Calories   float64 `json:"calories"`
+	MenuItemId string  `json:"menu_item_id" gorm:"column:menuitemid"`
+	ItemName   string  `json:"item_name" gorm:"column:itemname"`
+	Price      float64 `json:"price" gorm:"column:price"`
+	Calories   float64 `json:"calories" gorm:"column:calories"`
 }
 
 func init() {
@@ -45,27 +45,13 @@ If entire table required then leave clause empty
 Returns struct of example customer for now
 Returns -1 in customerID if unable to access database
 */
-func QueryMenu(clause ...string) []*MenuItem {
-	dbTable := db.Table("menuitem")
-	// If clause provided, use it
+func QueryMenu(clause ...string) []MenuItem {
+
 	if len(clause) > 0 {
-		dbTable.Where(clause[0])
+		db.Where(clause[0])
 	}
-	rows, err := dbTable.Rows()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	var data []*MenuItem
-	for rows.Next() {
-		var _menuitemid string
-		var _itemname string
-		var _price float64
-		var _calories float64
-		rows.Scan(&_menuitemid, &_itemname, &_price, &_calories)
-		data = append(data, &MenuItem{MenuItemId: _menuitemid, ItemName: _itemname, Price: _price, Calories: _calories})
-	}
-
+	var data []MenuItem
+	db.Table("menuitem").Model(&MenuItem{}).Find(&data)
 	return data
 }
 
@@ -77,7 +63,6 @@ db_details.txt should be in database folder with following content structure:
 <password>
 */
 func fetchDBAuth() (string, string, string) {
-
 	file, err := os.Open("db_details.txt")
 	if err != nil {
 		log.Fatal(err)
