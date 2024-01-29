@@ -20,8 +20,8 @@ type MenuItem struct {
 }
 
 func init() {
-	dbUsername, dbPassword := fetchDBAuth()
-	url := "postgres://" + dbUsername + ":" + dbPassword + "@localhost:5432/teamproject30"
+	dbUsername, dbName, dbPassword := fetchDBAuth()
+	url := "postgres://" + dbUsername + ":" + dbPassword + "@db:5432/" + dbName
 	dbLocal, err := gorm.Open(postgres.Open(url), &gorm.Config{})
 	db = dbLocal
 	if err != nil {
@@ -73,9 +73,10 @@ func QueryMenu(clause ...string) []*MenuItem {
 Fetches database login details from db_details.txt file
 db_details.txt should be in database folder with following content structure:
 <username>
+<database name>
 <password>
 */
-func fetchDBAuth() (string, string) {
+func fetchDBAuth() (string, string, string) {
 
 	file, err := os.Open("db_details.txt")
 	if err != nil {
@@ -87,6 +88,8 @@ func fetchDBAuth() (string, string) {
 	reader.Scan()
 	dbUsername := reader.Text()
 	reader.Scan()
+	dbName := reader.Text()
+	reader.Scan()
 	dbPassword := reader.Text()
-	return dbUsername, dbPassword
+	return dbUsername, dbName, dbPassword
 }

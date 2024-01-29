@@ -35,8 +35,8 @@ func TestQueryMenuGeneric(t *testing.T) {
 }
 
 func TestDBAuth(t *testing.T) {
-	user, pass := fetchDBAuth()
-	if user == "-1" || pass == "-1" {
+	user, name, pass := fetchDBAuth()
+	if user == "-1" || name == "-1" || pass == "-1" {
 		t.Fail()
 	}
 }
