@@ -4,6 +4,7 @@ package endpoints
 
 import (
 	"testing"
+	"structs"
 )
 
 /*
@@ -20,21 +21,45 @@ func TestFetchMenu1(t *testing.T) {
 Tests that menu items can be filtered to those that have < x calories
 */
 func TestFetchMenu2(t *testing.T) {
-	
+	filter := menuFilter{low_calories: true}
+	menu, code := FetchMenu(filter)
+	if code != 200 { // If there was any error getting items
+		t.Fail()
+	}
 }
 
 /*
-Tests that menu items can be filtered to those missing one or more allergens
+Tests that menu items can be filtered to those missing one allergen
 */
 func TestFetchMenu3(t *testing.T) {
-
+	filter := menuFilter{allergens: ["gluten"]}
+	menu, code := FetchMenu(filter)
+	if code != 200 { // If there was any error getting items
+		t.Fail()
+	}
 }
+
+/*
+Tests that menu items can be filtered to those missing multiple allergens
+*/
+func TestFetchMenu4(t *testing.T) {
+	filter := menuFilter{allergens: ["gluten", "soya", "milk", "eggs"]}
+	menu, code := FetchMenu(filter)
+	if code != 200 { // If there was any error getting items
+		t.Fail()
+	}
+}
+
 
 /*
 Tests that menu items can be filtered to those under a certain price
 */
-func TestFetchMenu4(t *testing.T) {
-	// Fetch all items that under x price
+func TestFetchMenu5(t *testing.T) {
+	filter := menuFilter{max_price: 14.99}
+	menu, code := FetchMenu(filter)
+	if code != 200 { // If there was any error getting items
+		t.Fail()
+	}
 }
 
 
@@ -58,7 +83,6 @@ Tests that, given an item ID, the item's ID CANNOT and WILL NOT be changed.
 
 Should return 403 (Forbidden).
 */
-
 func TestChangeMenu2(t *testing.T) {
-	// Change item with given ID to have different ID, should return 403
+	
 }
