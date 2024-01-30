@@ -21,7 +21,7 @@ func TestFetchMenu1(t *testing.T) {
 Tests that menu items can be filtered to those that have < x calories
 */
 func TestFetchMenu2(t *testing.T) {
-	filter := MenuFilter{low_calories: true}
+	filter := MenuFilter{LowCalories: true}
 	menu, code := FetchMenu(filter)
 	if code != 200 { // If there was any error getting items
 		t.Fail()
@@ -32,7 +32,7 @@ func TestFetchMenu2(t *testing.T) {
 Tests that menu items can be filtered to those missing one allergen
 */
 func TestFetchMenu3(t *testing.T) {
-	filter := MenuFilter{allergens: ["gluten"]}
+	filter := MenuFilter{Allergens: ["gluten"]}
 	menu, code := FetchMenu(filter)
 	if code != 200 { // If there was any error getting items
 		t.Fail()
@@ -43,7 +43,7 @@ func TestFetchMenu3(t *testing.T) {
 Tests that menu items can be filtered to those missing multiple allergens
 */
 func TestFetchMenu4(t *testing.T) {
-	filter := MenuFilter{allergens: ["gluten", "soya", "milk", "eggs"]}
+	filter := MenuFilter{Allergens: ["gluten", "soya", "milk", "eggs"]}
 	menu, code := FetchMenu(filter)
 	if code != 200 { // If there was any error getting items
 		t.Fail()
@@ -55,7 +55,7 @@ func TestFetchMenu4(t *testing.T) {
 Tests that menu items can be filtered to those under a certain price
 */
 func TestFetchMenu5(t *testing.T) {
-	filter := MenuFilter{max_price: 14.99}
+	filter := MenuFilter{MaxPrice: 14.99}
 	menu, code := FetchMenu(filter)
 	if code != 200 { // If there was any error getting items
 		t.Fail()
