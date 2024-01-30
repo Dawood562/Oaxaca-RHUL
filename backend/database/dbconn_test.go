@@ -25,19 +25,19 @@ func TestDatabaseQueries(t *testing.T) {
 			name:            "EmptyFilter",
 			filter:          &MenuFilter{},
 			expectedLen:     4,
-			expectedElement: MenuItem{ItemName: "TESTFOOD", Price: 5.00, Calories: 400},
+			expectedElement: MenuItem{ItemId: 1, ItemName: "TESTFOOD", Price: 5.00, Calories: 400},
 		},
 		{
 			name:            "WithSearchTermFilter",
 			filter:          &MenuFilter{SearchTerm: "TESTFOOD2"},
 			expectedLen:     1,
-			expectedElement: MenuItem{ItemName: "TESTFOOD2", Price: 6.00, Calories: 500},
+			expectedElement: MenuItem{ItemId: 2, ItemName: "TESTFOOD2", Price: 6.00, Calories: 500},
 		},
 		{
 			name:            "WithMultipleFilters",
 			filter:          &MenuFilter{MaxPrice: 6.00, MaxCalories: 600},
 			expectedLen:     2,
-			expectedElement: MenuItem{ItemName: "TESTFOOD", Price: 5.00, Calories: 400},
+			expectedElement: MenuItem{ItemId: 1, ItemName: "TESTFOOD", Price: 5.00, Calories: 400},
 		},
 	}
 
@@ -77,6 +77,22 @@ func TestDatabaseInserts(t *testing.T) {
 	assert.NoError(t, err)
 	menu = QueryMenu(&MenuFilter{})
 	assert.Equal(t, 2, len(menu), "Check that the second record was added to the menu")
+
+	UpdateDB("DELETE FROM menuitem")
+}
+
+func TestDatabaseDelete(t *testing.T) {
+	UpdateDB("INSERT INTO menuitem (itemid, itemname, price, calories) VALUES (1, 'TESTFOOD', 5.00, 400)")
+	UpdateDB("INSERT INTO menuitem (itemname, price, calories) VALUES ('TESTFOOD2', 6.00, 500)")
+	UpdateDB("INSERT INTO menuitem (itemname, price, calories) VALUES ('TESTFOOD3', 7.00, 600)")
+	UpdateDB("INSERT INTO menuitem (itemname, price, calories) VALUES ('TESTFOOD4', 8.01, 720)")
+
+	// Delete TESTFOOD4
+	err := RemoveItem(1)
+	assert.NoError(t, err)
+	// Check the record was really removed
+	menu := QueryMenu(&MenuFilter{})
+	assert.Equal(t, 3, len(menu), "Check record was removed from menu")
 
 	UpdateDB("DELETE FROM menuitem")
 }

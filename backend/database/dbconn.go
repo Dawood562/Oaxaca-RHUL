@@ -39,11 +39,15 @@ func AddItem(item *MenuItem) error {
 	return result.Error
 }
 
-/*
-Takes in MenuFilter containing conditions to filter menu item.
-If entire table required then provide empty MenuFilter
-Returns array of MenuItems
-*/
+// RemoveItem removes an item from the menu with the given ID
+// Returns an error if the item could not be removed
+func RemoveItem(id int) error {
+	result := db.Table("menuitem").Where("itemid = ?", id).Delete(&MenuItem{})
+	return result.Error
+}
+
+// QueryMenu returns the menu items from the database as a slice
+// If filter is provided, the returned item slice will be filtered as such
 func QueryMenu(filter *MenuFilter) []MenuItem {
 	preparedFilter := prepareArgs(filter)
 
