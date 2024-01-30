@@ -119,7 +119,6 @@ footer {
 }
 
 h1,
-h2,
 h3 {
     color: #591F0A;
 }
@@ -129,7 +128,12 @@ h1 {
     font-size: 100px;
     text-align: center;
 }
-
+h2{
+	font-family: Mexican Tequila;
+    font-size: 60px;
+    text-align: center;
+    
+    }
 strong {
     color: #591F0A;
 }
