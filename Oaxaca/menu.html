@@ -30,6 +30,14 @@
         <h1 id="menuTitle">Menu</h1>
         <p id="menuDescription">Explore our well-organized menu with distinct sections for a delightful experience.</p>
 
+        <div id="menuFilter">
+          <button onclick="filterMenu('all', this)" class="active">Show All</button>
+          <button onclick="filterMenu('appetizersSection', this)">Appetizers</button>
+          <button onclick="filterMenu('entreesSection', this)">Entrees</button>
+          <button onclick="filterMenu('dessertsSection', this)">Desserts</button>
+          <button onclick="filterMenu('drinksSection', this)">Drinks</button>
+        </div>
+
         <div class="menuSection">
           <section>
             <h2>Appetizers Section</h2>
