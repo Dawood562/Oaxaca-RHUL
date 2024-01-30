@@ -6,7 +6,7 @@ stop:
 	docker compose down
 
 unittest:
-	go test ./... -tags=unittest -cover
+	go test ./... -tags=unit -cover
 
 integrationtest:
 	docker compose -f docker-compose.test.yml build

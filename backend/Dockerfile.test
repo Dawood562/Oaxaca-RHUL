@@ -5,4 +5,4 @@ WORKDIR /app
 ADD . ./
 RUN go mod download
 
-CMD ["go", "test", "./...", "-tags=integration"]
+CMD ["go", "test", "./...", "-v", "-cover", "-tags=integration"]

@@ -15,9 +15,8 @@ var db *gorm.DB
 func init() {
 	dbUsername, dbName, dbPassword := fetchDBAuth()
 	url := "postgres://" + dbUsername + ":" + dbPassword + "@db:5432/" + dbName
-	dbLocal, err := gorm.Open(postgres.Open(url), &gorm.Config{})
-	db = dbLocal
-	db = db.Table("menuitem").Model(&MenuItem{})
+	conn, err := gorm.Open(postgres.Open(url), &gorm.Config{})
+	db = conn
 	if err != nil {
 		log.Fatal(err)
 	} else {
@@ -39,23 +38,40 @@ If entire table required then leave clause empty
 Returns struct of example customer for now
 Returns -1 in customerID if unable to access database
 */
-func QueryMenu(filter MenuFilter) []MenuItem {
-	dbLocal := db
+func QueryMenu(filter *MenuFilter) []MenuItem {
+	preparedFilter := prepareArgs(filter)
+
 	var data []MenuItem
-
-	if filter.SearchTerm != "" {
-		term := filter.SearchTerm + "%"
-		dbLocal = dbLocal.Where("itemname LIKE ?", term)
-	}
-	if filter.MaxCalories != 0 {
-		dbLocal = dbLocal.Where("calories <= ?", filter.MaxCalories)
-	}
-	if filter.MaxPrice != 0 {
-		dbLocal = dbLocal.Where("price <= ?", filter.MaxPrice)
-	}
-
-	dbLocal.Find(&data)
+	db.Table("menuitem").Model(&MenuItem{}).Where("itemname LIKE ?", preparedFilter.SearchTerm).Where("calories <= ?", preparedFilter.MaxCalories).Where("price <= ?", preparedFilter.MaxPrice).Find(&data)
 	return data
+}
+
+// prepareArgs applies defaults to a MenuFilter struct in preparation for use in a query
+func prepareArgs(filter *MenuFilter) *MenuFilter {
+	ret := &MenuFilter{}
+
+	// If the search term is shorter than 3 chars, disregard it
+	if len(filter.SearchTerm) < 3 {
+		ret.SearchTerm = "%"
+	} else {
+		ret.SearchTerm = "%" + filter.SearchTerm + "%"
+	}
+
+	// If no max calories are provided, set it to a high number
+	if filter.MaxCalories <= 0 {
+		ret.MaxCalories = 9999
+	} else {
+		ret.MaxCalories = filter.MaxCalories
+	}
+
+	// If no max price is provided, set it to a high number
+	if filter.MaxPrice <= 0 {
+		ret.MaxPrice = 9999
+	} else {
+		ret.MaxPrice = filter.MaxPrice
+	}
+
+	return ret
 }
 
 /*
