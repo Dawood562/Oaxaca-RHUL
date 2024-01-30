@@ -1,7 +1,7 @@
 package database
 
 type MenuFilter struct {
-	LowCalories bool
+	SearchTerm  string
+	MaxCalories int
 	MaxPrice    float32
-	Allergens   []string
 }

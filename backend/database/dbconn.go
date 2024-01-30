@@ -43,8 +43,8 @@ func QueryMenu(clause ...string) []MenuItem {
 	var data []MenuItem
 	db = db.Table("menuitem").Model(&MenuItem{})
 
-	if len(clause) > 0 {
-		db = db.Where(clause[0])
+	for _, arg := range clause {
+		db = db.Where(arg)
 	}
 
 	db.Find(&data)

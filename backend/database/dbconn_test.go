@@ -5,45 +5,41 @@ package database
 import (
 	"os"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestMain(m *testing.M) {
-	// Always add TESTFOOD before testing
-	UpdateDB("DELETE FROM menuitem WHERE itemname = 'TESTFOOD';")
-	UpdateDB("INSERT INTO menuitem VALUES ('999', 'TESTFOOD', 4.20, 450)")
+	// Setup test data
+	UpdateDB("INSERT INTO menuitem (itemname, price, calories) VALUES ('TESTFOOD', 5.00, 400)")
+	UpdateDB("INSERT INTO menuitem (itemname, price, calories) VALUES ('TESTFOOD2', 6.00, 500)")
+	UpdateDB("INSERT INTO menuitem (itemname, price, calories) VALUES ('TESTFOOD3', 7.00, 600)")
+	UpdateDB("INSERT INTO menuitem (itemname, price, calories) VALUES ('TESTFOOD4', 8.01, 720)")
 
 	code := m.Run()
 
-	// Remove TESTFOOD after testing
-	UpdateDB("DELETE FROM menuitem WHERE itemname = 'TESTFOOD';")
+	// Remove test values after tests
+	UpdateDB("DELETE FROM menuitem")
 
 	os.Exit(code)
 }
 
-func TestUpdateMenu(t *testing.T) {
-	retrieved := QueryMenu("itemname='TESTFOOD'")[0]
-	if retrieved.ItemName != "TESTFOOD" {
-		t.Fail()
-	}
+func TestGetMenu(t *testing.T) {
+	menu := QueryMenu()
+	assert.Equal(t, 4, len(menu), "Number of menu items should be 4")
+	assert.Contains(t, menu, MenuItem{MenuItemId: 1, ItemName: "TESTFOOD", Price: 5.00, Calories: 400}, "Test that the correct menu items are returned")
 }
 
-func TestUpdateQueryMultiple(t *testing.T) {
-	// Add extra item to ensure its not retrieving incorrect item
-	UpdateDB("INSERT INTO menuitem VALUES ('111', 'TESTFOOD2', 7.20, 720)")
-	retrieved := QueryMenu("itemname='TESTFOOD'")
-	if len(retrieved) != 1 {
-		t.Fail() // if retrieved more than one item, should fail
-	} else if retrieved[0].ItemName != "TESTFOOD" {
-		t.Fail()
-	}
-	UpdateDB("DELETE FROM menuitem WHERE itemname='TESTFOOD2'")
+func TestGetMenuWithArgs(t *testing.T) {
+	items := QueryMenu("itemname='TESTFOOD2'")
+	assert.Equal(t, 1, len(items), "Query should only return one item")
+	assert.Equal(t, "TESTFOOD2", items[0].ItemName, "Test correct item is returned from query")
 }
 
-func TestQueryMenuGeneric(t *testing.T) {
-	retrieved := QueryMenu()
-	if retrieved[0].MenuItemId == "-1" {
-		t.Fail()
-	}
+func TestGetMenuWithMultipleArgs(t *testing.T) {
+	items := QueryMenu("price < 6.50", "calories > 350")
+	assert.Equal(t, 2, len(items), "Query should return two items")
+	assert.Contains(t, items, MenuItem{MenuItemId: 1, ItemName: "TESTFOOD", Price: 5.00, Calories: 400}, "Test that the correct menu items are returned")
 }
 
 func TestDBAuth(t *testing.T) {
