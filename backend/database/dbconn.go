@@ -1,11 +1,11 @@
 package database
 
 import (
-	"bufio"
 	"fmt"
 	"log"
 	"os"
 
+	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -32,11 +32,9 @@ func UpdateDB(stmt string) {
 }
 
 /*
-Takes in clause to retrieve specific items from menu table.
-Example: "itemname = 'chicken korma'"
-If entire table required then leave clause empty
-Returns struct of example customer for now
-Returns -1 in customerID if unable to access database
+Takes in MenuFilter containing conditions to filter menu item.
+If entire table required then provide empty MenuFilter
+Returns array of MenuItems
 */
 func QueryMenu(filter *MenuFilter) []MenuItem {
 	preparedFilter := prepareArgs(filter)
@@ -75,25 +73,20 @@ func prepareArgs(filter *MenuFilter) *MenuFilter {
 }
 
 /*
-Fetches database login details from db_details.txt file
+Fetches database login details from .env
 db_details.txt should be in database folder with following content structure:
 <username>
 <database name>
 <password>
 */
 func fetchDBAuth() (string, string, string) {
-	file, err := os.Open("db_details.txt")
+	err := godotenv.Load()
 	if err != nil {
-		log.Fatal(err)
+		// Load test env if production env not found
+		godotenv.Load(".env.test")
 	}
-	defer file.Close()
-	reader := bufio.NewScanner(file)
-
-	reader.Scan()
-	dbUsername := reader.Text()
-	reader.Scan()
-	dbName := reader.Text()
-	reader.Scan()
-	dbPassword := reader.Text()
-	return dbUsername, dbName, dbPassword
+	username := os.Getenv("USERNAME")
+	dbname := os.Getenv("DB_NAME")
+	password := os.Getenv("DB_PASSWORD")
+	return username, dbname, password
 }
