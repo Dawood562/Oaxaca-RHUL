@@ -6,30 +6,59 @@ import (
 	"testing"
 )
 
+/*
+Tests that all menu items can be successfully fetched.
+*/
 func TestFetchMenu1(t *testing.T) {
-	// Fetch all items on the menu
 	menu, code := FetchMenu()
 	if code != 200 { // If there was any error getting items
 		t.Fail()
 	}
 }
 
+/*
+Tests that menu items can be filtered to those that have < x calories
+*/
 func TestFetchMenu2(t *testing.T) {
-	// Fetch all items that have x calories
+	
 }
 
+/*
+Tests that menu items can be filtered to those missing one or more allergens
+*/
 func TestFetchMenu3(t *testing.T) {
-	// Fetch all items that do NOT have x allergen
+
+}
+
+/*
+Tests that menu items can be filtered to those under a certain price
+*/
+func TestFetchMenu4(t *testing.T) {
+	// Fetch all items that under x price
 }
 
 
 
+/*
+Tests that, given an item ID, some data like the dish name can be changed.
+
+Should return 200 Okay if successful.
+*/
 func TestChangeMenu1(t *testing.T) {
-	// Change item with given name to have a slightly different name, should return 200 Okay
+	var itemID int = 562;
+	var newName string = "What a nice day outside! Too bad I'm coding."
+	error := ChangeMenu(itemID, newName)
+	if error != 200 {
+		t.Fail()
+	}
 }
+
+/*
+Tests that, given an item ID, the item's ID CANNOT and WILL NOT be changed.
+
+Should return 403 (Forbidden).
+*/
+
 func TestChangeMenu2(t *testing.T) {
-	// Change name item with given ID, should return 200 Okay if exists and 404 if not
-}
-func TestChangeMenu3(t *testing.T) {
 	// Change item with given ID to have different ID, should return 403
 }
