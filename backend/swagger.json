@@ -7,7 +7,36 @@
     "paths": {
         "/menu": {
             "get": {
-                "summary": "Returns the restaurant menu."
+                "summary": "Returns the restaurant menu.",
+                "parameters": [
+                    {
+                        "name": "searchTerm",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": false,
+                        "description": "Optional search term to filter menu items by name"
+                    },
+                    {
+                        "name": "maxPrice",
+                        "in": "query",
+                        "schema": {
+                            "type": "number"
+                        },
+                        "required": false,
+                        "description": "Optional search term to filter menu items by a maximum price"
+                    },
+                    {
+                        "name": "maxCalories",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "required": false,
+                        "description": "Optional search term to filter menu items by a maximum number of calories"
+                    }
+                ]
             }
         }
     }

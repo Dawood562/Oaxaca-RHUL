@@ -2,6 +2,8 @@ services:
   bot:
     build: .
     container_name: team_project
+    ports:
+      - "4444:4444"
     stop_grace_period: 40s
     depends_on:
       db:
