@@ -1,7 +1,7 @@
 package database
 
 type MenuFilter struct {
-	SearchTerm  string
-	MaxCalories int
-	MaxPrice    float32
+	SearchTerm  string  `json:"searchTerm"`
+	MaxCalories int     `json:"maxCalories"`
+	MaxPrice    float32 `json:"maxPrice"`
 }

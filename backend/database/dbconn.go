@@ -31,6 +31,14 @@ func UpdateDB(stmt string) {
 	db.Exec(stmt)
 }
 
+// AddItem adds the given item to the database.
+// Returns an error if there is a problem adding the item.
+// Item names must be unique.
+func AddItem(item *MenuItem) error {
+	result := db.Table("menuitem").Create(item)
+	return result.Error
+}
+
 /*
 Takes in MenuFilter containing conditions to filter menu item.
 If entire table required then provide empty MenuFilter

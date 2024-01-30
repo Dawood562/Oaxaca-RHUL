@@ -25,19 +25,19 @@ func TestDatabaseQueries(t *testing.T) {
 			name:            "EmptyFilter",
 			filter:          &MenuFilter{},
 			expectedLen:     4,
-			expectedElement: MenuItem{MenuItemId: 1, ItemName: "TESTFOOD", Price: 5.00, Calories: 400},
+			expectedElement: MenuItem{ItemName: "TESTFOOD", Price: 5.00, Calories: 400},
 		},
 		{
 			name:            "WithSearchTermFilter",
 			filter:          &MenuFilter{SearchTerm: "TESTFOOD2"},
 			expectedLen:     1,
-			expectedElement: MenuItem{MenuItemId: 2, ItemName: "TESTFOOD2", Price: 6.00, Calories: 500},
+			expectedElement: MenuItem{ItemName: "TESTFOOD2", Price: 6.00, Calories: 500},
 		},
 		{
 			name:            "WithMultipleFilters",
 			filter:          &MenuFilter{MaxPrice: 6.00, MaxCalories: 600},
 			expectedLen:     2,
-			expectedElement: MenuItem{MenuItemId: 1, ItemName: "TESTFOOD", Price: 5.00, Calories: 400},
+			expectedElement: MenuItem{ItemName: "TESTFOOD", Price: 5.00, Calories: 400},
 		},
 	}
 
@@ -48,6 +48,35 @@ func TestDatabaseQueries(t *testing.T) {
 			assert.Contains(t, result, test.expectedElement, "Check that query result contains expected item")
 		})
 	}
+
+	UpdateDB("DELETE FROM menuitem")
+}
+
+func TestDatabaseInserts(t *testing.T) {
+	item := &MenuItem{
+		ItemName: "TestInsert",
+		Price:    5.00,
+		Calories: 500,
+	}
+	err := AddItem(item)
+	assert.NoError(t, err)
+	// Add again to check duplicate prevention
+	err = AddItem(item)
+	assert.Error(t, err)
+	// Check the size of the database
+	menu := QueryMenu(&MenuFilter{})
+	assert.Equal(t, 1, len(menu), "Check that the record was added to the menu")
+
+	// Add a different item
+	item = &MenuItem{
+		ItemName: "TestInsert2",
+		Price:    6.00,
+		Calories: 600,
+	}
+	err = AddItem(item)
+	assert.NoError(t, err)
+	menu = QueryMenu(&MenuFilter{})
+	assert.Equal(t, 2, len(menu), "Check that the second record was added to the menu")
 
 	UpdateDB("DELETE FROM menuitem")
 }

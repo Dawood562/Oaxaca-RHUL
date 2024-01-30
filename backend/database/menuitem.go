@@ -1,8 +1,7 @@
 package database
 
 type MenuItem struct {
-	MenuItemId int     `json:"menu_item_id" gorm:"column:menuitemid"`
-	ItemName   string  `json:"item_name" gorm:"column:itemname"`
-	Price      float64 `json:"price" gorm:"column:price"`
-	Calories   float64 `json:"calories" gorm:"column:calories"`
+	ItemName string  `json:"itemName" gorm:"column:itemname"`
+	Price    float64 `json:"price" gorm:"column:price"`
+	Calories float64 `json:"calories" gorm:"column:calories"`
 }
