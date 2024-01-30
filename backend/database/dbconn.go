@@ -17,6 +17,7 @@ func init() {
 	url := "postgres://" + dbUsername + ":" + dbPassword + "@db:5432/" + dbName
 	dbLocal, err := gorm.Open(postgres.Open(url), &gorm.Config{})
 	db = dbLocal
+	db = db.Table("menuitem").Model(&MenuItem{})
 	if err != nil {
 		log.Fatal(err)
 	} else {
@@ -38,16 +39,22 @@ If entire table required then leave clause empty
 Returns struct of example customer for now
 Returns -1 in customerID if unable to access database
 */
-func QueryMenu(clause ...string) []MenuItem {
-
+func QueryMenu(filter MenuFilter) []MenuItem {
+	dbLocal := db
 	var data []MenuItem
-	db = db.Table("menuitem").Model(&MenuItem{})
 
-	for _, arg := range clause {
-		db = db.Where(arg)
+	if filter.SearchTerm != "" {
+		term := filter.SearchTerm + "%"
+		dbLocal = dbLocal.Where("itemname LIKE ?", term)
+	}
+	if filter.MaxCalories != 0 {
+		dbLocal = dbLocal.Where("calories <= ?", filter.MaxCalories)
+	}
+	if filter.MaxPrice != 0 {
+		dbLocal = dbLocal.Where("price <= ?", filter.MaxPrice)
 	}
 
-	db.Find(&data)
+	dbLocal.Find(&data)
 	return data
 }
 

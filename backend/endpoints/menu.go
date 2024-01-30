@@ -20,6 +20,7 @@ func Menu(c *fiber.Ctx) error {
 // FetchMenu returns the current restaurant menu as a JSON encoded string.
 // filter is applied to the database query to filter results
 func FetchMenu(filter *database.MenuFilter) (string, error) {
-	r, err := json.Marshal(database.QueryMenu())
+	menFilter := database.MenuFilter{} // Temporary empty filter
+	r, err := json.Marshal(database.QueryMenu(menFilter))
 	return string(r), err
 }

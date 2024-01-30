@@ -25,19 +25,19 @@ func TestMain(m *testing.M) {
 }
 
 func TestGetMenu(t *testing.T) {
-	menu := QueryMenu()
+	menu := QueryMenu(MenuFilter{})
 	assert.Equal(t, 4, len(menu), "Number of menu items should be 4")
 	assert.Contains(t, menu, MenuItem{MenuItemId: 1, ItemName: "TESTFOOD", Price: 5.00, Calories: 400}, "Test that the correct menu items are returned")
 }
 
 func TestGetMenuWithArgs(t *testing.T) {
-	items := QueryMenu("itemname='TESTFOOD2'")
+	items := QueryMenu(MenuFilter{SearchTerm: "TESTFOOD2"})
 	assert.Equal(t, 1, len(items), "Query should only return one item")
 	assert.Equal(t, "TESTFOOD2", items[0].ItemName, "Test correct item is returned from query")
 }
 
 func TestGetMenuWithMultipleArgs(t *testing.T) {
-	items := QueryMenu("price < 6.50", "calories > 350")
+	items := QueryMenu(MenuFilter{MaxPrice: 6.50, MaxCalories: 599})
 	assert.Equal(t, 2, len(items), "Query should return two items")
 	assert.Contains(t, items, MenuItem{MenuItemId: 1, ItemName: "TESTFOOD", Price: 5.00, Calories: 400}, "Test that the correct menu items are returned")
 }
