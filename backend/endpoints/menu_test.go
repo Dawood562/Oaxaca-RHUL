@@ -8,6 +8,10 @@ import (
 
 func TestFetchMenu1(t *testing.T) {
 	// Fetch all items on the menu
+	menu, code := FetchMenu()
+	if code != 200 { // If there was any error getting items
+		t.Fail()
+	}
 }
 
 func TestFetchMenu2(t *testing.T) {
