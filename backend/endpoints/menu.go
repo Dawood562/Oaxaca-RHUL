@@ -2,6 +2,7 @@ package endpoints
 
 import (
 	"encoding/json"
+
 	"teamproject/database"
 
 	"github.com/gofiber/fiber/v2"
@@ -9,7 +10,7 @@ import (
 
 // Menu retrieves the menu from the database and represents it as a JSON string.
 func Menu(c *fiber.Ctx) error {
-	r, err := FetchMenu()
+	r, err := FetchMenu(nil)
 	if err != nil {
 		return err
 	}
@@ -17,7 +18,7 @@ func Menu(c *fiber.Ctx) error {
 }
 
 // FetchMenu returns the current restaurant menu as a JSON encoded string
-func FetchMenu() (string, error) {
+func FetchMenu(_ *database.MenuFilter) (string, error) {
 	r, err := json.Marshal(database.QueryMenu())
 	return string(r), err
 }

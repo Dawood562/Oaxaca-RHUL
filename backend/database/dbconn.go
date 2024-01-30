@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"structs"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
