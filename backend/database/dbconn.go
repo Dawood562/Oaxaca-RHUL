@@ -39,10 +39,17 @@ func AddItem(item *MenuItem) error {
 	return result.Error
 }
 
-// RemoveItem removes an item from the menu with the given ID
+// EditItem edits the item with given name
+// The properties of the given struct will be used to update the record
+func EditItem(name string, new *MenuItem) error {
+	result := db.Table("menuitem").Where("itemname = ?", name).Save(new)
+	return result.Error
+}
+
+// RemoveItem removes an item from the menu with the given name
 // Returns an error if the item could not be removed
-func RemoveItem(id int) error {
-	result := db.Table("menuitem").Where("itemid = ?", id).Delete(&MenuItem{})
+func RemoveItem(name string) error {
+	result := db.Table("menuitem").Where("itemname = ?", name).Delete(&MenuItem{})
 	return result.Error
 }
 

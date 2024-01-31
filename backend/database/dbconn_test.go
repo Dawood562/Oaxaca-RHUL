@@ -25,19 +25,19 @@ func TestDatabaseQueries(t *testing.T) {
 			name:            "EmptyFilter",
 			filter:          &MenuFilter{},
 			expectedLen:     4,
-			expectedElement: MenuItem{ItemId: 1, ItemName: "TESTFOOD", Price: 5.00, Calories: 400},
+			expectedElement: MenuItem{ItemName: "TESTFOOD", Price: 5.00, Calories: 400},
 		},
 		{
 			name:            "WithSearchTermFilter",
 			filter:          &MenuFilter{SearchTerm: "TESTFOOD2"},
 			expectedLen:     1,
-			expectedElement: MenuItem{ItemId: 2, ItemName: "TESTFOOD2", Price: 6.00, Calories: 500},
+			expectedElement: MenuItem{ItemName: "TESTFOOD2", Price: 6.00, Calories: 500},
 		},
 		{
 			name:            "WithMultipleFilters",
 			filter:          &MenuFilter{MaxPrice: 6.00, MaxCalories: 600},
 			expectedLen:     2,
-			expectedElement: MenuItem{ItemId: 1, ItemName: "TESTFOOD", Price: 5.00, Calories: 400},
+			expectedElement: MenuItem{ItemName: "TESTFOOD", Price: 5.00, Calories: 400},
 		},
 	}
 
@@ -59,10 +59,10 @@ func TestDatabaseInserts(t *testing.T) {
 		Calories: 500,
 	}
 	err := AddItem(item)
-	assert.NoError(t, err)
+	assert.NoError(t, err, "Test that inserting a record does not create an error")
 	// Add again to check duplicate prevention
 	err = AddItem(item)
-	assert.Error(t, err)
+	assert.Error(t, err, "Test that inserting a duplicate record creates an error")
 	// Check the size of the database
 	menu := QueryMenu(&MenuFilter{})
 	assert.Equal(t, 1, len(menu), "Check that the record was added to the menu")
@@ -74,7 +74,7 @@ func TestDatabaseInserts(t *testing.T) {
 		Calories: 600,
 	}
 	err = AddItem(item)
-	assert.NoError(t, err)
+	assert.NoError(t, err, "Test that adding an item does not create an error")
 	menu = QueryMenu(&MenuFilter{})
 	assert.Equal(t, 2, len(menu), "Check that the second record was added to the menu")
 
@@ -82,19 +82,35 @@ func TestDatabaseInserts(t *testing.T) {
 }
 
 func TestDatabaseDelete(t *testing.T) {
-	UpdateDB("INSERT INTO menuitem (itemid, itemname, price, calories) VALUES (1, 'TESTFOOD', 5.00, 400)")
+	UpdateDB("INSERT INTO menuitem (itemname, price, calories) VALUES ('TESTFOOD', 5.00, 400)")
 	UpdateDB("INSERT INTO menuitem (itemname, price, calories) VALUES ('TESTFOOD2', 6.00, 500)")
 	UpdateDB("INSERT INTO menuitem (itemname, price, calories) VALUES ('TESTFOOD3', 7.00, 600)")
 	UpdateDB("INSERT INTO menuitem (itemname, price, calories) VALUES ('TESTFOOD4', 8.01, 720)")
 
 	// Delete TESTFOOD4
-	err := RemoveItem(1)
-	assert.NoError(t, err)
+	err := RemoveItem("TESTFOOD4")
+	assert.NoError(t, err, "Test that removing a record does not create an error")
 	// Check the record was really removed
 	menu := QueryMenu(&MenuFilter{})
 	assert.Equal(t, 3, len(menu), "Check record was removed from menu")
 
 	UpdateDB("DELETE FROM menuitem")
+}
+
+func TestDatabaseEdit(t *testing.T) {
+	UpdateDB("INSERT INTO menuitem (itemname, price, calories) VALUES ('TESTFOOD', 5.00, 400)")
+
+	// Check that a valid record can be edited
+	newItem := MenuItem{ItemName: "TESTFOOD2", Price: 6.00, Calories: 500}
+	err := EditItem("TESTFOOD", &newItem)
+	assert.NoError(t, err, "Test that editing a valid record does not create an error")
+	// Check that the fields were modified
+	menu := QueryMenu(&MenuFilter{})
+	assert.Contains(t, menu, newItem, "Test that the item was successfully edited")
+
+	// Check that an invalid record can't be edited
+	err = EditItem("I don't exist", &newItem)
+	assert.Error(t, err, "Test that editing an invalid record creates an error")
 }
 
 func TestDBAuth(t *testing.T) {
