@@ -1,14 +1,13 @@
-function requestMenu(){
-    let data = requestMenuAll()
+function requestMenuAll(){
+    let data = requestMenu()
     
     data.then(r => {
         console.log(r)
-        // UPDATE MENU BELOW HERE USING DATA FROM r
     })
 }
 
-// Asynchronously
-async function requestMenu(scope){
+// Fetches data from backend or throws error to console and provides example menu data
+async function requestMenu(MenuScope){
     try{
         let response = await fetch("http://localhost:4444/menu", {
             method:"POST",
@@ -16,7 +15,7 @@ async function requestMenu(scope){
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                Scope: scope
+                Scope: MenuScope
             })
         })
 
@@ -28,6 +27,28 @@ async function requestMenu(scope){
         return data
     }catch(error){
         console.error(error)
-        return null
+        // Return example error if unable to connect to backend
+        return JSON.stringify(
+            [{
+            ItemName: "Tequila",
+            Price: 6.90,
+            Calories: 12,
+            Type: "DRINK"
+        }, {
+            ItemName: "Olives",
+            Price: 7.99,
+            Calories: 165,
+            Type: "APPETIZER"
+        }, {
+            ItemName: "Mozzarella Sticks",
+            Price: 8.99,
+            Calories: 349,
+            Type: "ENTREES"
+        }, {
+            ItemName: "Ice Cream",
+            Price: 7.42,
+            Calories: 632,
+            Type: "DESSERT"
+        }])
     }
 }

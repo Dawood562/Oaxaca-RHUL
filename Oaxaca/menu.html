@@ -6,6 +6,7 @@
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   <title>Menu - Oaxaca</title>
   <link rel="stylesheet" href="style.css" type="text/css">
+  <script type="text/javascript" src="menu.js"></script>
 
 </head>
 
@@ -85,6 +86,7 @@
   <script>
     document.addEventListener("DOMContentLoaded", function () {
       filterMenu('all', document.querySelector('#menuFilter button.active'));
+      requestMenuAll()
     });
 
     function filterMenu(category, button) {
