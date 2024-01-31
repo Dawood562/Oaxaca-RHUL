@@ -5,6 +5,7 @@ import (
 
 	"github.com/gofiber/contrib/swagger"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 )
 
@@ -12,6 +13,7 @@ func main() {
 	// Create new Fiber app
 	app := fiber.New()
 	// Add logger middleware
+	app.Use(cors.New())
 	app.Use(logger.New())
 	app.Use(swagger.New(swagger.Config{
 		BasePath: "/",
