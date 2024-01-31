@@ -36,7 +36,34 @@
                         "required": false,
                         "description": "Optional search term to filter menu items by a maximum number of calories. If set to zero, will be ignored."
                     }
-                ]
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The menu was returned successfully"
+                    },
+                    "500": {
+                        "description": "Something went wrong internally"
+                    }
+                }
+            }
+        },
+        "/add_item": {
+            "post": {
+                "summary": "Adds an item to the menu",
+                "responses": {
+                    "200": {
+                        "description": "The item was added successfully"
+                    },
+                    "400": {
+                        "description": "The provided JSON was invalid"
+                    },
+                    "422": {
+                        "description": "The provided JSON was missing a required attribute"
+                    },
+                    "409": {
+                        "description": "A menu item with that name already exists"
+                    }
+                }
             }
         }
     }
