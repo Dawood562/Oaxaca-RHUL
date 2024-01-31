@@ -68,9 +68,9 @@ func TestFetchMenu(t *testing.T) {
 			req.URL.RawQuery = q.Encode()
 			// Run the query
 			res, err := app.Test(req)
+			assert.NoError(t, err)
 			defer res.Body.Close()
 
-			assert.NoError(t, err)
 			// Check the response
 			assert.Equal(t, 200, res.StatusCode, "Check that request returned a 200 OK status code")
 			// Check that the returned response is JSON
