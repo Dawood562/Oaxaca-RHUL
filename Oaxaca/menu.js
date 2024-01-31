@@ -1,23 +1,39 @@
 function requestMenuAll(){
-    let data = requestMenu()
+    let data = requestMenu(0,0,0) // Zero value = none specified
     
     data.then(r => {
         console.log(r)
     })
 }
 
-// Fetches data from backend or throws error to console and provides example menu data
-async function requestMenu(MenuScope){
+// ONLY FOR USE IN TESTING ONLY
+// TO ADD ITEM TO YOUR LOCAL TESTING DB RUN THIS IN BROWSER CONSOLE
+async function addTestItem(){
     try{
-        let response = await fetch("http://localhost:4444/menu", {
-            method:"POST",
+        let response = await fetch("http://localhost:4444/add_item", {
+            method:'POST',
             headers:{
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                Scope: MenuScope
-            })
+                ItemName: "Tequila",
+                Price: 2.50,
+                Calories: 12
+            }) 
         })
+    }catch(error){
+        console.error(error)
+    }
+}
+
+// Fetches data from backend or throws error to console and provides example menu data
+async function requestMenu(userSearchTerm, userMaxPrice, userMaxCalories){
+    try{
+        let response = await fetch("http://localhost:4444/menu?" + new URLSearchParams({
+            ItemName: userSearchTerm,
+            Price: userMaxPrice,
+            userMaxCalories 
+        }).toString())
 
         if(!response.ok){
             console.log("ERROR fetching menu")
