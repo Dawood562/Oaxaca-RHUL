@@ -12,7 +12,7 @@ import (
 func main() {
 	// Create new Fiber app
 	app := fiber.New()
-	// Add logger middleware
+	// Add logger and cors middleware
 	app.Use(cors.New())
 	app.Use(logger.New())
 	app.Use(swagger.New(swagger.Config{

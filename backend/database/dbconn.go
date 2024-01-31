@@ -39,10 +39,9 @@ func AddItem(item *MenuItem) error {
 	return result.Error
 }
 
-// EditItem edits the item with given name
-// The properties of the given struct will be used to update the record
-func EditItem(name string, new *MenuItem) error {
-	result := db.Table("menuitem").Where("itemname = ?", name).Save(new)
+// EditItem edits the given item with new information
+func EditItem(item *MenuItem) error {
+	result := db.Table("menuitem").Save(&item)
 	return result.Error
 }
 

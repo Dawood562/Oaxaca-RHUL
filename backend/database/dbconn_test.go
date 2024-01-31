@@ -10,10 +10,10 @@ import (
 
 func TestDatabaseQueries(t *testing.T) {
 	// Setup test data
-	UpdateDB("INSERT INTO menuitem (itemname, price, calories) VALUES ('TESTFOOD', 5.00, 400)")
-	UpdateDB("INSERT INTO menuitem (itemname, price, calories) VALUES ('TESTFOOD2', 6.00, 500)")
-	UpdateDB("INSERT INTO menuitem (itemname, price, calories) VALUES ('TESTFOOD3', 7.00, 600)")
-	UpdateDB("INSERT INTO menuitem (itemname, price, calories) VALUES ('TESTFOOD4', 8.01, 720)")
+	UpdateDB("INSERT INTO menuitem (itemid, itemname, price, calories) VALUES (1, 'TESTFOOD', 5.00, 400)")
+	UpdateDB("INSERT INTO menuitem (itemid, itemname, price, calories) VALUES (2, 'TESTFOOD2', 6.00, 500)")
+	UpdateDB("INSERT INTO menuitem (itemid, itemname, price, calories) VALUES (3, 'TESTFOOD3', 7.00, 600)")
+	UpdateDB("INSERT INTO menuitem (itemid, itemname, price, calories) VALUES (4, 'TESTFOOD4', 8.01, 720)")
 
 	testCases := []struct {
 		name            string
@@ -25,19 +25,19 @@ func TestDatabaseQueries(t *testing.T) {
 			name:            "EmptyFilter",
 			filter:          &MenuFilter{},
 			expectedLen:     4,
-			expectedElement: MenuItem{ItemName: "TESTFOOD", Price: 5.00, Calories: 400},
+			expectedElement: MenuItem{ID: 1, ItemName: "TESTFOOD", Price: 5.00, Calories: 400},
 		},
 		{
 			name:            "WithSearchTermFilter",
 			filter:          &MenuFilter{SearchTerm: "TESTFOOD2"},
 			expectedLen:     1,
-			expectedElement: MenuItem{ItemName: "TESTFOOD2", Price: 6.00, Calories: 500},
+			expectedElement: MenuItem{ID: 2, ItemName: "TESTFOOD2", Price: 6.00, Calories: 500},
 		},
 		{
 			name:            "WithMultipleFilters",
 			filter:          &MenuFilter{MaxPrice: 6.00, MaxCalories: 600},
 			expectedLen:     2,
-			expectedElement: MenuItem{ItemName: "TESTFOOD", Price: 5.00, Calories: 400},
+			expectedElement: MenuItem{ID: 1, ItemName: "TESTFOOD", Price: 5.00, Calories: 400},
 		},
 	}
 
@@ -98,19 +98,22 @@ func TestDatabaseDelete(t *testing.T) {
 }
 
 func TestDatabaseEdit(t *testing.T) {
-	UpdateDB("INSERT INTO menuitem (itemname, price, calories) VALUES ('TESTFOOD', 5.00, 400)")
+	UpdateDB("INSERT INTO menuitem (itemid, itemname, price, calories) VALUES (1, 'TESTFOOD', 5.00, 400)")
 
 	// Check that a valid record can be edited
-	newItem := MenuItem{ItemName: "TESTFOOD2", Price: 6.00, Calories: 500}
-	err := EditItem("TESTFOOD", &newItem)
+	newItem := MenuItem{ID: 1, ItemName: "TESTFOOD2", Price: 6.00, Calories: 500}
+	err := EditItem(&newItem)
 	assert.NoError(t, err, "Test that editing a valid record does not create an error")
 	// Check that the fields were modified
 	menu := QueryMenu(&MenuFilter{})
 	assert.Contains(t, menu, newItem, "Test that the item was successfully edited")
 
 	// Check that an invalid record can't be edited
-	err = EditItem("I don't exist", &newItem)
+	newItem.ID = 2
+	err = EditItem(&newItem)
 	assert.Error(t, err, "Test that editing an invalid record creates an error")
+
+	UpdateDB("DELETE FROM menuitem")
 }
 
 func TestDBAuth(t *testing.T) {

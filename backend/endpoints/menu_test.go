@@ -3,9 +3,12 @@
 package endpoints
 
 import (
+	"encoding/json"
+	"net/http"
 	"teamproject/database"
 	"testing"
 
+	"github.com/gofiber/fiber/v2"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -16,40 +19,74 @@ func TestFetchMenu(t *testing.T) {
 	database.UpdateDB("INSERT INTO menuitem (itemname, price, calories) VALUES ('TESTFOOD3', 7.00, 600)")
 	database.UpdateDB("INSERT INTO menuitem (itemname, price, calories) VALUES ('TESTFOOD4', 8.01, 720)")
 
+	// Setup server for testing
+	app := fiber.New()
+	app.Get("/menu", Menu)
+
 	testCases := []struct {
-		name   string
-		filter *database.MenuFilter
+		name  string
+		args  map[string]string
+		items []string
 	}{
 		{
-			name:   "EmptyFilter",
-			filter: &database.MenuFilter{},
+			name:  "NoFilters",
+			args:  map[string]string{},
+			items: []string{"TESTFOOD", "TESTFOOD2", "TESTFOOD3", "TESTFOOD4"},
 		},
 		{
-			name:   "WithSearchTermFilter",
-			filter: &database.MenuFilter{SearchTerm: "2"},
+			name:  "WithSearchTerm",
+			args:  map[string]string{"searchTerm": "FOOD2"},
+			items: []string{"TESTFOOD2"},
 		},
 		{
-			name:   "WithPriceFilter",
-			filter: &database.MenuFilter{MaxPrice: 5.00},
+			name:  "WithMaxPrice",
+			args:  map[string]string{"maxPrice": "5.50"},
+			items: []string{"TESTFOOD"},
 		},
 		{
-			name:   "WithCalorieFilter",
-			filter: &database.MenuFilter{MaxCalories: 500},
+			name:  "WithMaxCalories",
+			args:  map[string]string{"maxCalories": "500"},
+			items: []string{"TESTFOOD", "TESTFOOD2"},
 		},
 		{
-			name: "WithMultipleFilters",
-			filter: &database.MenuFilter{
-				SearchTerm:  "TESTFOOD",
-				MaxPrice:    6.00,
-				MaxCalories: 600,
-			},
+			name:  "WithMultipleFilters",
+			args:  map[string]string{"searchTerm": "TESTFOOD", "maxPrice": "6.50", "maxCalories": "450"},
+			items: []string{"TESTFOOD"},
 		},
 	}
 
 	for _, test := range testCases {
 		t.Run(test.name, func(t *testing.T) {
-			_, err := FetchMenu(test.filter)
+			// Create a new HTTP request
+			req, _ := http.NewRequest("GET", "/menu", nil)
+
+			q := req.URL.Query()
+			// Add args
+			for k, v := range test.args {
+				q.Add(k, v)
+			}
+			req.URL.RawQuery = q.Encode()
+			// Run the query
+			res, err := app.Test(req)
+			defer res.Body.Close()
+
 			assert.NoError(t, err)
+			// Check the response
+			assert.Equal(t, 200, res.StatusCode, "Check that request returned a 200 OK status code")
+			// Check that the returned response is JSON
+			var data []database.MenuItem
+			err = json.NewDecoder(res.Body).Decode(&data)
+			assert.NoError(t, err, "Check that the request returned valid JSON")
+
+			// Check that expected items matches the items returned
+			assert.Equal(t, len(test.items), len(data), "Test that the right number of items were returned")
+			names := make([]string, len(data))
+			for i, item := range data {
+				names[i] = item.ItemName
+			}
+			for _, item := range test.items {
+				assert.Contains(t, names, item, "Check that all required items were returned")
+			}
 		})
 	}
 

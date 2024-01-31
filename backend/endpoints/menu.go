@@ -2,6 +2,7 @@ package endpoints
 
 import (
 	"encoding/json"
+	"strconv"
 
 	"teamproject/database"
 
@@ -10,7 +11,22 @@ import (
 
 // Menu retrieves the menu from the database and represents it as a JSON string.
 func Menu(c *fiber.Ctx) error {
-	r, err := FetchMenu(nil)
+	// Check provided params
+	maxPrice, err := strconv.ParseFloat(c.Query("maxPrice"), 32)
+	if err != nil {
+		maxPrice = 0
+	}
+	maxCalories, err := strconv.ParseInt(c.Query("maxCalories"), 10, 32)
+	if err != nil {
+		maxCalories = 0
+	}
+	filter := &database.MenuFilter{
+		SearchTerm:  c.Query("searchTerm"),
+		MaxPrice:    float32(maxPrice),
+		MaxCalories: int(maxCalories),
+	}
+	// Retrieve the menu
+	r, err := FetchMenu(filter)
 	if err != nil {
 		return err
 	}
