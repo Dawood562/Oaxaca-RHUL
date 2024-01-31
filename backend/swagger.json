@@ -16,7 +16,7 @@
                             "type": "string"
                         },
                         "required": false,
-                        "description": "Optional search term to filter menu items by name"
+                        "description": "Optional search term to filter menu items by name. Terms less than 3 characters in length will be ignored."
                     },
                     {
                         "name": "maxPrice",
@@ -25,7 +25,7 @@
                             "type": "number"
                         },
                         "required": false,
-                        "description": "Optional search term to filter menu items by a maximum price"
+                        "description": "Optional search term to filter menu items by a maximum price. If set to zero, will be ignored."
                     },
                     {
                         "name": "maxCalories",
@@ -34,7 +34,7 @@
                             "type": "integer"
                         },
                         "required": false,
-                        "description": "Optional search term to filter menu items by a maximum number of calories"
+                        "description": "Optional search term to filter menu items by a maximum number of calories. If set to zero, will be ignored."
                     }
                 ]
             }
