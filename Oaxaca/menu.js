@@ -3,20 +3,42 @@ function initMenuAll(){
     let data = requestMenu(0,0,0); // Zero value = none specified
     
     data.then(r => {
+        console.log(r)
         let index = 0;
         document.getElementById("menuSectionAll").innerHTML = ""
         r.forEach(element => {
-            
-            let item = '<li id="item'+index+'" class="genericMenuItem" data-calories="'+element.Calories+'" data-price="'+element.Price+'">'+element.ItemName+'</li>';
+            let item = '<li id="item'+index+'" class="genericMenuItem" data-calories="'+element.calories+'" data-price="'+element.price+'">'+element.itemName+'</li>';
             document.getElementById("menuSectionAll").innerHTML+= item
             index++;
         });
     })
 }
 
-// ONLY FOR USE IN TESTING ONLY
-// TO ADD ITEM TO YOUR LOCAL TESTING DB RUN THIS IN BROWSER CONSOLE
-async function addTestItem(){
+var editMode = false;
+// Toggle edit mode
+function editMenu(){
+    // Add textfield to bottom of menu list
+    // Add plus button to the right of text field
+
+    // Enable edit mode
+    if(!editMode){
+        document.getElementById("menuSectionAll").innerHTML += "<div id='newItemDiv'>   <label>Name:</label><input type='text' id='newItemNameField'>  <label>Price:</label><input type='text' id='newItemPriceField'>  <label>Calories:</label><input type='text' id='newItemCaloriesField'>    <button onclick='addMenuItem()'>+</button></div>";
+        editMode = true;
+    }else{
+        document.getElementById("newItemDiv").remove();
+        editMode = false;
+    }
+}
+
+function addMenuItem(){
+    let nameValue = document.getElementById("newItemNameField").value;
+    let priceValue = parseFloat(document.getElementById("newItemPriceField").value);
+    let caloriesValue = parseInt(document.getElementById("newItemCaloriesField").value);
+    addItemToDB(nameValue, priceValue, caloriesValue);
+}
+
+// Add menu item
+async function addItemToDB(name, _price, _calories){
     try{
         let response = await fetch("http://localhost:4444/add_item", {
             method:'POST',
@@ -24,9 +46,9 @@ async function addTestItem(){
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                ItemName: "Tequila",
-                Price: 2.50,
-                Calories: 12
+                itemName: name,
+                price: _price,
+                calories: _calories
             }) 
         })
     }catch(error){
