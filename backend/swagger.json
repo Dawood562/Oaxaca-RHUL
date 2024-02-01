@@ -1,0 +1,116 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Team Project API Documentation",
+        "version": "0.0.1"
+    },
+    "paths": {
+        "/menu": {
+            "get": {
+                "summary": "Returns the restaurant menu.",
+                "parameters": [
+                    {
+                        "name": "searchTerm",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": false,
+                        "description": "Optional search term to filter menu items by name. Terms less than 3 characters in length will be ignored."
+                    },
+                    {
+                        "name": "maxPrice",
+                        "in": "query",
+                        "schema": {
+                            "type": "number"
+                        },
+                        "required": false,
+                        "description": "Optional search term to filter menu items by a maximum price. If set to zero, will be ignored."
+                    },
+                    {
+                        "name": "maxCalories",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "required": false,
+                        "description": "Optional search term to filter menu items by a maximum number of calories. If set to zero, will be ignored."
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The menu was returned successfully"
+                    },
+                    "500": {
+                        "description": "Something went wrong internally"
+                    }
+                }
+            }
+        },
+        "/add_item": {
+            "post": {
+                "summary": "Adds an item to the menu",
+                "responses": {
+                    "200": {
+                        "description": "The item was added successfully"
+                    },
+                    "400": {
+                        "description": "The provided JSON was invalid"
+                    },
+                    "422": {
+                        "description": "The provided JSON was missing a required attribute"
+                    },
+                    "409": {
+                        "description": "A menu item with that name already exists"
+                    }
+                }
+            }
+        },
+        "/remove_item": {
+            "delete": {
+                "summary": "Remove item with given ID from the menu",
+                "parameters": [
+                  {
+                    "name": "itemId",
+                    "in": "query",
+                    "required": true,
+                    "description": "The ID of the item to remove",
+                    "schema": {
+                      "type": "string"
+                    }
+                  }
+                ],
+                "responses": {
+                  "200": {
+                    "description": "The item was successfully deleted"
+                  },
+                  "409": {
+                    "description": "No item exists with the given ID"
+                  },
+                  "429": {
+                    "description": "Missing required itemId parameter"
+                  }
+                }
+            }
+        },
+        "/edit_item": {
+            "patch": {
+                "summary": "Edits an item on the menu",
+                "responses": {
+                    "200": {
+                        "description": "The item was edited successfully"
+                    },
+                    "400": {
+                        "description": "The provided JSON was invalid"
+                    },
+                    "422": {
+                        "description": "The provided JSON was missing a required attribute"
+                    },
+                    "409": {
+                        "description": "A menu item with that name does not exist"
+                    }
+                }
+            }
+        }
+    }
+}
