@@ -122,18 +122,23 @@ func TestAddItem(t *testing.T) {
 			// Check the response
 			assert.Equal(t, test.code, res.StatusCode, "Check that request returned expected status code")
 			// Check that the database contains the required entries
-			menu := database.QueryMenu(&database.MenuFilter{})
-			assert.Equal(t, len(test.expectedItemNames), len(menu), "Check that the database contains the correct number of entries")
-
-			menuNames := make([]string, len(menu))
-			for i, item := range menu {
-				menuNames[i] = item.ItemName
-			}
-			for _, expected := range test.expectedItemNames {
-				assert.Contains(t, menuNames, expected, "Check that all expected entries are present")
-			}
+			checkItemNames(t, test.expectedItemNames)
 		})
 	}
 
 	database.UpdateDB("DELETE FROM menuitem")
+}
+
+// checkItemNames asserts that expectedItemNames and the database menu are the same length and contain the same elements regardless of order
+func checkItemNames(t *testing.T, expectedItemNames []string) {
+	menu := database.QueryMenu(&database.MenuFilter{})
+	assert.Equal(t, len(expectedItemNames), len(menu), "Check that the database contains the correct number of entries")
+
+	menuNames := make([]string, len(menu))
+	for i, item := range menu {
+		menuNames[i] = item.ItemName
+	}
+	for _, expected := range expectedItemNames {
+		assert.Contains(t, menuNames, expected, "Check that all expected entries are present")
+	}
 }

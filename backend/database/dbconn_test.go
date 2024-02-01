@@ -82,17 +82,22 @@ func TestDatabaseInserts(t *testing.T) {
 }
 
 func TestDatabaseDelete(t *testing.T) {
-	UpdateDB("INSERT INTO menuitem (menuitemname, price, calories) VALUES ('TESTFOOD', 5.00, 400)")
-	UpdateDB("INSERT INTO menuitem (menuitemname, price, calories) VALUES ('TESTFOOD2', 6.00, 500)")
-	UpdateDB("INSERT INTO menuitem (menuitemname, price, calories) VALUES ('TESTFOOD3', 7.00, 600)")
-	UpdateDB("INSERT INTO menuitem (menuitemname, price, calories) VALUES ('TESTFOOD4', 8.01, 720)")
+	UpdateDB("INSERT INTO menuitem (menuitemid, menuitemname, price, calories) VALUES (1, 'TESTFOOD', 5.00, 400)")
+	UpdateDB("INSERT INTO menuitem (menuitemid, menuitemname, price, calories) VALUES (2, 'TESTFOOD2', 6.00, 500)")
+	UpdateDB("INSERT INTO menuitem (menuitemid, menuitemname, price, calories) VALUES (3, 'TESTFOOD3', 7.00, 600)")
+	UpdateDB("INSERT INTO menuitem (menuitemid, menuitemname, price, calories) VALUES (4, 'TESTFOOD4', 8.01, 720)")
 
 	// Delete TESTFOOD4
-	err := RemoveItem("TESTFOOD4")
+	err := RemoveItem(4)
 	assert.NoError(t, err, "Test that removing a record does not create an error")
 	// Check the record was really removed
 	menu := QueryMenu(&MenuFilter{})
 	assert.Equal(t, 3, len(menu), "Check record was removed from menu")
+	// Check removing a duplicate item
+	err = RemoveItem(4)
+	assert.Error(t, err, "Check that removing a non-existent item creates an error")
+	menu = QueryMenu(&MenuFilter{})
+	assert.Equal(t, 3, len(menu), "Check that no items were removed from the database")
 
 	UpdateDB("DELETE FROM menuitem")
 }

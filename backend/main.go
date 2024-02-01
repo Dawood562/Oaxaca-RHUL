@@ -25,6 +25,7 @@ func main() {
 	// Register routes
 	app.Get("/menu", endpoints.Menu)
 	app.Post("/add_item", endpoints.AddItem)
+	app.Delete("/remove_item", endpoints.RemoveItem)
 
 	// Start server
 	app.Listen(":4444")

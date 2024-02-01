@@ -1,6 +1,7 @@
 package database
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -45,11 +46,17 @@ func EditItem(item *MenuItem) error {
 	return result.Error
 }
 
-// RemoveItem removes an item from the menu with the given name
+// RemoveItem removes an item from the menu with the given id
 // Returns an error if the item could not be removed
-func RemoveItem(name string) error {
-	result := db.Table("menuitem").Where("menuitemname = ?", name).Delete(&MenuItem{})
-	return result.Error
+func RemoveItem(id int) error {
+	result := db.Table("menuitem").Where("menuitemid = ?", id).Delete(&MenuItem{})
+	if result.Error != nil {
+		return result.Error
+	}
+	if result.RowsAffected == 0 {
+		return errors.New(fmt.Sprintf("Item with id '%d' does not exist", id))
+	}
+	return nil
 }
 
 // QueryMenu returns the menu items from the database as a slice
