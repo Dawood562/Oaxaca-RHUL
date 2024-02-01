@@ -66,7 +66,7 @@ async function requestMenu(userSearchTerm, userMaxPrice, userMaxCalories){
         let response = await fetch("http://localhost:4444/menu?" + new URLSearchParams({
             ItemName: userSearchTerm,
             Price: userMaxPrice,
-            userMaxCalories 
+            Calories: userMaxCalories 
         }).toString())
 
         if(!response.ok){
