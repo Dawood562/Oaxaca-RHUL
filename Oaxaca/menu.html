@@ -27,9 +27,11 @@
     </div>
 
     <div id="flex">
-      <main id="menuPage">
-        <h1 id="menuTitle">Menu</h1>
-        <p id="menuDescription"><h3>Menu Filters</h3></p>
+
+      <aside id="leftSidebar">
+    
+        <h2 id="menuTitle">Menu Filters</h2>
+        
         <div class="box">
 
           <div id="menuFilter">
@@ -55,15 +57,19 @@
               <label for="categoryFilter">Category:</label>
               <button onclick="filterMenuByCategory('all', this)" data-category="all" class="active">Show All</button>
             </div>
-        </div>
-      </div>
-          <div>
-            <p>
-            <button onclick="editMenu()">Edit Menu</button>
-            </p>
           </div>
-        
 
+        </div>
+
+        <div>
+        <p>
+        <button onclick="editMenu()">Edit Menu</button>
+        </p>
+        </div>
+        
+      </aside> <!--Above section is in sidebar for cleaner presentation-->
+      
+      <main id="menuPage"> <!--Main section of page-->
         <div class="menuSection">
           <section class="appetizersSection" data-calories="200" data-price="10.00">
             <h2>Dishes & Drinks</h2>
@@ -73,6 +79,7 @@
           </section>
         </div>
       </main>
+    
     </div>
 
     <footer id="footer">
@@ -80,7 +87,9 @@
       <a href="#">Get in touch</a>&emsp;
       <a href="#">Privacy policy</a>
     </footer>
+
   </div>
+
   <script>
     document.addEventListener("DOMContentLoaded", function () {
       initializeMenu();
