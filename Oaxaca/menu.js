@@ -26,7 +26,8 @@ function editMenu(){
 
     // Enable edit mode
     if(!editMode){
-        document.getElementById("menuSectionAll").innerHTML += "<div id='newItemDiv'><h3>Add new item here:</h3><p><label>Name:</label><input type='text' id='newItemNameField'>  <label>Price:</label><input type='text' id='newItemPriceField'>  <label>Calories:</label><input type='text' id='newItemCaloriesField'>    <button onclick='addMenuItem()'>+</button></p></div>";
+        document.getElementById("menuSectionAll").innerHTML += "<div id='newItemDiv'><h3>Add new menu item:</h3><p><label>Name:</label><input type='text' id='newItemNameField'>  <label>Price:</label><input type='text' id='newItemPriceField'>  <label>Calories:</label><input type='text' id='newItemCaloriesField'>    <button onclick='addMenuItem()'>+</button></p></div>";
+        document.getElementById("menuSectionAll").innerHTML += "<div id='newItemDiv'><h3>Delete menu item:</h3><p><label>Enter the name of the item you want to delete from the menu:</label><input type='text' id='deleteItemNameField'> <button onclick='deleteMenuItem()'>-</button></p></div>";
         editMode = true;
     }else{
         document.getElementById("newItemDiv").remove();
@@ -39,6 +40,11 @@ function addMenuItem(){
     let priceValue = parseFloat(document.getElementById("newItemPriceField").value);
     let caloriesValue = parseInt(document.getElementById("newItemCaloriesField").value);
     addItemToDB(nameValue, priceValue, caloriesValue);
+}
+
+function deleteMenuItem(){
+    let nameValue = document.getElementById("deleteItemNameField").value;
+    deleteItemFromDB(nameValue);
 }
 
 // Add menu item
