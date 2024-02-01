@@ -26,6 +26,7 @@ func TestAddItem(t *testing.T) {
 			json: []byte(`
 			{
 				"itemName": "TESTFOOD",
+				"itemDescription": "A test item",
 				"price": 5.00,
 				"calories": 500
 			}
@@ -37,6 +38,7 @@ func TestAddItem(t *testing.T) {
 			json: []byte(`
 			{
 				"itemName": "TESTFOOD",
+				"itemDescription": "A test item",
 				"price": 5.00,
 				"calories": 500
 			}
@@ -47,6 +49,7 @@ func TestAddItem(t *testing.T) {
 			name: "WithMissingItemName",
 			json: []byte(`
 			{
+				"itemDescription": "A test item",
 				"price": 5.00,
 				"calories": 500
 			}
@@ -57,6 +60,7 @@ func TestAddItem(t *testing.T) {
 			name: "WithMissingPrice",
 			json: []byte(`
 			{
+				"itemDescription": "A test item",
 				"itemName": "TESTFOOD3",
 				"calories": 500
 			}
@@ -67,8 +71,20 @@ func TestAddItem(t *testing.T) {
 			name: "WithMissingCalories",
 			json: []byte(`
 			{
+				"itemDescription": "A test item",
 				"itemName": "TESTFOOD4",
 				"price": 5.00
+			}
+			`),
+			code: 200,
+		},
+		{
+			name: "WithMissingDescription",
+			json: []byte(`
+			{
+				"itemName": "TESTFOOD5",
+				"price": 5.00,
+				"calories": 500
 			}
 			`),
 			code: 200,
@@ -77,7 +93,7 @@ func TestAddItem(t *testing.T) {
 			name: "WithBadJSON",
 			json: []byte(`
 			{
-				"itemName": "TESTFOOD5",
+				"itemName": "TESTFOOD6",
 				"price: 5.00
 			}
 			`),

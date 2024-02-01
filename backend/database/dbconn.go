@@ -48,7 +48,7 @@ func EditItem(item *MenuItem) error {
 // RemoveItem removes an item from the menu with the given name
 // Returns an error if the item could not be removed
 func RemoveItem(name string) error {
-	result := db.Table("menuitem").Where("itemname = ?", name).Delete(&MenuItem{})
+	result := db.Table("menuitem").Where("menuitemname = ?", name).Delete(&MenuItem{})
 	return result.Error
 }
 
@@ -58,7 +58,7 @@ func QueryMenu(filter *MenuFilter) []MenuItem {
 	preparedFilter := prepareArgs(filter)
 
 	var data []MenuItem
-	db.Table("menuitem").Model(&MenuItem{}).Where("itemname LIKE ?", preparedFilter.SearchTerm).Where("calories <= ?", preparedFilter.MaxCalories).Where("price <= ?", preparedFilter.MaxPrice).Find(&data)
+	db.Table("menuitem").Model(&MenuItem{}).Where("menuItemName LIKE ?", preparedFilter.SearchTerm).Where("calories <= ?", preparedFilter.MaxCalories).Where("price <= ?", preparedFilter.MaxPrice).Find(&data)
 	return data
 }
 

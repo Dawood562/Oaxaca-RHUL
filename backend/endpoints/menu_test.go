@@ -12,12 +12,12 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestFetchMenu(t *testing.T) {
+func TestMenu(t *testing.T) {
 	// Setup test data
-	database.UpdateDB("INSERT INTO menuitem (itemname, price, calories) VALUES ('TESTFOOD', 5.00, 400)")
-	database.UpdateDB("INSERT INTO menuitem (itemname, price, calories) VALUES ('TESTFOOD2', 6.00, 500)")
-	database.UpdateDB("INSERT INTO menuitem (itemname, price, calories) VALUES ('TESTFOOD3', 7.00, 600)")
-	database.UpdateDB("INSERT INTO menuitem (itemname, price, calories) VALUES ('TESTFOOD4', 8.01, 720)")
+	database.UpdateDB("INSERT INTO menuitem (menuitemname, price, calories) VALUES ('TESTFOOD', 5.00, 400)")
+	database.UpdateDB("INSERT INTO menuitem (menuitemname, price, calories) VALUES ('TESTFOOD2', 6.00, 500)")
+	database.UpdateDB("INSERT INTO menuitem (menuitemname, price, calories) VALUES ('TESTFOOD3', 7.00, 600)")
+	database.UpdateDB("INSERT INTO menuitem (menuitemname, price, calories) VALUES ('TESTFOOD4', 8.01, 720)")
 
 	// Setup server for testing
 	app := fiber.New()

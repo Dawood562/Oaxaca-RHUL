@@ -10,10 +10,10 @@ import (
 
 func TestDatabaseQueries(t *testing.T) {
 	// Setup test data
-	UpdateDB("INSERT INTO menuitem (itemid, itemname, price, calories) VALUES (1, 'TESTFOOD', 5.00, 400)")
-	UpdateDB("INSERT INTO menuitem (itemid, itemname, price, calories) VALUES (2, 'TESTFOOD2', 6.00, 500)")
-	UpdateDB("INSERT INTO menuitem (itemid, itemname, price, calories) VALUES (3, 'TESTFOOD3', 7.00, 600)")
-	UpdateDB("INSERT INTO menuitem (itemid, itemname, price, calories) VALUES (4, 'TESTFOOD4', 8.01, 720)")
+	UpdateDB("INSERT INTO menuitem (menuitemid, menuitemname, price, calories) VALUES (1, 'TESTFOOD', 5.00, 400)")
+	UpdateDB("INSERT INTO menuitem (menuitemid, menuitemname, price, calories) VALUES (2, 'TESTFOOD2', 6.00, 500)")
+	UpdateDB("INSERT INTO menuitem (menuitemid, menuitemname, price, calories) VALUES (3, 'TESTFOOD3', 7.00, 600)")
+	UpdateDB("INSERT INTO menuitem (menuitemid, menuitemname, price, calories) VALUES (4, 'TESTFOOD4', 8.01, 720)")
 
 	testCases := []struct {
 		name            string
@@ -82,10 +82,10 @@ func TestDatabaseInserts(t *testing.T) {
 }
 
 func TestDatabaseDelete(t *testing.T) {
-	UpdateDB("INSERT INTO menuitem (itemname, price, calories) VALUES ('TESTFOOD', 5.00, 400)")
-	UpdateDB("INSERT INTO menuitem (itemname, price, calories) VALUES ('TESTFOOD2', 6.00, 500)")
-	UpdateDB("INSERT INTO menuitem (itemname, price, calories) VALUES ('TESTFOOD3', 7.00, 600)")
-	UpdateDB("INSERT INTO menuitem (itemname, price, calories) VALUES ('TESTFOOD4', 8.01, 720)")
+	UpdateDB("INSERT INTO menuitem (menuitemname, price, calories) VALUES ('TESTFOOD', 5.00, 400)")
+	UpdateDB("INSERT INTO menuitem (menuitemname, price, calories) VALUES ('TESTFOOD2', 6.00, 500)")
+	UpdateDB("INSERT INTO menuitem (menuitemname, price, calories) VALUES ('TESTFOOD3', 7.00, 600)")
+	UpdateDB("INSERT INTO menuitem (menuitemname, price, calories) VALUES ('TESTFOOD4', 8.01, 720)")
 
 	// Delete TESTFOOD4
 	err := RemoveItem("TESTFOOD4")
@@ -98,7 +98,7 @@ func TestDatabaseDelete(t *testing.T) {
 }
 
 func TestDatabaseEdit(t *testing.T) {
-	UpdateDB("INSERT INTO menuitem (itemid, itemname, price, calories) VALUES (1, 'TESTFOOD', 5.00, 400)")
+	UpdateDB("INSERT INTO menuitem (menuItemId, menuItemName, price, calories) VALUES (1, 'TESTFOOD', 5.00, 400)")
 
 	// Check that a valid record can be edited
 	newItem := MenuItem{ID: 1, ItemName: "TESTFOOD2", Price: 6.00, Calories: 500}
