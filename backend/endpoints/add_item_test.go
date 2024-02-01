@@ -17,9 +17,10 @@ func TestAddItem(t *testing.T) {
 	app.Post("/add_item", AddItem)
 
 	testCases := []struct {
-		name string
-		json []byte
-		code int
+		name              string
+		json              []byte
+		code              int
+		expectedItemNames []string
 	}{
 		{
 			name: "WithCorrectFields",
@@ -31,7 +32,8 @@ func TestAddItem(t *testing.T) {
 				"calories": 500
 			}
 			`),
-			code: 200,
+			code:              200,
+			expectedItemNames: []string{"TESTFOOD"},
 		},
 		{
 			name: "WithDuplicateName",
@@ -43,7 +45,8 @@ func TestAddItem(t *testing.T) {
 				"calories": 500
 			}
 			`),
-			code: 409,
+			code:              409,
+			expectedItemNames: []string{"TESTFOOD"},
 		},
 		{
 			name: "WithMissingItemName",
@@ -54,7 +57,8 @@ func TestAddItem(t *testing.T) {
 				"calories": 500
 			}
 			`),
-			code: 422,
+			code:              422,
+			expectedItemNames: []string{"TESTFOOD"},
 		},
 		{
 			name: "WithMissingPrice",
@@ -65,7 +69,8 @@ func TestAddItem(t *testing.T) {
 				"calories": 500
 			}
 			`),
-			code: 200,
+			code:              200,
+			expectedItemNames: []string{"TESTFOOD", "TESTFOOD3"},
 		},
 		{
 			name: "WithMissingCalories",
@@ -76,7 +81,8 @@ func TestAddItem(t *testing.T) {
 				"price": 5.00
 			}
 			`),
-			code: 200,
+			code:              200,
+			expectedItemNames: []string{"TESTFOOD", "TESTFOOD3", "TESTFOOD4"},
 		},
 		{
 			name: "WithMissingDescription",
@@ -87,7 +93,8 @@ func TestAddItem(t *testing.T) {
 				"calories": 500
 			}
 			`),
-			code: 200,
+			code:              200,
+			expectedItemNames: []string{"TESTFOOD", "TESTFOOD3", "TESTFOOD4", "TESTFOOD5"},
 		},
 		{
 			name: "WithBadJSON",
@@ -97,7 +104,8 @@ func TestAddItem(t *testing.T) {
 				"price: 5.00
 			}
 			`),
-			code: 400,
+			code:              400,
+			expectedItemNames: []string{"TESTFOOD", "TESTFOOD3", "TESTFOOD4", "TESTFOOD5"},
 		},
 	}
 
@@ -113,6 +121,17 @@ func TestAddItem(t *testing.T) {
 
 			// Check the response
 			assert.Equal(t, test.code, res.StatusCode, "Check that request returned expected status code")
+			// Check that the database contains the required entries
+			menu := database.QueryMenu(&database.MenuFilter{})
+			assert.Equal(t, len(test.expectedItemNames), len(menu), "Check that the database contains the correct number of entries")
+
+			menuNames := make([]string, len(menu))
+			for i, item := range menu {
+				menuNames[i] = item.ItemName
+			}
+			for _, expected := range test.expectedItemNames {
+				assert.Contains(t, menuNames, expected, "Check that all expected entries are present")
+			}
 		})
 	}
 
