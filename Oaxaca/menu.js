@@ -26,7 +26,7 @@ function editMenu(){
 
     // Enable edit mode
     if(!editMode){
-        document.getElementById("menuSectionAll").innerHTML += "<div id='newItemDiv'>   <label>Name:</label><input type='text' id='newItemNameField'>  <label>Price:</label><input type='text' id='newItemPriceField'>  <label>Calories:</label><input type='text' id='newItemCaloriesField'>    <button onclick='addMenuItem()'>+</button></div>";
+        document.getElementById("menuSectionAll").innerHTML += "<div id='newItemDiv'><h3>Add new item here:</h3><p><label>Name:</label><input type='text' id='newItemNameField'>  <label>Price:</label><input type='text' id='newItemPriceField'>  <label>Calories:</label><input type='text' id='newItemCaloriesField'>    <button onclick='addMenuItem()'>+</button></p></div>";
         editMode = true;
     }else{
         document.getElementById("newItemDiv").remove();
