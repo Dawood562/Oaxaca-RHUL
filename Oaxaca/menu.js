@@ -21,10 +21,7 @@ function initMenuAll(){
 
 // Toggle edit mode
 function editMenu(){
-    // Add textfield to bottom of menu list
-    // Add plus button to the right of text field
 
-    // Enable edit mode
     if(!editMode){
         document.getElementById("menuSectionAll").innerHTML += "<div id='newItemDiv'><h3>Add new menu item:</h3><p><label>Name:</label><input type='text' id='newItemNameField'>  <label>Price:</label><input type='text' id='newItemPriceField'>  <label>Calories:</label><input type='text' id='newItemCaloriesField'>    <button onclick='addMenuItem()'>+</button></p></div>";
         document.getElementById("menuSectionAll").innerHTML += "<div id='newItemDiv'><h3>Delete menu item:</h3><p><label>Enter the name of the item you want to delete from the menu:</label><input type='text' id='deleteItemNameField'> <button onclick='deleteMenuItem()'>-</button></p></div>";
@@ -34,7 +31,7 @@ function editMenu(){
         editMode = false;
     }
 }
-
+// Functions to add and delete menu items
 function addMenuItem(){
     let nameValue = document.getElementById("newItemNameField").value;
     let priceValue = parseFloat(document.getElementById("newItemPriceField").value);
