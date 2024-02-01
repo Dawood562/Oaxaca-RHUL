@@ -42,7 +42,14 @@ func AddItem(item *MenuItem) error {
 
 // EditItem edits the given item with new information
 func EditItem(item *MenuItem) error {
-	result := db.Table("menuitem").Save(&item)
+	// Check that the item exists
+	var count int64
+	result := db.Table("menuitem").Where("menuitemid = ?", item.ID).Count(&count)
+	if count == 0 {
+		return errors.New("Item does not exist")
+	}
+	// Update the item
+	result = db.Table("menuitem").Save(&item)
 	return result.Error
 }
 

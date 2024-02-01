@@ -114,7 +114,7 @@ func TestDatabaseEdit(t *testing.T) {
 	assert.Contains(t, menu, newItem, "Test that the item was successfully edited")
 
 	// Check that an invalid record can't be edited
-	newItem.ID = 2
+	newItem = MenuItem{ID: 2, ItemName: "TESTFOOD3"}
 	err = EditItem(&newItem)
 	assert.Error(t, err, "Test that editing an invalid record creates an error")
 
