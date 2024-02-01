@@ -12,7 +12,7 @@ function initMenuAll(){
         let index = 0;
         document.getElementById("menuSectionAll").innerHTML = ""
         r.forEach(element => {
-            let item = '<li id="item'+index+'" class="genericMenuItem" data-calories="'+element.calories+'" data-price="'+element.price+'">'+element.itemName+'</li>';
+            let item = '<li id="item'+index+'" class="genericMenuItem" data-calories="'+element.calories+'" data-price="'+element.price+'">'+element.itemName+' -- £'+element.price.toFixed(2)+' -- '+element.calories+'kcal</li>';
             document.getElementById("menuSectionAll").innerHTML+= item
             index++;
         });
@@ -80,24 +80,24 @@ async function requestMenu(userSearchTerm, userMaxPrice, userMaxCalories){
         // Return example error if unable to connect to backend
         return (
             [{
-            ItemName: "Tequila",
-            Price: 6.90,
-            Calories: 12,
+            itemName: "Tequila",
+            price: 6.90,
+            calories: 12,
             Type: "DRINK"
         }, {
-            ItemName: "Olives",
-            Price: 7.99,
-            Calories: 165,
+            itemName: "Olives",
+            price: 7.99,
+            calories: 165,
             Type: "APPETIZER"
         }, {
-            ItemName: "Mozzarella Sticks",
-            Price: 8.99,
-            Calories: 349,
+            itemName: "Mozzarella Sticks",
+            price: 8.99,
+            calories: 349,
             Type: "ENTREES"
         }, {
-            ItemName: "Ice Cream",
-            Price: 7.42,
-            Calories: 632,
+            itemName: "Ice Cream",
+            price: 7.42,
+            calories: 632,
             Type: "DESSERT"
         }])
     }
