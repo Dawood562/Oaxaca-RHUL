@@ -1,8 +1,15 @@
-function requestMenuAll(){
-    let data = requestMenu(0,0,0) // Zero value = none specified
+// Called when menu page is initially loaded
+function initMenuAll(){
+    let data = requestMenu(0,0,0); // Zero value = none specified
     
     data.then(r => {
-        console.log(r)
+        let index = 0;
+        r.forEach(element => {
+
+            let item = '<li id="item'+index+'" class="genericMenuItem" data-calories="'+element.Calories+'" data-price="'+element.Price+'">'+element.ItemName+'</li>';
+            document.getElementById("menuSectionAll").innerHTML+= item
+            index++;
+        });
     })
 }
 
@@ -44,7 +51,7 @@ async function requestMenu(userSearchTerm, userMaxPrice, userMaxCalories){
     }catch(error){
         console.error(error)
         // Return example error if unable to connect to backend
-        return JSON.stringify(
+        return (
             [{
             ItemName: "Tequila",
             Price: 6.90,
