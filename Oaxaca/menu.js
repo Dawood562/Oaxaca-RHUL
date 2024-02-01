@@ -1,5 +1,10 @@
+var editMode = false;
 // Called when menu page is initially loaded
 function initMenuAll(){
+    if(editMode){
+        editMenu()
+    }
+
     let data = requestMenu(0,0,0); // Zero value = none specified
     
     data.then(r => {
@@ -14,7 +19,6 @@ function initMenuAll(){
     })
 }
 
-var editMode = false;
 // Toggle edit mode
 function editMenu(){
     // Add textfield to bottom of menu list
