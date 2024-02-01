@@ -65,6 +65,33 @@
                     }
                 }
             }
+        },
+        "/remove_item": {
+            "delete": {
+                "summary": "Remove item with given ID from the menu",
+                "parameters": [
+                  {
+                    "name": "itemId",
+                    "in": "query",
+                    "required": true,
+                    "description": "The ID of the item to remove",
+                    "schema": {
+                      "type": "string"
+                    }
+                  }
+                ],
+                "responses": {
+                  "200": {
+                    "description": "The item was successfully deleted"
+                  },
+                  "409": {
+                    "description": "No item exists with the given ID"
+                  },
+                  "429": {
+                    "description": "Missing required itemId parameter"
+                  }
+                }
+            }
         }
     }
 }
