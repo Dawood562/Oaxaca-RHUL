@@ -1,3 +1,5 @@
+// Will hold currently displayed version of menu
+var currentMenu;
 var editMode = false;
 // Called when menu page is initially loaded
 function initMenuAll(){
@@ -6,9 +8,9 @@ function initMenuAll(){
     }
 
     let data = requestMenu(0,0,0); // Zero value = none specified
-    
     data.then(r => {
         console.log(r)
+        currentMenu = r
         let index = 0;
         document.getElementById("menuSectionAll").innerHTML = ""
         r.forEach(element => {
@@ -21,8 +23,6 @@ function initMenuAll(){
 
 // Toggle edit mode
 function editMenu(){
-    // Add textfield to bottom of menu list
-    // Add plus button to the right of text field
 
     // Enable edit mode
     if(!editMode){
@@ -55,6 +55,33 @@ async function addItemToDB(name, _price, _calories){
                 calories: _calories
             }) 
         })
+    }catch(error){
+        console.error(error)
+    }
+}
+
+function getIdFromName(name){
+    for(let i = 0; i < currentMenu.length;i++){
+        console.log(currentMenu[i].itemName+":"+name)
+        if(currentMenu[i].itemName == name){
+            console.log(currentMenu[i].itemId)
+            return currentMenu[i].itemId;
+        }
+    }
+    console.log("COULD NOT FIND ID FROM ITEM NAME: "+name);
+    return null;
+}
+
+async function removeItem(name){
+    console.log(currentMenu)
+    nameId = String(getIdFromName(name))
+    try{
+        let response = await fetch("http://localhost:4444/remove_item?" + new URLSearchParams({
+            itemId: nameId
+        }).toString(), {
+            method: "DELETE"
+        })
+
     }catch(error){
         console.error(error)
     }
