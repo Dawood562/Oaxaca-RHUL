@@ -29,36 +29,40 @@
     <div id="flex">
       <main id="menuPage">
         <h1 id="menuTitle">Menu</h1>
-        <p id="menuDescription">This is the organized menu page content with different sections.</p>
+        <p id="menuDescription"><h3>Menu Filters</h3></p>
+        <div class="box">
 
-        <div id="menuFilter">
-          <div class="filterOption">
-            <label for="searchTerm">Search Item:</label>
-            <input type="text" id="searchTerm" placeholder="Enter item name">
-          </div>
+          <div id="menuFilter">
+            <div class="filterOption">
+              <label for="searchTerm">Search Item:</label>
+              <input type="text" id="searchTerm" placeholder="Enter item name">
+            </div>
 
-          <div class="filterOption">
-            <label for="maxCalories">Max Calories:</label>
-            <input type="number" id="maxCalories" placeholder="Enter max calories">
-          </div>
+            <div class="filterOption">
+              <label for="maxCalories">Max Calories:</label>
+              <input type="number" id="maxCalories" placeholder="Enter max calories">
+            </div>
 
-          <div class="filterOption">
-            <label for="maxPrice">Max Price:</label>
-            <input type="number" id="maxPrice" placeholder="Enter max price">
-          </div>
+            <div class="filterOption">
+              <label for="maxPrice">Max Price:</label>
+              <input type="number" id="maxPrice" placeholder="Enter max price">
+            </div>
 
-          <button onclick="applyFilter()" class="filterButton">Apply Filter</button>
-          <button onclick="resetFilter()" class="filterButton">Reset Filter</button>
+            <button onclick="applyFilter()" class="filterButton">Apply Filter</button>
+            <button onclick="resetFilter()" class="filterButton">Reset Filter</button>
 
-          <div class="filterOption" id="categoryFilter">
-            <label for="categoryFilter">Category:</label>
-            <button onclick="filterMenuByCategory('all', this)" data-category="all" class="active">Show All</button>
-          </div>
-          <div>
-            <label>Edit Menu:</label>
-            <button onclick="editMenu()">Edit</button>
-          </div>
+            <div class="filterOption" id="categoryFilter">
+              <label for="categoryFilter">Category:</label>
+              <button onclick="filterMenuByCategory('all', this)" data-category="all" class="active">Show All</button>
+            </div>
         </div>
+      </div>
+          <div>
+            <p>
+            <button onclick="editMenu()">Edit Menu</button>
+            </p>
+          </div>
+        
 
         <div class="menuSection">
           <section class="appetizersSection" data-calories="200" data-price="10.00">
