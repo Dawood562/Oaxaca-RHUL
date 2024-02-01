@@ -4,8 +4,9 @@ function initMenuAll(){
     
     data.then(r => {
         let index = 0;
+        document.getElementById("menuSectionAll").innerHTML = ""
         r.forEach(element => {
-
+            
             let item = '<li id="item'+index+'" class="genericMenuItem" data-calories="'+element.Calories+'" data-price="'+element.Price+'">'+element.ItemName+'</li>';
             document.getElementById("menuSectionAll").innerHTML+= item
             index++;
