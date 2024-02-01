@@ -92,6 +92,25 @@
                   }
                 }
             }
+        },
+        "/edit_item": {
+            "patch": {
+                "summary": "Edits an item on the menu",
+                "responses": {
+                    "200": {
+                        "description": "The item was edited successfully"
+                    },
+                    "400": {
+                        "description": "The provided JSON was invalid"
+                    },
+                    "422": {
+                        "description": "The provided JSON was missing a required attribute"
+                    },
+                    "409": {
+                        "description": "A menu item with that name does not exist"
+                    }
+                }
+            }
         }
     }
 }

@@ -26,6 +26,7 @@ func main() {
 	app.Get("/menu", endpoints.Menu)
 	app.Post("/add_item", endpoints.AddItem)
 	app.Delete("/remove_item", endpoints.RemoveItem)
+	app.Patch("/edit_item", endpoints.EditItem)
 
 	// Start server
 	app.Listen(":4444")
