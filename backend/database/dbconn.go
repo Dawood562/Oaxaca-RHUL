@@ -25,11 +25,6 @@ func init() {
 	}
 }
 
-// ClearMenu clears all items from the menu. This should only be used in tests
-func ClearMenu() {
-	db.Exec("DELETE FROM menuitem")
-}
-
 // AddItem adds the given item to the database.
 // Returns an error if there is a problem adding the item.
 // Item names must be unique.
@@ -119,4 +114,9 @@ func fetchDBAuth() (string, string, string) {
 	dbname := os.Getenv("DB_NAME")
 	password := os.Getenv("DB_PASSWORD")
 	return username, dbname, password
+}
+
+// ClearMenu clears all items from the menu. For testing use only
+func ClearMenu() {
+	db.Exec("DELETE FROM menuitem")
 }

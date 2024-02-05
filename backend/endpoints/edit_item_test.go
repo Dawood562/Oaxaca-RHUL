@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"net/http"
 	"teamproject/database"
+	"teamproject/util"
 	"testing"
 
 	"github.com/gofiber/fiber/v2"
@@ -16,20 +17,7 @@ func TestEditItem(t *testing.T) {
 	app := fiber.New()
 	app.Patch("/edit_item", EditItem)
 
-	database.AddItem(&database.MenuItem{
-		ID:          1,
-		Name:        "TESTFOOD",
-		Description: "Test description",
-		Price:       5.00,
-		Calories:    500,
-	})
-	database.AddItem(&database.MenuItem{
-		ID:          2,
-		Name:        "TESTFOOD3",
-		Description: "Test description",
-		Price:       5.00,
-		Calories:    500,
-	})
+	util.ResetTestMenu()
 
 	testCases := []struct {
 		name         string
@@ -42,7 +30,7 @@ func TestEditItem(t *testing.T) {
 			json: []byte(`
 				{
 					"itemId": 1,
-					"itemName": "TESTFOOD2",
+					"itemName": "TESTFOOD5",
 					"itemDescription": "New description",
 					"price": 6.0,
 					"calories": 600
@@ -50,7 +38,7 @@ func TestEditItem(t *testing.T) {
 			`),
 			expectedItem: database.MenuItem{
 				ID:          1,
-				Name:        "TESTFOOD2",
+				Name:        "TESTFOOD5",
 				Description: "New description",
 				Price:       6.0,
 				Calories:    600,
@@ -61,7 +49,7 @@ func TestEditItem(t *testing.T) {
 			name: "WithMissingID",
 			json: []byte(`
 				{
-					"itemName": "TESTFOOD2",
+					"itemName": "TESTFOOD6",
 					"itemDescription": "New description",
 					"price": 6.0,
 					"calories": 600
@@ -69,7 +57,7 @@ func TestEditItem(t *testing.T) {
 			`),
 			expectedItem: database.MenuItem{
 				ID:          1,
-				Name:        "TESTFOOD2",
+				Name:        "TESTFOOD5",
 				Description: "New description",
 				Price:       6.0,
 				Calories:    600,
@@ -80,8 +68,8 @@ func TestEditItem(t *testing.T) {
 			name: "WithInvalidID",
 			json: []byte(`
 				{
-					"itemId": 3,
-					"itemName": "TESTFOOD4",
+					"itemId": 6,
+					"itemName": "TESTFOOD6",
 					"itemDescription": "New description",
 					"price": 6.0,
 					"calories": 600
@@ -89,7 +77,7 @@ func TestEditItem(t *testing.T) {
 			`),
 			expectedItem: database.MenuItem{
 				ID:          1,
-				Name:        "TESTFOOD2",
+				Name:        "TESTFOOD5",
 				Description: "New description",
 				Price:       6.0,
 				Calories:    600,
@@ -101,7 +89,7 @@ func TestEditItem(t *testing.T) {
 			json: []byte(`
 				{
 					"itemId": 2,
-					"itemName": "TESTFOOD2",
+					"itemName": "TESTFOOD5",
 					"itemDescription": "New description",
 					"price": 6.0,
 					"calories": 600
@@ -109,7 +97,7 @@ func TestEditItem(t *testing.T) {
 			`),
 			expectedItem: database.MenuItem{
 				ID:          1,
-				Name:        "TESTFOOD2",
+				Name:        "TESTFOOD5",
 				Description: "New description",
 				Price:       6.0,
 				Calories:    600,
@@ -129,7 +117,7 @@ func TestEditItem(t *testing.T) {
 			`),
 			expectedItem: database.MenuItem{
 				ID:          1,
-				Name:        "TESTFOOD2",
+				Name:        "TESTFOOD5",
 				Description: "New description",
 				Price:       6.0,
 				Calories:    600,
@@ -154,7 +142,7 @@ func TestEditItem(t *testing.T) {
 
 			// Check that the item in the database was updated correctly
 			menu := database.QueryMenu(&database.MenuFilter{})
-			assert.Equal(t, 2, len(menu), "Check that the menu only contains two items")
+			assert.Equal(t, 4, len(menu), "Check that the menu only contains four items")
 			assert.Contains(t, menu, test.expectedItem, "Check that the item was correctly updated")
 		})
 	}

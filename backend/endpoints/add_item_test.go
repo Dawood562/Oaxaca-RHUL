@@ -13,6 +13,8 @@ import (
 )
 
 func TestAddItem(t *testing.T) {
+	database.ClearMenu()
+
 	app := fiber.New()
 	app.Post("/add_item", AddItem)
 
@@ -126,8 +128,6 @@ func TestAddItem(t *testing.T) {
 			checkItemNames(t, test.expectedItemNames)
 		})
 	}
-
-	database.ClearMenu()
 }
 
 // checkItemNames asserts that expectedItemNames and the database menu are the same length and contain the same elements regardless of order
