@@ -23,6 +23,11 @@ func init() {
 	} else {
 		fmt.Println("Successfully connected to database!")
 	}
+
+	err = db.AutoMigrate(&MenuItem{})
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 // AddItem adds the given item to the database.
