@@ -9,7 +9,7 @@ services:
       db:
         condition: service_healthy
   db:
-    build: deploy/database
+    image: postgres:latest
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=pass

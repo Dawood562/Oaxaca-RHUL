@@ -13,7 +13,7 @@ func RemoveItem(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusUnprocessableEntity, "Invalid itemId field")
 	}
 
-	err = database.RemoveItem(int(id))
+	err = database.RemoveItem(uint(id))
 	if err != nil {
 		return fiber.NewError(fiber.StatusConflict, err.Error())
 	}

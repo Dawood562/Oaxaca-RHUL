@@ -3,6 +3,7 @@
 package database
 
 import (
+	"teamproject/database/models"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -15,25 +16,25 @@ func TestDatabaseQueries(t *testing.T) {
 		name            string
 		filter          *MenuFilter
 		expectedLen     int
-		expectedElement MenuItem
+		expectedElement models.MenuItem
 	}{
 		{
 			name:            "EmptyFilter",
 			filter:          &MenuFilter{},
 			expectedLen:     4,
-			expectedElement: MenuItem{ID: 1, Name: "TESTFOOD", Description: "Description for TESTFOOD", Price: 5.00, Calories: 400},
+			expectedElement: models.MenuItem{ID: 1, Name: "TESTFOOD", Description: "Description for TESTFOOD", Price: 5.00, Calories: 400},
 		},
 		{
 			name:            "WithSearchTermFilter",
 			filter:          &MenuFilter{SearchTerm: "TESTFOOD2"},
 			expectedLen:     1,
-			expectedElement: MenuItem{ID: 2, Name: "TESTFOOD2", Description: "Description for TESTFOOD2", Price: 6.00, Calories: 500},
+			expectedElement: models.MenuItem{ID: 2, Name: "TESTFOOD2", Description: "Description for TESTFOOD2", Price: 6.00, Calories: 500},
 		},
 		{
 			name:            "WithMultipleFilters",
 			filter:          &MenuFilter{MaxPrice: 6.00, MaxCalories: 600},
 			expectedLen:     2,
-			expectedElement: MenuItem{ID: 1, Name: "TESTFOOD", Description: "Description for TESTFOOD", Price: 5.00, Calories: 400},
+			expectedElement: models.MenuItem{ID: 1, Name: "TESTFOOD", Description: "Description for TESTFOOD", Price: 5.00, Calories: 400},
 		},
 	}
 
@@ -48,7 +49,7 @@ func TestDatabaseQueries(t *testing.T) {
 
 func TestDatabaseInserts(t *testing.T) {
 	ClearMenu()
-	item := &MenuItem{
+	item := &models.MenuItem{
 		Name:     "TestInsert",
 		Price:    5.00,
 		Calories: 500,
@@ -63,7 +64,7 @@ func TestDatabaseInserts(t *testing.T) {
 	assert.Equal(t, 1, len(menu), "Check that the record was added to the menu")
 
 	// Add a different item
-	item = &MenuItem{
+	item = &models.MenuItem{
 		Name:     "TestInsert2",
 		Price:    6.00,
 		Calories: 600,
@@ -94,7 +95,7 @@ func TestDatabaseEdit(t *testing.T) {
 	ResetTestMenu()
 
 	// Check that a valid record can be edited
-	newItem := MenuItem{ID: 1, Name: "TESTFOOD5", Price: 6.00, Calories: 500}
+	newItem := models.MenuItem{ID: 1, Name: "TESTFOOD5", Price: 6.00, Calories: 500}
 	err := EditItem(&newItem)
 	assert.NoError(t, err, "Test that editing a valid record does not create an error")
 	// Check that the fields were modified
@@ -102,11 +103,11 @@ func TestDatabaseEdit(t *testing.T) {
 	assert.Contains(t, menu, newItem, "Test that the item was successfully edited")
 
 	// Check that an invalid record can't be edited
-	newItem = MenuItem{ID: 5, Name: "TESTFOOD3"}
+	newItem = models.MenuItem{ID: 5, Name: "TESTFOOD3"}
 	err = EditItem(&newItem)
 	assert.Error(t, err, "Test that editing an invalid record creates an error")
 
-	newItem = MenuItem{ID: 4, Name: "TESTFOOD2"}
+	newItem = models.MenuItem{ID: 4, Name: "TESTFOOD2"}
 	err = EditItem(&newItem)
 	assert.Error(t, err, "Test that editing an item with a duplicate name creates an error")
 }
