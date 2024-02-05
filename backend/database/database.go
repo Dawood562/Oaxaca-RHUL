@@ -34,27 +34,26 @@ func init() {
 // Returns an error if there is a problem adding the item.
 // Item names must be unique.
 func AddItem(item *MenuItem) error {
-	result := db.Table("menuitem").Create(item)
+	result := db.Create(item)
 	return result.Error
 }
 
 // EditItem edits the given item with new information
 func EditItem(item *MenuItem) error {
 	// Check that the item exists
-	var count int64
-	result := db.Table("menuitem").Where("menuitemid = ?", item.ID).Count(&count)
-	if count == 0 {
+	result := db.First(&MenuItem{ID: item.ID})
+	if result.RowsAffected == 0 {
 		return errors.New("Item does not exist")
 	}
 	// Update the item
-	result = db.Table("menuitem").Save(&item)
+	result = db.Save(&item)
 	return result.Error
 }
 
 // RemoveItem removes an item from the menu with the given id
 // Returns an error if the item could not be removed
 func RemoveItem(id int) error {
-	result := db.Table("menuitem").Where("menuitemid = ?", id).Delete(&MenuItem{})
+	result := db.Delete(&MenuItem{ID: id})
 	if result.Error != nil {
 		return result.Error
 	}
@@ -70,7 +69,7 @@ func QueryMenu(filter *MenuFilter) []MenuItem {
 	preparedFilter := prepareArgs(filter)
 
 	var data []MenuItem
-	db.Table("menuitem").Model(&MenuItem{}).Where("menuItemName LIKE ?", preparedFilter.SearchTerm).Where("calories <= ?", preparedFilter.MaxCalories).Where("price <= ?", preparedFilter.MaxPrice).Find(&data)
+	db.Model(&MenuItem{}).Where("name LIKE ?", preparedFilter.SearchTerm).Where("calories <= ?", preparedFilter.MaxCalories).Where("price <= ?", preparedFilter.MaxPrice).Find(&data)
 	return data
 }
 
@@ -119,9 +118,4 @@ func fetchDBAuth() (string, string, string) {
 	dbname := os.Getenv("DB_NAME")
 	password := os.Getenv("DB_PASSWORD")
 	return username, dbname, password
-}
-
-// ClearMenu clears all items from the menu. For testing use only
-func ClearMenu() {
-	db.Exec("DELETE FROM menuitem")
 }

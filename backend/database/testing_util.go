@@ -2,6 +2,18 @@
 
 package database
 
+import (
+	"log"
+)
+
+// ClearMenu clears all items from the menu. For testing use only
+func ClearMenu() {
+	result := db.Where("1 = 1").Delete(&MenuItem{})
+	if result.Error != nil {
+		log.Fatal("Failed to clear database after test")
+	}
+}
+
 // ResetTestMenu clears the menu table in the database and inserts all testing data
 func ResetTestMenu() {
 	ClearMenu()
