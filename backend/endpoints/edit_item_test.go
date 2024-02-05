@@ -6,7 +6,6 @@ import (
 	"bytes"
 	"net/http"
 	"teamproject/database"
-	"teamproject/util"
 	"testing"
 
 	"github.com/gofiber/fiber/v2"
@@ -17,7 +16,7 @@ func TestEditItem(t *testing.T) {
 	app := fiber.New()
 	app.Patch("/edit_item", EditItem)
 
-	util.ResetTestMenu()
+	database.ResetTestMenu()
 
 	testCases := []struct {
 		name         string

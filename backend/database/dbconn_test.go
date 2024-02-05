@@ -9,27 +9,7 @@ import (
 )
 
 func TestDatabaseQueries(t *testing.T) {
-	// TODO: DUPLICATE CODE SMELL
-	AddItem(&MenuItem{
-		Name:     "TESTFOOD",
-		Price:    5.00,
-		Calories: 400,
-	})
-	AddItem(&MenuItem{
-		Name:     "TESTFOOD2",
-		Price:    6.00,
-		Calories: 500,
-	})
-	AddItem(&MenuItem{
-		Name:     "TESTFOOD3",
-		Price:    7.00,
-		Calories: 600,
-	})
-	AddItem(&MenuItem{
-		Name:     "TESTFOOD4",
-		Price:    8.01,
-		Calories: 720,
-	})
+	ResetTestMenu()
 
 	testCases := []struct {
 		name            string
@@ -41,19 +21,19 @@ func TestDatabaseQueries(t *testing.T) {
 			name:            "EmptyFilter",
 			filter:          &MenuFilter{},
 			expectedLen:     4,
-			expectedElement: MenuItem{ID: 1, Name: "TESTFOOD", Price: 5.00, Calories: 400},
+			expectedElement: MenuItem{ID: 1, Name: "TESTFOOD", Description: "Description for TESTFOOD", Price: 5.00, Calories: 400},
 		},
 		{
 			name:            "WithSearchTermFilter",
 			filter:          &MenuFilter{SearchTerm: "TESTFOOD2"},
 			expectedLen:     1,
-			expectedElement: MenuItem{ID: 2, Name: "TESTFOOD2", Price: 6.00, Calories: 500},
+			expectedElement: MenuItem{ID: 2, Name: "TESTFOOD2", Description: "Description for TESTFOOD2", Price: 6.00, Calories: 500},
 		},
 		{
 			name:            "WithMultipleFilters",
 			filter:          &MenuFilter{MaxPrice: 6.00, MaxCalories: 600},
 			expectedLen:     2,
-			expectedElement: MenuItem{ID: 1, Name: "TESTFOOD", Price: 5.00, Calories: 400},
+			expectedElement: MenuItem{ID: 1, Name: "TESTFOOD", Description: "Description for TESTFOOD", Price: 5.00, Calories: 400},
 		},
 	}
 
@@ -64,11 +44,10 @@ func TestDatabaseQueries(t *testing.T) {
 			assert.Contains(t, result, test.expectedElement, "Check that query result contains expected item")
 		})
 	}
-
-	ClearMenu()
 }
 
 func TestDatabaseInserts(t *testing.T) {
+	ClearMenu()
 	item := &MenuItem{
 		Name:     "TestInsert",
 		Price:    5.00,
@@ -93,35 +72,10 @@ func TestDatabaseInserts(t *testing.T) {
 	assert.NoError(t, err, "Test that adding an item does not create an error")
 	menu = QueryMenu(&MenuFilter{})
 	assert.Equal(t, 2, len(menu), "Check that the second record was added to the menu")
-
-	ClearMenu()
 }
 
 func TestDatabaseDelete(t *testing.T) {
-	AddItem(&MenuItem{
-		ID:       1,
-		Name:     "TESTFOOD",
-		Price:    5.00,
-		Calories: 400,
-	})
-	AddItem(&MenuItem{
-		ID:       2,
-		Name:     "TESTFOOD2",
-		Price:    6.00,
-		Calories: 500,
-	})
-	AddItem(&MenuItem{
-		ID:       3,
-		Name:     "TESTFOOD3",
-		Price:    7.00,
-		Calories: 600,
-	})
-	AddItem(&MenuItem{
-		ID:       4,
-		Name:     "TESTFOOD4",
-		Price:    8.01,
-		Calories: 720,
-	})
+	ResetTestMenu()
 
 	// Delete TESTFOOD4
 	err := RemoveItem(4)
@@ -134,20 +88,13 @@ func TestDatabaseDelete(t *testing.T) {
 	assert.Error(t, err, "Check that removing a non-existent item creates an error")
 	menu = QueryMenu(&MenuFilter{})
 	assert.Equal(t, 3, len(menu), "Check that no items were removed from the database")
-
-	ClearMenu()
 }
 
 func TestDatabaseEdit(t *testing.T) {
-	AddItem(&MenuItem{
-		ID:       1,
-		Name:     "TESTFOOD",
-		Price:    5.00,
-		Calories: 400,
-	})
+	ResetTestMenu()
 
 	// Check that a valid record can be edited
-	newItem := MenuItem{ID: 1, Name: "TESTFOOD2", Price: 6.00, Calories: 500}
+	newItem := MenuItem{ID: 1, Name: "TESTFOOD5", Price: 6.00, Calories: 500}
 	err := EditItem(&newItem)
 	assert.NoError(t, err, "Test that editing a valid record does not create an error")
 	// Check that the fields were modified
@@ -155,11 +102,13 @@ func TestDatabaseEdit(t *testing.T) {
 	assert.Contains(t, menu, newItem, "Test that the item was successfully edited")
 
 	// Check that an invalid record can't be edited
-	newItem = MenuItem{ID: 2, Name: "TESTFOOD3"}
+	newItem = MenuItem{ID: 5, Name: "TESTFOOD3"}
 	err = EditItem(&newItem)
 	assert.Error(t, err, "Test that editing an invalid record creates an error")
 
-	ClearMenu()
+	newItem = MenuItem{ID: 4, Name: "TESTFOOD2"}
+	err = EditItem(&newItem)
+	assert.Error(t, err, "Test that editing an item with a duplicate name creates an error")
 }
 
 func TestDBAuth(t *testing.T) {

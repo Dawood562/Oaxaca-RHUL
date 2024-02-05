@@ -4,7 +4,7 @@ package endpoints
 
 import (
 	"net/http"
-	"teamproject/util"
+	"teamproject/database"
 	"testing"
 
 	"github.com/gofiber/fiber/v2"
@@ -15,7 +15,7 @@ func TestRemoveItem(t *testing.T) {
 	app := fiber.New()
 	app.Delete("/remove_item", RemoveItem)
 
-	util.ResetTestMenu()
+	database.ResetTestMenu()
 
 	testCases := []struct {
 		name              string

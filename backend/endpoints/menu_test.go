@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"net/http"
 	"teamproject/database"
-	"teamproject/util"
 	"testing"
 
 	"github.com/gofiber/fiber/v2"
@@ -15,7 +14,7 @@ import (
 
 func TestMenu(t *testing.T) {
 	// Setup test data
-	util.ResetTestMenu()
+	database.ResetTestMenu()
 
 	// Setup server for testing
 	app := fiber.New()
