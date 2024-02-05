@@ -25,11 +25,9 @@ func init() {
 	}
 }
 
-/*
-Executes SQL query provided
-*/
-func UpdateDB(stmt string) {
-	db.Exec(stmt)
+// ClearMenu clears all items from the menu. This should only be used in tests
+func ClearMenu() {
+	db.Exec("DELETE FROM menuitem")
 }
 
 // AddItem adds the given item to the database.

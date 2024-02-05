@@ -6,6 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+// EditItem is a callback for the API to allow an item to be edited
 func EditItem(c *fiber.Ctx) error {
 	c.Accepts("application/json")
 	// Extract the item

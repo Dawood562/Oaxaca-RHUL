@@ -16,9 +16,20 @@ func TestEditItem(t *testing.T) {
 	app := fiber.New()
 	app.Patch("/edit_item", EditItem)
 
-	// Add an item for editing
-	database.UpdateDB("INSERT INTO menuitem (menuitemid, menuitemname, itemdescription, price, calories) VALUES (1, 'TESTFOOD', 'Test description', 5.0, 500)")
-	database.UpdateDB("INSERT INTO menuitem (menuitemid, menuitemname, itemdescription, price, calories) VALUES (2, 'TESTFOOD3', 'Test description', 5.0, 500)")
+	database.AddItem(&database.MenuItem{
+		ID:          1,
+		Name:        "TESTFOOD",
+		Description: "Test description",
+		Price:       5.00,
+		Calories:    500,
+	})
+	database.AddItem(&database.MenuItem{
+		ID:          2,
+		Name:        "TESTFOOD3",
+		Description: "Test description",
+		Price:       5.00,
+		Calories:    500,
+	})
 
 	testCases := []struct {
 		name         string
@@ -39,7 +50,7 @@ func TestEditItem(t *testing.T) {
 			`),
 			expectedItem: database.MenuItem{
 				ID:          1,
-				ItemName:    "TESTFOOD2",
+				Name:        "TESTFOOD2",
 				Description: "New description",
 				Price:       6.0,
 				Calories:    600,
@@ -58,7 +69,7 @@ func TestEditItem(t *testing.T) {
 			`),
 			expectedItem: database.MenuItem{
 				ID:          1,
-				ItemName:    "TESTFOOD2",
+				Name:        "TESTFOOD2",
 				Description: "New description",
 				Price:       6.0,
 				Calories:    600,
@@ -78,7 +89,7 @@ func TestEditItem(t *testing.T) {
 			`),
 			expectedItem: database.MenuItem{
 				ID:          1,
-				ItemName:    "TESTFOOD2",
+				Name:        "TESTFOOD2",
 				Description: "New description",
 				Price:       6.0,
 				Calories:    600,
@@ -98,7 +109,7 @@ func TestEditItem(t *testing.T) {
 			`),
 			expectedItem: database.MenuItem{
 				ID:          1,
-				ItemName:    "TESTFOOD2",
+				Name:        "TESTFOOD2",
 				Description: "New description",
 				Price:       6.0,
 				Calories:    600,
@@ -118,7 +129,7 @@ func TestEditItem(t *testing.T) {
 			`),
 			expectedItem: database.MenuItem{
 				ID:          1,
-				ItemName:    "TESTFOOD2",
+				Name:        "TESTFOOD2",
 				Description: "New description",
 				Price:       6.0,
 				Calories:    600,
@@ -133,6 +144,7 @@ func TestEditItem(t *testing.T) {
 			req, _ := http.NewRequest("PATCH", "/edit_item", bytes.NewBuffer(test.json))
 			req.Header.Set("Content-Type", "application/json")
 
+			// Send the test request
 			res, err := app.Test(req)
 			assert.NoError(t, err)
 			defer res.Body.Close()
@@ -147,5 +159,5 @@ func TestEditItem(t *testing.T) {
 		})
 	}
 
-	database.UpdateDB("DELETE FROM menuitem")
+	database.ClearMenu()
 }

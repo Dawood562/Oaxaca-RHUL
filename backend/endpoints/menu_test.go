@@ -14,10 +14,26 @@ import (
 
 func TestMenu(t *testing.T) {
 	// Setup test data
-	database.UpdateDB("INSERT INTO menuitem (menuitemname, price, calories) VALUES ('TESTFOOD', 5.00, 400)")
-	database.UpdateDB("INSERT INTO menuitem (menuitemname, price, calories) VALUES ('TESTFOOD2', 6.00, 500)")
-	database.UpdateDB("INSERT INTO menuitem (menuitemname, price, calories) VALUES ('TESTFOOD3', 7.00, 600)")
-	database.UpdateDB("INSERT INTO menuitem (menuitemname, price, calories) VALUES ('TESTFOOD4', 8.01, 720)")
+	database.AddItem(&database.MenuItem{
+		Name:     "TESTFOOD",
+		Price:    5.00,
+		Calories: 400,
+	})
+	database.AddItem(&database.MenuItem{
+		Name:     "TESTFOOD2",
+		Price:    6.00,
+		Calories: 500,
+	})
+	database.AddItem(&database.MenuItem{
+		Name:     "TESTFOOD3",
+		Price:    7.00,
+		Calories: 600,
+	})
+	database.AddItem(&database.MenuItem{
+		Name:     "TESTFOOD4",
+		Price:    8.01,
+		Calories: 720,
+	})
 
 	// Setup server for testing
 	app := fiber.New()
@@ -82,7 +98,7 @@ func TestMenu(t *testing.T) {
 			assert.Equal(t, len(test.items), len(data), "Test that the right number of items were returned")
 			names := make([]string, len(data))
 			for i, item := range data {
-				names[i] = item.ItemName
+				names[i] = item.Name
 			}
 			for _, item := range test.items {
 				assert.Contains(t, names, item, "Check that all required items were returned")
@@ -90,5 +106,5 @@ func TestMenu(t *testing.T) {
 		})
 	}
 
-	database.UpdateDB("DELETE FROM menuitem")
+	database.ClearMenu()
 }

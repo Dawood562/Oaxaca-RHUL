@@ -15,10 +15,30 @@ func TestRemoveItem(t *testing.T) {
 	app := fiber.New()
 	app.Delete("/remove_item", RemoveItem)
 
-	database.UpdateDB("INSERT INTO menuitem (menuitemid, menuitemname, price, calories) VALUES (1, 'TESTFOOD', 5.00, 400)")
-	database.UpdateDB("INSERT INTO menuitem (menuitemid, menuitemname, price, calories) VALUES (2, 'TESTFOOD2', 6.00, 500)")
-	database.UpdateDB("INSERT INTO menuitem (menuitemid, menuitemname, price, calories) VALUES (3, 'TESTFOOD3', 7.00, 600)")
-	database.UpdateDB("INSERT INTO menuitem (menuitemid, menuitemname, price, calories) VALUES (4, 'TESTFOOD4', 8.01, 720)")
+	database.AddItem(&database.MenuItem{
+		ID:       1,
+		Name:     "TESTFOOD",
+		Price:    5.00,
+		Calories: 400,
+	})
+	database.AddItem(&database.MenuItem{
+		ID:       2,
+		Name:     "TESTFOOD2",
+		Price:    6.00,
+		Calories: 500,
+	})
+	database.AddItem(&database.MenuItem{
+		ID:       3,
+		Name:     "TESTFOOD3",
+		Price:    7.00,
+		Calories: 600,
+	})
+	database.AddItem(&database.MenuItem{
+		ID:       4,
+		Name:     "TESTFOOD4",
+		Price:    8.01,
+		Calories: 720,
+	})
 
 	testCases := []struct {
 		name              string
@@ -66,5 +86,5 @@ func TestRemoveItem(t *testing.T) {
 		})
 	}
 
-	database.UpdateDB("DELETE FROM menuitem")
+	database.ClearMenu()
 }
