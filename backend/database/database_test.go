@@ -3,41 +3,38 @@
 package database
 
 import (
+	"teamproject/database/models"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestDatabaseQueries(t *testing.T) {
-	// Setup test data
-	UpdateDB("INSERT INTO menuitem (menuitemid, menuitemname, price, calories) VALUES (1, 'TESTFOOD', 5.00, 400)")
-	UpdateDB("INSERT INTO menuitem (menuitemid, menuitemname, price, calories) VALUES (2, 'TESTFOOD2', 6.00, 500)")
-	UpdateDB("INSERT INTO menuitem (menuitemid, menuitemname, price, calories) VALUES (3, 'TESTFOOD3', 7.00, 600)")
-	UpdateDB("INSERT INTO menuitem (menuitemid, menuitemname, price, calories) VALUES (4, 'TESTFOOD4', 8.01, 720)")
+	ResetTestMenu()
 
 	testCases := []struct {
 		name            string
 		filter          *MenuFilter
 		expectedLen     int
-		expectedElement MenuItem
+		expectedElement models.MenuItem
 	}{
 		{
 			name:            "EmptyFilter",
 			filter:          &MenuFilter{},
 			expectedLen:     4,
-			expectedElement: MenuItem{ID: 1, ItemName: "TESTFOOD", Price: 5.00, Calories: 400},
+			expectedElement: models.MenuItem{ID: 1, Name: "TESTFOOD", Description: "Description for TESTFOOD", Price: 5.00, Calories: 400},
 		},
 		{
 			name:            "WithSearchTermFilter",
 			filter:          &MenuFilter{SearchTerm: "TESTFOOD2"},
 			expectedLen:     1,
-			expectedElement: MenuItem{ID: 2, ItemName: "TESTFOOD2", Price: 6.00, Calories: 500},
+			expectedElement: models.MenuItem{ID: 2, Name: "TESTFOOD2", Description: "Description for TESTFOOD2", Price: 6.00, Calories: 500},
 		},
 		{
 			name:            "WithMultipleFilters",
 			filter:          &MenuFilter{MaxPrice: 6.00, MaxCalories: 600},
 			expectedLen:     2,
-			expectedElement: MenuItem{ID: 1, ItemName: "TESTFOOD", Price: 5.00, Calories: 400},
+			expectedElement: models.MenuItem{ID: 1, Name: "TESTFOOD", Description: "Description for TESTFOOD", Price: 5.00, Calories: 400},
 		},
 	}
 
@@ -48,13 +45,12 @@ func TestDatabaseQueries(t *testing.T) {
 			assert.Contains(t, result, test.expectedElement, "Check that query result contains expected item")
 		})
 	}
-
-	UpdateDB("DELETE FROM menuitem")
 }
 
 func TestDatabaseInserts(t *testing.T) {
-	item := &MenuItem{
-		ItemName: "TestInsert",
+	ClearMenu()
+	item := &models.MenuItem{
+		Name:     "TestInsert",
 		Price:    5.00,
 		Calories: 500,
 	}
@@ -68,8 +64,8 @@ func TestDatabaseInserts(t *testing.T) {
 	assert.Equal(t, 1, len(menu), "Check that the record was added to the menu")
 
 	// Add a different item
-	item = &MenuItem{
-		ItemName: "TestInsert2",
+	item = &models.MenuItem{
+		Name:     "TestInsert2",
 		Price:    6.00,
 		Calories: 600,
 	}
@@ -77,15 +73,10 @@ func TestDatabaseInserts(t *testing.T) {
 	assert.NoError(t, err, "Test that adding an item does not create an error")
 	menu = QueryMenu(&MenuFilter{})
 	assert.Equal(t, 2, len(menu), "Check that the second record was added to the menu")
-
-	UpdateDB("DELETE FROM menuitem")
 }
 
 func TestDatabaseDelete(t *testing.T) {
-	UpdateDB("INSERT INTO menuitem (menuitemid, menuitemname, price, calories) VALUES (1, 'TESTFOOD', 5.00, 400)")
-	UpdateDB("INSERT INTO menuitem (menuitemid, menuitemname, price, calories) VALUES (2, 'TESTFOOD2', 6.00, 500)")
-	UpdateDB("INSERT INTO menuitem (menuitemid, menuitemname, price, calories) VALUES (3, 'TESTFOOD3', 7.00, 600)")
-	UpdateDB("INSERT INTO menuitem (menuitemid, menuitemname, price, calories) VALUES (4, 'TESTFOOD4', 8.01, 720)")
+	ResetTestMenu()
 
 	// Delete TESTFOOD4
 	err := RemoveItem(4)
@@ -98,15 +89,13 @@ func TestDatabaseDelete(t *testing.T) {
 	assert.Error(t, err, "Check that removing a non-existent item creates an error")
 	menu = QueryMenu(&MenuFilter{})
 	assert.Equal(t, 3, len(menu), "Check that no items were removed from the database")
-
-	UpdateDB("DELETE FROM menuitem")
 }
 
 func TestDatabaseEdit(t *testing.T) {
-	UpdateDB("INSERT INTO menuitem (menuItemId, menuItemName, price, calories) VALUES (1, 'TESTFOOD', 5.00, 400)")
+	ResetTestMenu()
 
 	// Check that a valid record can be edited
-	newItem := MenuItem{ID: 1, ItemName: "TESTFOOD2", Price: 6.00, Calories: 500}
+	newItem := models.MenuItem{ID: 1, Name: "TESTFOOD5", Price: 6.00, Calories: 500}
 	err := EditItem(&newItem)
 	assert.NoError(t, err, "Test that editing a valid record does not create an error")
 	// Check that the fields were modified
@@ -114,11 +103,13 @@ func TestDatabaseEdit(t *testing.T) {
 	assert.Contains(t, menu, newItem, "Test that the item was successfully edited")
 
 	// Check that an invalid record can't be edited
-	newItem = MenuItem{ID: 2, ItemName: "TESTFOOD3"}
+	newItem = models.MenuItem{ID: 5, Name: "TESTFOOD3"}
 	err = EditItem(&newItem)
 	assert.Error(t, err, "Test that editing an invalid record creates an error")
 
-	UpdateDB("DELETE FROM menuitem")
+	newItem = models.MenuItem{ID: 4, Name: "TESTFOOD2"}
+	err = EditItem(&newItem)
+	assert.Error(t, err, "Test that editing an item with a duplicate name creates an error")
 }
 
 func TestDBAuth(t *testing.T) {

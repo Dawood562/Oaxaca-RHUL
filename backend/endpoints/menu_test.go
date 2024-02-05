@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"teamproject/database"
+	"teamproject/database/models"
 	"testing"
 
 	"github.com/gofiber/fiber/v2"
@@ -14,10 +15,7 @@ import (
 
 func TestMenu(t *testing.T) {
 	// Setup test data
-	database.UpdateDB("INSERT INTO menuitem (menuitemname, price, calories) VALUES ('TESTFOOD', 5.00, 400)")
-	database.UpdateDB("INSERT INTO menuitem (menuitemname, price, calories) VALUES ('TESTFOOD2', 6.00, 500)")
-	database.UpdateDB("INSERT INTO menuitem (menuitemname, price, calories) VALUES ('TESTFOOD3', 7.00, 600)")
-	database.UpdateDB("INSERT INTO menuitem (menuitemname, price, calories) VALUES ('TESTFOOD4', 8.01, 720)")
+	database.ResetTestMenu()
 
 	// Setup server for testing
 	app := fiber.New()
@@ -74,7 +72,7 @@ func TestMenu(t *testing.T) {
 			// Check the response
 			assert.Equal(t, 200, res.StatusCode, "Check that request returned a 200 OK status code")
 			// Check that the returned response is JSON
-			var data []database.MenuItem
+			var data []models.MenuItem
 			err = json.NewDecoder(res.Body).Decode(&data)
 			assert.NoError(t, err, "Check that the request returned valid JSON")
 
@@ -82,13 +80,11 @@ func TestMenu(t *testing.T) {
 			assert.Equal(t, len(test.items), len(data), "Test that the right number of items were returned")
 			names := make([]string, len(data))
 			for i, item := range data {
-				names[i] = item.ItemName
+				names[i] = item.Name
 			}
 			for _, item := range test.items {
 				assert.Contains(t, names, item, "Check that all required items were returned")
 			}
 		})
 	}
-
-	database.UpdateDB("DELETE FROM menuitem")
 }

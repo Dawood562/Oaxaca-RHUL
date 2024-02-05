@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"net/http"
 	"teamproject/database"
+	"teamproject/database/models"
 	"testing"
 
 	"github.com/gofiber/fiber/v2"
@@ -14,16 +15,14 @@ import (
 
 func TestEditItem(t *testing.T) {
 	app := fiber.New()
-	app.Patch("/edit_item", EditItem)
+	app.Put("/edit_item", EditItem)
 
-	// Add an item for editing
-	database.UpdateDB("INSERT INTO menuitem (menuitemid, menuitemname, itemdescription, price, calories) VALUES (1, 'TESTFOOD', 'Test description', 5.0, 500)")
-	database.UpdateDB("INSERT INTO menuitem (menuitemid, menuitemname, itemdescription, price, calories) VALUES (2, 'TESTFOOD3', 'Test description', 5.0, 500)")
+	database.ResetTestMenu()
 
 	testCases := []struct {
 		name         string
 		json         []byte
-		expectedItem database.MenuItem
+		expectedItem models.MenuItem
 		code         int
 	}{
 		{
@@ -31,15 +30,15 @@ func TestEditItem(t *testing.T) {
 			json: []byte(`
 				{
 					"itemId": 1,
-					"itemName": "TESTFOOD2",
+					"itemName": "TESTFOOD5",
 					"itemDescription": "New description",
 					"price": 6.0,
 					"calories": 600
 				}
 			`),
-			expectedItem: database.MenuItem{
+			expectedItem: models.MenuItem{
 				ID:          1,
-				ItemName:    "TESTFOOD2",
+				Name:        "TESTFOOD5",
 				Description: "New description",
 				Price:       6.0,
 				Calories:    600,
@@ -50,15 +49,15 @@ func TestEditItem(t *testing.T) {
 			name: "WithMissingID",
 			json: []byte(`
 				{
-					"itemName": "TESTFOOD2",
+					"itemName": "TESTFOOD6",
 					"itemDescription": "New description",
 					"price": 6.0,
 					"calories": 600
 				}
 			`),
-			expectedItem: database.MenuItem{
+			expectedItem: models.MenuItem{
 				ID:          1,
-				ItemName:    "TESTFOOD2",
+				Name:        "TESTFOOD5",
 				Description: "New description",
 				Price:       6.0,
 				Calories:    600,
@@ -69,16 +68,16 @@ func TestEditItem(t *testing.T) {
 			name: "WithInvalidID",
 			json: []byte(`
 				{
-					"itemId": 3,
-					"itemName": "TESTFOOD4",
+					"itemId": 6,
+					"itemName": "TESTFOOD6",
 					"itemDescription": "New description",
 					"price": 6.0,
 					"calories": 600
 				}
 			`),
-			expectedItem: database.MenuItem{
+			expectedItem: models.MenuItem{
 				ID:          1,
-				ItemName:    "TESTFOOD2",
+				Name:        "TESTFOOD5",
 				Description: "New description",
 				Price:       6.0,
 				Calories:    600,
@@ -90,15 +89,15 @@ func TestEditItem(t *testing.T) {
 			json: []byte(`
 				{
 					"itemId": 2,
-					"itemName": "TESTFOOD2",
+					"itemName": "TESTFOOD5",
 					"itemDescription": "New description",
 					"price": 6.0,
 					"calories": 600
 				}
 			`),
-			expectedItem: database.MenuItem{
+			expectedItem: models.MenuItem{
 				ID:          1,
-				ItemName:    "TESTFOOD2",
+				Name:        "TESTFOOD5",
 				Description: "New description",
 				Price:       6.0,
 				Calories:    600,
@@ -116,9 +115,9 @@ func TestEditItem(t *testing.T) {
 					calories: 600
 				}
 			`),
-			expectedItem: database.MenuItem{
+			expectedItem: models.MenuItem{
 				ID:          1,
-				ItemName:    "TESTFOOD2",
+				Name:        "TESTFOOD5",
 				Description: "New description",
 				Price:       6.0,
 				Calories:    600,
@@ -130,9 +129,10 @@ func TestEditItem(t *testing.T) {
 	for _, test := range testCases {
 		t.Run(test.name, func(t *testing.T) {
 			// Create a new HTTP request
-			req, _ := http.NewRequest("PATCH", "/edit_item", bytes.NewBuffer(test.json))
+			req, _ := http.NewRequest("PUT", "/edit_item", bytes.NewBuffer(test.json))
 			req.Header.Set("Content-Type", "application/json")
 
+			// Send the test request
 			res, err := app.Test(req)
 			assert.NoError(t, err)
 			defer res.Body.Close()
@@ -142,10 +142,8 @@ func TestEditItem(t *testing.T) {
 
 			// Check that the item in the database was updated correctly
 			menu := database.QueryMenu(&database.MenuFilter{})
-			assert.Equal(t, 2, len(menu), "Check that the menu only contains two items")
+			assert.Equal(t, 4, len(menu), "Check that the menu only contains four items")
 			assert.Contains(t, menu, test.expectedItem, "Check that the item was correctly updated")
 		})
 	}
-
-	database.UpdateDB("DELETE FROM menuitem")
 }

@@ -13,6 +13,8 @@ import (
 )
 
 func TestAddItem(t *testing.T) {
+	database.ClearMenu()
+
 	app := fiber.New()
 	app.Post("/add_item", AddItem)
 
@@ -115,6 +117,7 @@ func TestAddItem(t *testing.T) {
 			req, _ := http.NewRequest("POST", "/add_item", bytes.NewBuffer(test.json))
 			req.Header.Set("Content-Type", "application/json")
 
+			// Send test HTTP request
 			res, err := app.Test(req)
 			assert.NoError(t, err)
 			defer res.Body.Close()
@@ -125,8 +128,6 @@ func TestAddItem(t *testing.T) {
 			checkItemNames(t, test.expectedItemNames)
 		})
 	}
-
-	database.UpdateDB("DELETE FROM menuitem")
 }
 
 // checkItemNames asserts that expectedItemNames and the database menu are the same length and contain the same elements regardless of order
@@ -136,7 +137,7 @@ func checkItemNames(t *testing.T, expectedItemNames []string) {
 
 	menuNames := make([]string, len(menu))
 	for i, item := range menu {
-		menuNames[i] = item.ItemName
+		menuNames[i] = item.Name
 	}
 	for _, expected := range expectedItemNames {
 		assert.Contains(t, menuNames, expected, "Check that all expected entries are present")
