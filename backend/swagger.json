@@ -50,6 +50,36 @@
         "/add_item": {
             "post": {
                 "summary": "Adds an item to the menu",
+                "parameters": [
+                    {
+                        "name": "Item",
+                        "description": "The item to add",
+                        "in": "body",
+                        "schema": {
+                          "type": "object",
+                          "properties": {
+                            "itemName": {
+                              "type": "string"
+                            },
+                            "itemDescription": {
+                              "type": "string"
+                            },
+                            "price": {
+                              "type": "number"
+                            },
+                            "calories": {
+                              "type": "number"
+                            }
+                          },
+                          "example": {
+                            "itemName": "Burger",
+                            "itemDescription": "A tasty burger made from cow",
+                            "price": 9.99,
+                            "calories": 900
+                          }
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "The item was added successfully"
@@ -94,8 +124,46 @@
             }
         },
         "/edit_item": {
-            "patch": {
+            "put": {
                 "summary": "Edits an item on the menu",
+                "description": "Given an object with an `itemId` attribute, sets the rest of the fields for the item with that ID to the values given.",
+                "parameters": [
+                    {
+                        "name": "Item",
+                        "description": "The item to edit",
+                        "in": "body",
+                        "schema": {
+                          "type": "object",
+                          "required": [
+                            "itemId"
+                          ],
+                          "properties": {
+                            "itemId": {
+                              "type": "number"
+                            },
+                            "itemName": {
+                              "type": "string"
+                            },
+                            "itemDescription": {
+                              "type": "string"
+                            },
+                            "price": {
+                              "type": "number"
+                            },
+                            "calories": {
+                              "type": "number"
+                            }
+                          },
+                          "example": {
+                            "itemId": 1,
+                            "itemName": "Pizza",
+                            "itemDescription": "The burger has become a pizza",
+                            "price": 9.99,
+                            "calories": 900
+                          }
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "The item was edited successfully"

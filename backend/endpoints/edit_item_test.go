@@ -15,7 +15,7 @@ import (
 
 func TestEditItem(t *testing.T) {
 	app := fiber.New()
-	app.Patch("/edit_item", EditItem)
+	app.Put("/edit_item", EditItem)
 
 	database.ResetTestMenu()
 
@@ -129,7 +129,7 @@ func TestEditItem(t *testing.T) {
 	for _, test := range testCases {
 		t.Run(test.name, func(t *testing.T) {
 			// Create a new HTTP request
-			req, _ := http.NewRequest("PATCH", "/edit_item", bytes.NewBuffer(test.json))
+			req, _ := http.NewRequest("PUT", "/edit_item", bytes.NewBuffer(test.json))
 			req.Header.Set("Content-Type", "application/json")
 
 			// Send the test request
