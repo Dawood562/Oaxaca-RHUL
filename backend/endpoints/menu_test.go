@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"teamproject/database"
+	"teamproject/util"
 	"testing"
 
 	"github.com/gofiber/fiber/v2"
@@ -14,26 +15,7 @@ import (
 
 func TestMenu(t *testing.T) {
 	// Setup test data
-	database.AddItem(&database.MenuItem{
-		Name:     "TESTFOOD",
-		Price:    5.00,
-		Calories: 400,
-	})
-	database.AddItem(&database.MenuItem{
-		Name:     "TESTFOOD2",
-		Price:    6.00,
-		Calories: 500,
-	})
-	database.AddItem(&database.MenuItem{
-		Name:     "TESTFOOD3",
-		Price:    7.00,
-		Calories: 600,
-	})
-	database.AddItem(&database.MenuItem{
-		Name:     "TESTFOOD4",
-		Price:    8.01,
-		Calories: 720,
-	})
+	util.ResetTestMenu()
 
 	// Setup server for testing
 	app := fiber.New()
