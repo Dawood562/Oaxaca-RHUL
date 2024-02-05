@@ -87,6 +87,4 @@ func TestMenu(t *testing.T) {
 			}
 		})
 	}
-
-	database.ClearMenu()
 }

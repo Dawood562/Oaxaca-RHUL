@@ -146,6 +146,4 @@ func TestEditItem(t *testing.T) {
 			assert.Contains(t, menu, test.expectedItem, "Check that the item was correctly updated")
 		})
 	}
-
-	database.ClearMenu()
 }
