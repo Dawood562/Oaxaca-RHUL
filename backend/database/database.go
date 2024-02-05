@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"teamproject/database/models"
 
 	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
@@ -24,7 +25,7 @@ func init() {
 		fmt.Println("Successfully connected to database!")
 	}
 
-	err = db.AutoMigrate(&MenuItem{})
+	err = db.AutoMigrate(&models.MenuItem{})
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -33,17 +34,17 @@ func init() {
 // AddItem adds the given item to the database.
 // Returns an error if there is a problem adding the item.
 // Item names must be unique.
-func AddItem(item *MenuItem) error {
+func AddItem(item *models.MenuItem) error {
 	result := db.Create(item)
 	return result.Error
 }
 
 // EditItem edits the given item with new information
-func EditItem(item *MenuItem) error {
+func EditItem(item *models.MenuItem) error {
 	// Check that the item exists
-	result := db.First(&MenuItem{ID: item.ID})
+	result := db.First(&models.MenuItem{ID: item.ID})
 	if result.RowsAffected == 0 {
-		return errors.New("Item does not exist")
+		return errors.New("item does not exist")
 	}
 	// Update the item
 	result = db.Save(&item)
@@ -53,23 +54,23 @@ func EditItem(item *MenuItem) error {
 // RemoveItem removes an item from the menu with the given id
 // Returns an error if the item could not be removed
 func RemoveItem(id int) error {
-	result := db.Delete(&MenuItem{ID: id})
+	result := db.Delete(&models.MenuItem{ID: id})
 	if result.Error != nil {
 		return result.Error
 	}
 	if result.RowsAffected == 0 {
-		return errors.New(fmt.Sprintf("Item with id '%d' does not exist", id))
+		return fmt.Errorf("item with id '%d' does not exist", id)
 	}
 	return nil
 }
 
 // QueryMenu returns the menu items from the database as a slice
 // If filter is provided, the returned item slice will be filtered as such
-func QueryMenu(filter *MenuFilter) []MenuItem {
+func QueryMenu(filter *MenuFilter) []models.MenuItem {
 	preparedFilter := prepareArgs(filter)
 
-	var data []MenuItem
-	db.Model(&MenuItem{}).Where("name LIKE ?", preparedFilter.SearchTerm).Where("calories <= ?", preparedFilter.MaxCalories).Where("price <= ?", preparedFilter.MaxPrice).Find(&data)
+	var data []models.MenuItem
+	db.Model(&models.MenuItem{}).Where("name LIKE ?", preparedFilter.SearchTerm).Where("calories <= ?", preparedFilter.MaxCalories).Where("price <= ?", preparedFilter.MaxPrice).Find(&data)
 	return data
 }
 

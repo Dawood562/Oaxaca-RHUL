@@ -1,4 +1,4 @@
-package database
+package models
 
 type MenuItem struct {
 	ID          int     `json:"itemId" gorm:"column:item_id;primary_key"`

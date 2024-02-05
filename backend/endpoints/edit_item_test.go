@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"net/http"
 	"teamproject/database"
+	"teamproject/database/models"
 	"testing"
 
 	"github.com/gofiber/fiber/v2"
@@ -21,7 +22,7 @@ func TestEditItem(t *testing.T) {
 	testCases := []struct {
 		name         string
 		json         []byte
-		expectedItem database.MenuItem
+		expectedItem models.MenuItem
 		code         int
 	}{
 		{
@@ -35,7 +36,7 @@ func TestEditItem(t *testing.T) {
 					"calories": 600
 				}
 			`),
-			expectedItem: database.MenuItem{
+			expectedItem: models.MenuItem{
 				ID:          1,
 				Name:        "TESTFOOD5",
 				Description: "New description",
@@ -54,7 +55,7 @@ func TestEditItem(t *testing.T) {
 					"calories": 600
 				}
 			`),
-			expectedItem: database.MenuItem{
+			expectedItem: models.MenuItem{
 				ID:          1,
 				Name:        "TESTFOOD5",
 				Description: "New description",
@@ -74,7 +75,7 @@ func TestEditItem(t *testing.T) {
 					"calories": 600
 				}
 			`),
-			expectedItem: database.MenuItem{
+			expectedItem: models.MenuItem{
 				ID:          1,
 				Name:        "TESTFOOD5",
 				Description: "New description",
@@ -94,7 +95,7 @@ func TestEditItem(t *testing.T) {
 					"calories": 600
 				}
 			`),
-			expectedItem: database.MenuItem{
+			expectedItem: models.MenuItem{
 				ID:          1,
 				Name:        "TESTFOOD5",
 				Description: "New description",
@@ -114,7 +115,7 @@ func TestEditItem(t *testing.T) {
 					calories: 600
 				}
 			`),
-			expectedItem: database.MenuItem{
+			expectedItem: models.MenuItem{
 				ID:          1,
 				Name:        "TESTFOOD5",
 				Description: "New description",

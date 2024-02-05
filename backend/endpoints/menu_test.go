@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"teamproject/database"
+	"teamproject/database/models"
 	"testing"
 
 	"github.com/gofiber/fiber/v2"
@@ -71,7 +72,7 @@ func TestMenu(t *testing.T) {
 			// Check the response
 			assert.Equal(t, 200, res.StatusCode, "Check that request returned a 200 OK status code")
 			// Check that the returned response is JSON
-			var data []database.MenuItem
+			var data []models.MenuItem
 			err = json.NewDecoder(res.Body).Decode(&data)
 			assert.NoError(t, err, "Check that the request returned valid JSON")
 
