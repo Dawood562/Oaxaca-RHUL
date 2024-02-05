@@ -25,7 +25,16 @@ func init() {
 		fmt.Println("Successfully connected to database!")
 	}
 
+	// AutoMigrate all tables
 	err = db.AutoMigrate(&models.MenuItem{})
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = db.AutoMigrate(&models.Order{})
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = db.AutoMigrate(&models.OrderItem{})
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -53,7 +62,7 @@ func EditItem(item *models.MenuItem) error {
 
 // RemoveItem removes an item from the menu with the given id
 // Returns an error if the item could not be removed
-func RemoveItem(id int) error {
+func RemoveItem(id uint) error {
 	result := db.Delete(&models.MenuItem{ID: id})
 	if result.Error != nil {
 		return result.Error
