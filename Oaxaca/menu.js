@@ -35,7 +35,7 @@ function editMenu(){
         
         // Add edit button to each menu item
         for(let i = 0; i < currentMenu.length; i++){
-            document.getElementById("item"+i).innerHTML += "<button index='"+i+"' class='editMenuItem'>EDIT</button>"
+            document.getElementById("item"+i).innerHTML += "<button index='"+i+"' id='itemEditButton' class='editMenuItem'>EDIT</button>"
         }
 
         // Retrieve all edit buttons into iterable
@@ -44,7 +44,7 @@ function editMenu(){
         // For each edit button add click listener
         editButtons.forEach(item => {
             item.addEventListener('click', function(){
-                toggleEditMode(item.getAttribute("index"))
+                EditMenuField(item.getAttribute("index"))
             })
         })
 
@@ -67,34 +67,42 @@ var editingText = false;
 var currentlyEditing = -1;
 var oldText
 
-// From here a textfield should appear where menu item was with the previous content that was there inside it
-// Also submit button should apear instead of 
-function toggleEditMode(index){
-    let previousText = document.getElementById("item"+index).textContent;
+// Should replace name with label displaying name: and a textfield
+// Should replace price and calories of price label and textfield too
+function EditMenuField(index){
+    // Index 0 = item name
+    // Index 2 = item price
+    // Index 3 = item calories
+    let itemToEdit = document.getElementById("item"+index).childNodes[4].childNodes;
+    
 
-    previousText = previousText.substring(0,previousText.length-4); // Gets rid of edit
+    // Replace name with name tag and checkbox
+    itemToEdit[0].innerHTML = "<label class='editMenuItemPrompt'>New name:</label><input id='nameEditPrompt' class='editMenuItemPrompt' type='text'>";
+    itemToEdit[2].innerHTML = "<label class='editMenuItemPrompt'>New price:</label><input id='priceEditPrompt' class='editMenuItemPrompt' type='text'>";
+    itemToEdit[3].innerHTML = "<label class='editMenuItemPrompt'>New calories:</label><input id='caloriesEditPrompt' class='editMenuItemPrompt' type='text'>";
 
-    document.getElementById("item"+index).innerHTML = "<input id='menuEditBox' type='text' value='"+previousText+"'> <button id='menuEditSubmitButton'>submit</button>"
-    document.getElementById("menuEditSubmitButton").addEventListener('click', function (){
+    document.getElementById("itemEditButton").remove();
+    document.getElementById("item"+index).innerHTML += "<button index='"+index+"' id='itemEditButton32' class='editMenuItem'>Submit</button>"
+    document.getElementById("itemEditButton32").addEventListener('click', function (){
         submitMenuEdit(index);
-    });
+    })
 
-    // Must now replace new item with item from server
+    // MUST REPLACE EDIT BUTTON TO BE CALLED SUBMIT AND MAKE IT CALL submitMenuEdit() FUNCTION
+    // SHOULD THEN REPLACE ALL THE BOXES WITH A SIMPLE "SUCCESSFUL" LABEL TO INDICATE CHANGE
 }
 
 // Needs to take in index so that it can get id
 async function submitMenuEdit(index){
-    let userInput = document.getElementById("menuEditBox").value
-    userInput = userInput.split("--");
     let id = currentMenu[index].itemId;
-    let name = userInput[0].substring(0,userInput[0].length-1);
-    let itemPrice = parseFloat(userInput[1].substring(2, userInput[1].length-1));
-    let itemCalories = parseInt(userInput[2].substring(1, userInput[2].length-4));
+    let name = document.getElementById("nameEditPrompt").value;
+    let itemPrice = parseFloat(document.getElementById("priceEditPrompt").value);
+    let itemCalories = parseInt(document.getElementById("caloriesEditPrompt").value);
     console.log(id+","+name+","+itemPrice+","+itemCalories);
+    console.log(document.getElementById("nameEditPrompt"));
 
     try{
         let response = await fetch("http://localhost:4444/edit_item", {
-            method:'PATCH',
+            method:'PUT',
             headers:{
                 'Content-Type':'application/json'
             },
@@ -105,6 +113,7 @@ async function submitMenuEdit(index){
                 calories: itemCalories
             })
         })
+
     }catch(error){
         console.error(error);
     }
