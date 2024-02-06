@@ -13,7 +13,8 @@ type Customer struct {
 }
 
 type Waiter struct {
-	ws *websocket.Conn
+	ws   *websocket.Conn
+	name string
 }
 
 var customers []Customer
@@ -48,7 +49,10 @@ func registerConnection(m string, ws *websocket.Conn) bool {
 		}
 		customers = append(customers, Customer{ws: ws, table: uint(ret)})
 	case "WAITER":
-		waiters = append(waiters, Waiter{ws: ws})
+		if len(segments[1]) == 0 {
+			return false
+		}
+		waiters = append(waiters, Waiter{ws: ws, name: segments[1]})
 	}
 
 	return true

@@ -38,9 +38,19 @@ func TestOpenWebsockets(t *testing.T) {
 			resp: "WELCOME",
 		},
 		{
-			name: "Waiter",
+			name: "WaiterWithValidName",
 			msg:  "WAITER:John",
 			resp: "WELCOME",
+		},
+		{
+			name: "WaiterWithNoName",
+			msg:  "WAITER:",
+			resp: "DENIED",
+		},
+		{
+			name: "WaiterWithNoNameSeparator",
+			msg:  "WAITER",
+			resp: "DENIED",
 		},
 		{
 			name: "CustomerWithNoTableNumber",
