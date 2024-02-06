@@ -12,9 +12,9 @@ function initMenuAll(){
         console.log(r)
         currentMenu = r
         let index = 0;
-        document.getElementById("menuSectionAll").innerHTML = ""
+        document.getElementById("MenuItemGridLayout").innerHTML = ""
         r.forEach(element => {
-            document.getElementById("menuSectionAll").innerHTML+= createMenuItem(index, element.itemName, element.price, element.calories);
+            document.getElementById("MenuItemGridLayout").innerHTML+= createMenuItem(index, element.itemName, element.price, element.calories);
             index++;
         });
     })
@@ -22,7 +22,7 @@ function initMenuAll(){
 
 // Function that takes in data and turns into menu item to be displayed
 function createMenuItem(index, itemName, price, calories){
-    let comp = '<li id="item'+index+'" class="genericMenuItem" data-calories="'+calories+'" data-price="'+price+'">'+itemName+' -- £'+price.toFixed(2)+' -- '+calories+'kcal</li>'
+    let comp = "<div class='MenuItemDiv' id='"+index+"'> <img class='MenuItemImg' src='image/foodimg.jpg'><br> <div class='MenuItemDetails'><label class='MenuItemName'>"+itemName+"</label><br><label class='MenuItemPrice'>£"+price.toFixed(2)+"</label><label class='MenuItemCalories'>"+calories+"kcal</label></div></div>";
     return comp;
 }
 

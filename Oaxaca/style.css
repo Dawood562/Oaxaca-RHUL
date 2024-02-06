@@ -214,3 +214,33 @@ strong {
 .editMenuItem{
     margin-left:2%;
 }
+
+.MenuItemDiv{
+    border-style: 5px dashed black;
+    width: 40%;
+    padding-bottom:10%;
+}
+.MenuItemImg{
+    width:80%;
+}
+.MenuItemCalories{
+    padding-left: 5%;
+    text-align:right;
+    font-size: 0.8em;
+    justify-content: flex-end;
+}
+.MenuItemPrice{
+    font-size: 1em;
+    font-weight:bold;
+}
+.MenuItemName{
+    font-weight: bold;
+}
+.MenuItemDetails{
+    text-align: center;
+}
+#MenuItemGridLayout{
+    display:grid;
+    grid-template-columns: auto auto auto;
+    padding-left: 10%;
+}
