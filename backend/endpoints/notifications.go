@@ -7,32 +7,49 @@ import (
 	"github.com/gofiber/contrib/websocket"
 )
 
+type Customer struct {
+	ws    *websocket.Conn
+	table uint
+}
+
+type Waiter struct {
+	ws *websocket.Conn
+}
+
+var customers []Customer
+var waiters []Waiter
+
 // NewConnection registers a new connection to the system given its websocket connection
 func NewConnection(ws *websocket.Conn) error {
 	_, m, err := ws.ReadMessage()
 	if err != nil {
 		return err
 	}
-	t := getTableNum(string(m))
-	if t == -1 {
+	r := registerConnection(string(m), ws)
+	if !r {
 		return ws.WriteMessage(websocket.TextMessage, []byte("DENIED"))
 	}
 	return ws.WriteMessage(websocket.TextMessage, []byte("WELCOME"))
 }
 
-// getTableNum extracts a table number from a message or returns -1 if the message is invalid
-func getTableNum(m string) int {
+// registerConnection returns true if the initial message from the connection is OK
+func registerConnection(m string, ws *websocket.Conn) bool {
 	segments := strings.Split(string(m), ":")
 	if len(segments) != 2 {
-		return -1
+		return false
 	}
-	if segments[0] != "CUSTOMER" {
-		return -1
+
+	switch segments[0] {
+	case "CUSTOMER":
+		// Extract the table number
+		ret, err := strconv.ParseInt(segments[1], 10, 32)
+		if err != nil {
+			return false
+		}
+		customers = append(customers, Customer{ws: ws, table: uint(ret)})
+	case "WAITER":
+		waiters = append(waiters, Waiter{ws: ws})
 	}
-	// Extract the table number
-	ret, err := strconv.ParseInt(segments[1], 10, 32)
-	if err != nil {
-		return -1
-	}
-	return int(ret)
+
+	return true
 }

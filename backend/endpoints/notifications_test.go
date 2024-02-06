@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestNotifications(t *testing.T) {
+func TestOpenWebsockets(t *testing.T) {
 	app := fiber.New(fiber.Config{
 		DisableStartupMessage: true,
 	})
@@ -25,6 +25,7 @@ func TestNotifications(t *testing.T) {
 	go func() {
 		app.Listen(":4444")
 	}()
+	defer app.Shutdown()
 
 	testCases := []struct {
 		name string
@@ -34,6 +35,11 @@ func TestNotifications(t *testing.T) {
 		{
 			name: "CustomerWithCorrectTableNumber",
 			msg:  "CUSTOMER:4",
+			resp: "WELCOME",
+		},
+		{
+			name: "Waiter",
+			msg:  "WAITER:John",
 			resp: "WELCOME",
 		},
 		{
@@ -77,6 +83,4 @@ func TestNotifications(t *testing.T) {
 			assert.Equal(t, test.resp, string(m), "Test that server replied with expected response")
 		})
 	}
-
-	app.Shutdown()
 }
