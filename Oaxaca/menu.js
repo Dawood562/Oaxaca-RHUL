@@ -21,10 +21,12 @@ function initMenuAll(){
 }
 
 // Function that takes in data and turns into menu item to be displayed
-function createMenuItem(index, itemName, price, calories){
-    let comp = "<div class='MenuItemDiv' id='item"+index+"'> <img class='MenuItemImg' src='image/foodimg.jpg'><br> <div class='MenuItemDetails'><label class='MenuItemName'>"+itemName+"</label><br><label class='MenuItemPrice'>£"+price.toFixed(2)+"</label><label class='MenuItemCalories'>"+calories+"kcal</label></div></div>";
+function createMenuItem(index, itemName, price, calories) {
+    let comp = "<div class='MenuItemDiv' id='item" + index + "'> <img class='MenuItemImg' src='image/foodimg.jpg'><br> <div class='MenuItemDetails'><label class='MenuItemName'>" + itemName + "</label><br><label class='MenuItemPrice'>£" + price.toFixed(2) + "</label><label class='MenuItemCalories'>" + calories + "kcal</label></div>";
+    comp += "<a href='order.html'><button onclick='addToBasket(" + index + ", \"" + itemName + "\", " + price + ", " + calories + ")'>Add to Basket</button></a></div>";
     return comp;
 }
+
 
 // Toggle edit mode
 function editMenu(){
