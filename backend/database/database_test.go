@@ -147,11 +147,19 @@ func TestOrderRetrievalUnfiltered(t *testing.T) {
 
 	// Check example data is inserted into table and returned correctly
 	testData1 := models.Order{ID: 1, Time: time.Now(), TableNumber: 69, Bill: 42, Status: "Unknown"}
-	AddOrder(&testData1)
+	err := AddOrder(&testData1)
+	assert.NoError(t, err, "No error should be returned when adding empty order to Order table")
 	data = fetchOrders()
 	assert.Equal(t, 1, len(data), "Size of data is actually: "+strconv.Itoa(len(data)))
 	assert.Equal(t, 1, int(data[0].ID), "Returned id does not match expected id")
 	assert.Equal(t, 69, int(data[0].TableNumber), "Returned table number doesnt match expected")
 	assert.Equal(t, float64(42), data[0].Bill, "Returned bill does not match expected")
 	assert.Equal(t, "Unknown", data[0].Status, "Status of recieved is: "+data[0].Status)
+}
+
+func TestOrderRetrievalRejectDuplicate(t *testing.T) {
+	testData1 := models.Order{ID: 1, Time: time.Now(), TableNumber: 69, Bill: 42, Status: "Unknown"}
+	AddOrder(&testData1)
+	err := AddOrder(&testData1)
+	assert.Error(t, err, "Error should be thrown when duplicate item is added to order table")
 }

@@ -130,8 +130,9 @@ func fetchDBAuth() (string, string, string) {
 	return username, dbname, password
 }
 
-func AddOrder(item *models.Order) {
-	db.Create(item)
+func AddOrder(item *models.Order) error {
+	feedback := db.Create(item)
+	return feedback.Error
 }
 
 func fetchOrders() []models.Order {
