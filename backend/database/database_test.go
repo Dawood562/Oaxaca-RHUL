@@ -163,3 +163,25 @@ func TestOrderRetrievalRejectDuplicate(t *testing.T) {
 	err := AddOrder(&testData1)
 	assert.Error(t, err, "Error should be thrown when duplicate item is added to order table")
 }
+
+func TestRemoveItem(t *testing.T) {
+	// Add empty test item
+	testData1 := models.Order{ID: 1, Time: time.Now(), TableNumber: 69, Bill: 42, Status: "Unknown"}
+	AddOrder(&testData1)
+	err := AddOrder(&testData1)
+	assert.Error(t, err, "Error should be thrown when duplicate item is added to order table")
+
+	data := fetchOrders()
+	assert.Equal(t, 1, len(data), "Test item was not successfully added correctly")
+
+	// Attempt to remove test item normally
+	err = RemoveOrder(testData1.ID)
+	assert.NoError(t, err, "Item was not removed!")
+
+	err = RemoveOrder(testData1.ID)
+	assert.Error(t, err, "Attempting to remove an item that doesnt exist should throw an error")
+
+	// Check if item was really removed
+	data = fetchOrders()
+	assert.Equal(t, 0, len(data), "Numbers of orders remaining should be 0 after removing only test order")
+}

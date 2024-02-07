@@ -135,6 +135,17 @@ func AddOrder(item *models.Order) error {
 	return feedback.Error
 }
 
+func RemoveOrder(id uint) error {
+	feedback := db.Delete(&models.Order{ID: id})
+	if feedback.Error != nil {
+		return feedback.Error
+	}
+	if feedback.RowsAffected == 0 {
+		return errors.New("no items removed from table")
+	}
+	return nil
+}
+
 func fetchOrders() []models.Order {
 	var data []models.Order
 	db.Model(&data).Find(&data)
