@@ -136,6 +136,7 @@ func AddOrder(item *models.Order) error {
 }
 
 func RemoveOrder(id uint) error {
+	removeAllChildItems(id)
 	feedback := db.Delete(&models.Order{ID: id})
 	if feedback.Error != nil {
 		return feedback.Error
@@ -144,6 +145,15 @@ func RemoveOrder(id uint) error {
 		return errors.New("no items removed from table")
 	}
 	return nil
+}
+
+func removeAllChildItems(id uint) {
+	var listOfChildren []models.OrderItem
+	db.Model(&listOfChildren).Find(&listOfChildren)
+	for _, item := range listOfChildren {
+		db.Delete(&item)
+	}
+
 }
 
 func fetchOrders() []models.Order {

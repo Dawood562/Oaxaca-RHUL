@@ -155,13 +155,43 @@ func TestOrderRetrievalUnfiltered(t *testing.T) {
 	assert.Equal(t, 69, int(data[0].TableNumber), "Returned table number doesnt match expected")
 	assert.Equal(t, float64(42), data[0].Bill, "Returned bill does not match expected")
 	assert.Equal(t, "Unknown", data[0].Status, "Status of recieved is: "+data[0].Status)
+
+	RemoveOrder(testData1.ID)
+}
+
+func TestOrderQueryUnfiltered(t *testing.T) {
+	menuItem1 := models.MenuItem{Name: "Tequila"}
+	menuItem2 := models.MenuItem{Name: "Vodka"}
+	menuItem3 := models.MenuItem{Name: "Rum"}
+
+	menuOrderItem1 := models.OrderItem{Item: menuItem1}
+	menuOrderItem2 := models.OrderItem{Item: menuItem2}
+	menuOrderItem3 := models.OrderItem{Item: menuItem3}
+
+	testItemList := []models.OrderItem{menuOrderItem1, menuOrderItem2, menuOrderItem3}
+	testOrder := models.Order{ID: 0, Time: time.Now(), TableNumber: 16, Bill: 16.99, Status: "Ready", Items: testItemList}
+
+	err := AddOrder(&testOrder)
+	if err != nil {
+		t.Fail()
+	}
+
+	returnedData := fetchOrders()
+	assert.Equal(t, 1, len(returnedData), "Incorrect number of data returned")
+
+	RemoveOrder(testOrder.ID)
 }
 
 func TestOrderRetrievalRejectDuplicate(t *testing.T) {
+	// Add test data
 	testData1 := models.Order{ID: 1, Time: time.Now(), TableNumber: 69, Bill: 42, Status: "Unknown"}
 	AddOrder(&testData1)
+
 	err := AddOrder(&testData1)
 	assert.Error(t, err, "Error should be thrown when duplicate item is added to order table")
+
+	// Remove test data
+	RemoveOrder(testData1.ID)
 }
 
 func TestRemoveItem(t *testing.T) {
