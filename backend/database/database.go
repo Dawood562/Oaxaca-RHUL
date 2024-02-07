@@ -129,3 +129,13 @@ func fetchDBAuth() (string, string, string) {
 	password := os.Getenv("DB_PASSWORD")
 	return username, dbname, password
 }
+
+func AddOrder(item *models.Order) {
+	db.Create(item)
+}
+
+func fetchOrders() []models.Order {
+	var data []models.Order
+	db.Model(&data).Find(&data)
+	return data
+}

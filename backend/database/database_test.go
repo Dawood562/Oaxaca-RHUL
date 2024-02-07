@@ -3,8 +3,10 @@
 package database
 
 import (
+	"strconv"
 	"teamproject/database/models"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -136,4 +138,20 @@ func TestPrepareArgsNotEmpty(t *testing.T) {
 	assert.Equal(t, "%test%", args.SearchTerm, "Test search term preparation")
 	assert.Equal(t, float32(5.00), args.MaxPrice, "Test price preparation")
 	assert.Equal(t, 500, args.MaxCalories, "Test calorie preparation")
+}
+
+func TestOrderRetrievalUnfiltered(t *testing.T) {
+	// Check no data is returned to when no orders are in table
+	data := fetchOrders()
+	assert.Equal(t, 0, len(data), "Length of orders received should be 0 when no orders placed. Instead, received: "+strconv.Itoa(len(data)))
+
+	// Check example data is inserted into table and returned correctly
+	testData1 := models.Order{ID: 1, Time: time.Now(), TableNumber: 69, Bill: 42, Status: "Unknown"}
+	AddOrder(&testData1)
+	data = fetchOrders()
+	assert.Equal(t, 1, len(data), "Size of data is actually: "+strconv.Itoa(len(data)))
+	assert.Equal(t, 1, int(data[0].ID), "Returned id does not match expected id")
+	assert.Equal(t, 69, int(data[0].TableNumber), "Returned table number doesnt match expected")
+	assert.Equal(t, float64(42), data[0].Bill, "Returned bill does not match expected")
+	assert.Equal(t, "Unknown", data[0].Status, "Status of recieved is: "+data[0].Status)
 }
