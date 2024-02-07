@@ -244,3 +244,16 @@ strong {
     grid-template-columns: auto auto auto;
     padding-left: 10%;
 }
+#orderDetails{
+	text-align: left;
+    font-family:Georgia, 'Times New Roman', Times, serif;
+}
+#orderDetails li {
+	background-color: beige;
+    font-family: 'Courier New', Courier, monospace;
+    color:black;
+    font-size:10px;
+    border: 2px solid #591F0A;
+    margin-bottom: 10px; 
+    padding: 10px; 
+}

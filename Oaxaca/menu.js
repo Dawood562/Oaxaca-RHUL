@@ -23,7 +23,7 @@ function initMenuAll(){
 // Function that takes in data and turns into menu item to be displayed
 function createMenuItem(index, itemName, price, calories) {
     let comp = "<div class='MenuItemDiv' id='item" + index + "'> <img class='MenuItemImg' src='image/foodimg.jpg'><br> <div class='MenuItemDetails'><label class='MenuItemName'>" + itemName + "</label><br><label class='MenuItemPrice'>£" + price.toFixed(2) + "</label><label class='MenuItemCalories'>" + calories + "kcal</label></div>";
-    comp += "<a href='order.html'><button onclick='addToBasket(" + index + ", \"" + itemName + "\", " + price + ", " + calories + ")'>Add to Basket</button></a></div>";
+    comp += "<button onclick='addToBasket(" + index + ", \"" + itemName + "\", " + price + ", " + calories + ")'>Add to Basket</button></a></div>";
     return comp;
 }
 
@@ -222,3 +222,50 @@ async function requestMenu(userSearchTerm, userMaxPrice, userMaxCalories){
         }])
     }
 }
+
+function addToBasket(index, itemName, price, calories) {
+    let order = JSON.parse(localStorage.getItem('order')) || [];
+
+    const item = {
+        index: index,
+        itemName: itemName,
+        price: price,
+        calories: calories
+    };
+    order.push(item);
+    localStorage.setItem('order', JSON.stringify(order));
+    const orderDetailsDiv = document.getElementById('orderDetails');
+    const li = document.createElement('li');
+    li.innerHTML = `
+        <h3>${item.itemName}</h3>
+        <p>Price: £${item.price.toFixed(2)}</p>
+        <p>Calories: ${item.calories} kcal</p>
+    `;
+    orderDetailsDiv.appendChild(li);
+
+
+}
+
+    function updateOrderDetails(){
+        const order = JSON.parse(localStorage.getItem('order'));
+        const orderDetailsDiv = document.getElementById('orderDetails');
+   
+        if (order && order.length > 0) {
+            order.forEach(item => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <h3>${item.itemName}</h3>
+                    <p>Price: £${item.price.toFixed(2)}</p>
+                    <p>Calories: ${item.calories} kcal</p>
+                `;
+                orderDetailsDiv.appendChild(li);
+            });
+        } else {
+     
+            orderDetailsDiv.innerHTML = `<p>No items selected.</p>`;
+        }
+    }
+
+document.addEventListener('DOMContentLoaded', function () {
+    updateOrderDetails();
+});
