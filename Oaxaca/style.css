@@ -93,7 +93,7 @@ aside {
 }
 
 main {
-  background-color: #EFA00B;
+  background-color:burlywood;
   flex: 1;
   padding: 20px;
   order: 2;
@@ -262,11 +262,26 @@ strong {
 }
 
 #orderDetails li {
-  background-color: beige;
-  font-family: 'Courier New', Courier, monospace;
-  color: black;
-  font-size: 10px;
-  border: 2px solid #591F0A;
-  margin-bottom: 10px;
-  padding: 10px;
+   display: flex; 
+   justify-content: space-between; 
+   align-items: center; 
+   background-color: beige;
+   font-family: 'Courier New', Courier, monospace;
+   color: black;
+   font-size: 10px;
+   border: 2px solid #591F0A;
+   margin-bottom: 10px;
+   padding: 10px;
+}
+.removeButton {
+   background-color:burlywood;
+   color: white;
+   border: none;
+   padding: 5px 10px;
+   cursor: pointer;
+   border-radius: 5px;
+   font-size: 10px;
+}
+.removeButton:hover {
+   background-color: brown;
 }
