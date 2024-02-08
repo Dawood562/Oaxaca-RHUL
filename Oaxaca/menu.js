@@ -270,7 +270,7 @@ document.addEventListener('DOMContentLoaded', function () {
     updateOrderDetails();
 });
 
-//Fetches the orders from teh backend
+//Fetches the orders from the backend
 async function fetchOrders() {
     try {
         let response = await fetch("http://localhost:4444/database?");
@@ -282,4 +282,21 @@ async function fetchOrders() {
     } catch (error) {
         console.error('Theres a problem with the fetch operation', error);
     }
+}
+
+//Display the orders with time and bill
+function displayOrders(orders) {
+    const ordersContainer = document.getElementById('ordersContainer');
+
+    orders.forEach(order => {
+        const orderElement = document.createElement('div');
+        orderElement.className = 'order';
+        const orderTime = new Date(order.orderTime).toString();
+        orderElement.innerHTML = `
+            <h3>Order #${order.ID} - Table #${order.TableNumber}</h3>
+            <p>Order Time: ${order.Time}</p>
+            <p>Bill: $${order.bill}</p>
+        `;
+        ordersContainer.appendChild(orderElement);
+    });
 }
