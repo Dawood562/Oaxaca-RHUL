@@ -19,19 +19,19 @@
         <ul>
           <li><a href="index.html">Home</a></li>
           <li><a href="menu.html">Menu</a></li>
+          <li><a href="order.html#">Order</a></li>
           <li><a href="#">Link</a></li>
           <li><a href="#">Link</a></li>
-          <li><a href="#">Link</a></li>
-        </ul> 
+        </ul>
       </nav>
     </div>
 
     <div id="flex">
 
       <aside id="leftSidebar">
-    
+
         <h2 id="menuTitle">Menu Filters</h2>
-        
+
         <div class="box">
 
           <div id="menuFilter">
@@ -62,13 +62,13 @@
         </div>
 
         <div>
-        <p>
-        <button onclick="editMenu()">Edit Menu</button>
-        </p>
+          <p>
+            <button onclick="editMenu()">Edit Menu</button>
+          </p>
         </div>
-        
+
       </aside> <!--Above section is in sidebar for cleaner presentation-->
-      
+
       <main id="menuPage"> <!--Main section of page-->
         <div class="menuSection">
           <section class="appetizersSection" data-calories="200" data-price="10.00">
@@ -77,12 +77,12 @@
 
             </div>
             <div id="MenuEditSection">
-              
+
             </div>
           </section>
         </div>
       </main>
-    
+
     </div>
 
     <footer id="footer">
@@ -99,10 +99,10 @@
       initializeCategoryFilter();
       //initMenuAll()
     });
-    
 
-   function initializeMenu() {
-     const activeButton = document.querySelector('#menuFilter button.active');
+
+    function initializeMenu() {
+      const activeButton = document.querySelector('#menuFilter button.active');
 
       if (activeButton) {
         const category = activeButton.getAttribute('data-category');
