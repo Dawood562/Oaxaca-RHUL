@@ -164,12 +164,9 @@ func TestOrderQueryUnfiltered(t *testing.T) {
 	menuItem2 := models.MenuItem{Name: "Vodka"}
 	menuItem3 := models.MenuItem{Name: "Rum"}
 
-	menuOrderItem1 := models.OrderItem{Item: menuItem1}
-	menuOrderItem2 := models.OrderItem{Item: menuItem2}
-	menuOrderItem3 := models.OrderItem{Item: menuItem3}
-
-	testItemList := []models.OrderItem{menuOrderItem1, menuOrderItem2, menuOrderItem3}
-	testOrder := models.Order{ID: 0, Time: time.Now(), TableNumber: 16, Bill: 16.99, Status: "Ready", Items: testItemList}
+	var TestId1 uint = 1
+	testItemList := []models.OrderItem{{OrderID: TestId1, Item: menuItem1}, {Item: menuItem2}, {Item: menuItem3}}
+	testOrder := models.Order{ID: TestId1, Time: time.Now(), TableNumber: 16, Bill: 16.99, Status: "Ready", Items: testItemList}
 
 	err := AddOrder(&testOrder)
 	if err != nil {
@@ -179,7 +176,8 @@ func TestOrderQueryUnfiltered(t *testing.T) {
 	returnedData := fetchOrders()
 	assert.Equal(t, 1, len(returnedData), "Incorrect number of data returned")
 
-	RemoveOrder(testOrder.ID)
+	err = RemoveOrder(testOrder.ID)
+	assert.NoError(t, err, "Shouldnt throw error on removal")
 }
 
 func TestOrderRetrievalRejectDuplicate(t *testing.T) {
@@ -214,4 +212,37 @@ func TestRemoveItem(t *testing.T) {
 	// Check if item was really removed
 	data = fetchOrders()
 	assert.Equal(t, 0, len(data), "Numbers of orders remaining should be 0 after removing only test order")
+}
+
+func TestRemovingMultipleData(t *testing.T) {
+	menuItem1 := models.MenuItem{Name: "Tequila"}
+	menuItem2 := models.MenuItem{Name: "Vodka"}
+	menuItem3 := models.MenuItem{Name: "Rum"}
+
+	var testItemID uint = 1
+	var testItemID2 uint = 2
+
+	testItemList1 := []models.OrderItem{{OrderID: testItemID, Item: menuItem1, Notes: "Item1"}, {OrderID: testItemID, Item: menuItem2, Notes: "Notes2"}}
+	testItemList2 := []models.OrderItem{{OrderID: testItemID2, Item: menuItem3, Notes: "Notes3"}}
+
+	testOrder := models.Order{ID: testItemID, Time: time.Now(), TableNumber: 16, Bill: 16.99, Status: "Ready", Items: testItemList1}
+	testOrder2 := models.Order{ID: testItemID2, Time: time.Now(), TableNumber: 17, Bill: 17.99, Status: "Preparing", Items: testItemList2}
+
+	AddOrder(&testOrder)
+	AddOrder(&testOrder2)
+	data := fetchOrders()
+
+	assert.Equal(t, 2, len(data), "Order table should contain only 1 item")
+
+	err := RemoveOrder(testItemID)
+	if err != nil {
+		assert.NoError(t, err, "Removing item returned an error")
+	}
+
+	data = fetchOrders()
+	assert.Equal(t, 1, len(data), "Order table should contain no items!")
+
+	RemoveOrder(testItemID2)
+	data = fetchOrders()
+	assert.Equal(t, 0, len(data), "Order table should contain no items!")
 }

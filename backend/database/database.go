@@ -136,7 +136,11 @@ func AddOrder(item *models.Order) error {
 }
 
 func RemoveOrder(id uint) error {
-	removeAllChildItems(id)
+	err := removeAllOrderChildItems(id)
+	if err != nil {
+		return err
+	}
+
 	feedback := db.Delete(&models.Order{ID: id})
 	if feedback.Error != nil {
 		return feedback.Error
@@ -147,17 +151,28 @@ func RemoveOrder(id uint) error {
 	return nil
 }
 
-func removeAllChildItems(id uint) {
-	var listOfChildren []models.OrderItem
-	db.Model(&listOfChildren).Find(&listOfChildren)
-	for _, item := range listOfChildren {
-		db.Delete(&item)
+func removeAllOrderChildItems(id uint) error {
+	allOrderItems := fetchOrderItems()
+	// if id matches, fuck it off
+	for _, items := range allOrderItems {
+		if id == items.OrderID {
+			err := db.Delete(&models.OrderItem{OrderID: id})
+			if err.Error != nil || err.RowsAffected == 0 {
+				return errors.New("Did not remove child items?!?!?")
+			}
+		}
 	}
-
+	return nil
 }
 
 func fetchOrders() []models.Order {
 	var data []models.Order
+	db.Model(&data).Find(&data)
+	return data
+}
+
+func fetchOrderItems() []models.OrderItem {
+	var data []models.OrderItem
 	db.Model(&data).Find(&data)
 	return data
 }
