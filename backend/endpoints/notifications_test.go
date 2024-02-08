@@ -31,46 +31,64 @@ func TestOpenWebsockets(t *testing.T) {
 		name string
 		msg  string
 		resp string
+		clen int
+		wlen int
 	}{
 		{
 			name: "CustomerWithCorrectTableNumber",
 			msg:  "CUSTOMER:4",
 			resp: "WELCOME",
+			clen: 1,
+			wlen: 0,
 		},
 		{
 			name: "WaiterWithValidName",
 			msg:  "WAITER:John",
 			resp: "WELCOME",
+			clen: 1,
+			wlen: 1,
 		},
 		{
 			name: "WaiterWithNoName",
 			msg:  "WAITER:",
 			resp: "DENIED",
+			clen: 1,
+			wlen: 1,
 		},
 		{
 			name: "WaiterWithNoNameSeparator",
 			msg:  "WAITER",
 			resp: "DENIED",
+			clen: 1,
+			wlen: 1,
 		},
 		{
 			name: "CustomerWithNoTableNumber",
 			msg:  "CUSTOMER:",
 			resp: "DENIED",
+			clen: 1,
+			wlen: 1,
 		},
 		{
 			name: "CustomerWithInvalidTableNumber",
 			msg:  "CUSTOMER:A",
 			resp: "DENIED",
+			clen: 1,
+			wlen: 1,
 		},
 		{
 			name: "CustomerWithNoTableNumberSeparator",
 			msg:  "CUSTOMER",
 			resp: "DENIED",
+			clen: 1,
+			wlen: 1,
 		},
 		{
 			name: "InvalidIdentifier",
 			msg:  "TEST",
 			resp: "DENIED",
+			clen: 1,
+			wlen: 1,
 		},
 	}
 
@@ -91,6 +109,8 @@ func TestOpenWebsockets(t *testing.T) {
 			_, m, err := ws.ReadMessage()
 			assert.NoError(t, err, "Test that receiving a message does not create an error")
 			assert.Equal(t, test.resp, string(m), "Test that server replied with expected response")
+			assert.Equal(t, test.clen, len(customers), "Test that the number of customers is as expected")
+			assert.Equal(t, test.wlen, len(waiters), "Test that the number of waiters is as expected")
 		})
 	}
 }
