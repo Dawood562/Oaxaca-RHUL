@@ -20,6 +20,11 @@ type Waiter struct {
 var customers []Customer
 var waiters []Waiter
 
+// HandleConnection spawns a handler to manage one websocket connection to the server
+func HandleConnection(ws *websocket.Conn) error {
+	return NewConnection(ws)
+}
+
 // NewConnection registers a new connection to the system given its websocket connection
 func NewConnection(ws *websocket.Conn) error {
 	_, m, err := ws.ReadMessage()
@@ -33,7 +38,7 @@ func NewConnection(ws *websocket.Conn) error {
 	return ws.WriteMessage(websocket.TextMessage, []byte("WELCOME"))
 }
 
-// registerConnection returns true if the initial message from the connection is OK
+// registerConnection returns true if the initial message from the connection is OK. ws is stored for later use
 func registerConnection(m string, ws *websocket.Conn) bool {
 	segments := strings.Split(string(m), ":")
 	if len(segments) != 2 {

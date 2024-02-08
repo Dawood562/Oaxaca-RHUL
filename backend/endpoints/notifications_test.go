@@ -17,9 +17,7 @@ func TestOpenWebsockets(t *testing.T) {
 	})
 
 	app.Get("/notifications", websocket.New(func(c *websocket.Conn) {
-		if NewConnection(c) != nil {
-			c.Close()
-		}
+		assert.NoError(t, HandleConnection(c))
 	}))
 
 	go func() {
