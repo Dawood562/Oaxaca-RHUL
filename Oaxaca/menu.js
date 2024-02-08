@@ -269,3 +269,17 @@ function addToBasket(index, itemName, price, calories) {
 document.addEventListener('DOMContentLoaded', function () {
     updateOrderDetails();
 });
+
+//Fetches the orders from teh backend
+async function fetchOrders() {
+    try {
+        let response = await fetch("http://localhost:4444/database?");
+        if (!response.ok) {
+            console.log("Error fetching orders");
+        }
+        let orders = await response.json();
+        displayOrders(orders);
+    } catch (error) {
+        console.error('Theres a problem with the fetch operation', error);
+    }
+}
