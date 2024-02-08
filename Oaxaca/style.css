@@ -86,7 +86,7 @@ body {
 
 aside {
     background-color: #D65108;
-    width: 20%;
+    width: 300px;
     padding: 20px;
     border-right: 1px dashed white;
 
@@ -125,11 +125,13 @@ h3 {
 
 h1 {
     font-family: Mexican Tequila;
-    font-size: 70px;
+    font-size: 100px;
+    text-align: center;
 }
 h2{
 	font-family: Mexican Tequila;
-    font-size: 40px;
+    font-size: 60px;
+    text-align: center;
     
     }
 strong {
