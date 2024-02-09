@@ -274,3 +274,33 @@ func TestFetchingOrdersCorrectlyBringsOrderItems(t *testing.T) {
 	RemoveOrder(testItemID)
 	RemoveOrder(testItemID2)
 }
+
+func TestFetchingItemsWithFilter(t *testing.T) {
+	menuItem1 := models.MenuItem{Name: "Tequila"}
+	menuItem2 := models.MenuItem{Name: "Vodka"}
+	menuItem3 := models.MenuItem{Name: "Rum"}
+
+	var testItemID uint = 1
+	var testItemID2 uint = 2
+
+	testItemList1 := []models.OrderItem{{OrderID: testItemID, Item: menuItem1, Notes: "Item1"}, {OrderID: testItemID, Item: menuItem2, Notes: "Notes2"}}
+	testItemList2 := []models.OrderItem{{OrderID: testItemID2, Item: menuItem3, Notes: "Notes3"}}
+
+	testOrder := models.Order{ID: testItemID, Time: time.Now(), TableNumber: 16, Bill: 16.99, Status: "Ready", Items: testItemList1}
+	testOrder2 := models.Order{ID: testItemID2, Time: time.Now(), TableNumber: 17, Bill: 17.99, Status: "Preparing", Items: testItemList2}
+
+	AddOrder(&testOrder)
+	AddOrder(&testOrder2)
+	testData, err := FetchOrders(models.Order{TableNumber: 16})
+	assert.NoError(t, err, "Fetching order should not be throwing an error")
+	assert.Equal(t, 1, len(testData), "Did not fetch correct number of items")
+	assert.Equal(t, "Item1", testData[0].Items[0].Notes, "Incorrect item returned from query")
+
+	testData, err = FetchOrders(models.Order{Status: "Preparing"})
+	assert.NoError(t, err, "Did not fetch correct number of items")
+	assert.Equal(t, 1, len(testData), "Did not fetch correct number of items")
+	assert.Equal(t, "Notes3", testData[0].Items[0].Notes, "Incorrect item returned from query")
+
+	RemoveOrder(testItemID)
+	RemoveOrder(testItemID2)
+}

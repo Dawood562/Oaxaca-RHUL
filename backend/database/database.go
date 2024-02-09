@@ -165,10 +165,22 @@ func removeAllOrderChildItems(id uint) error {
 	return nil
 }
 
-func FetchOrders() ([]models.Order, error) {
+func FetchOrders(filter ...models.Order) ([]models.Order, error) {
+	dbCopy := *db
+	dbLocal := &dbCopy
 	var orderData []models.Order
 	var orderItemData = fetchOrderItems()
-	db.Model(&orderData).Find(&orderData)
+
+	if len(filter) > 0 {
+
+		if filter[0].TableNumber > 0 {
+			dbLocal = dbLocal.Where("Table_Number = ?", filter[0].TableNumber)
+		}
+		if len(filter[0].Status) > 0 {
+			dbLocal = dbLocal.Where("Status = ?", filter[0].Status)
+		}
+	}
+	dbLocal.Model(&orderData).Find(&orderData)
 
 	// Iterate through each order and append its order items into Items field
 	for i, oData := range orderData {
