@@ -49,12 +49,19 @@ func HandleConnection(ws *websocket.Conn) {
 	// Enter a loop to handle further interaction
 	for {
 		// Receive from websocket
-		if _, _, err := ws.ReadMessage(); err != nil {
+		var m []byte
+		if _, m, err = ws.ReadMessage(); err != nil {
 			break
 		}
+		HandleMessage(string(m), u)
 	}
 	// Cleanup
 	u.Remove()
+}
+
+// Handle message processed the given message sent by the given user
+func HandleMessage(m string, u User) {
+
 }
 
 // NewConnection registers a new connection to the system given its websocket connection.
