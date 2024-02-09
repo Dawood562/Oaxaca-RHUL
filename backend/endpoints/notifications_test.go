@@ -57,7 +57,42 @@ func TestCreateCustomer(t *testing.T) {
 }
 
 func TestCreateWaiter(t *testing.T) {
+	waiters = []Waiter{}
 
+	testCases := []struct {
+		name string
+		arg  string
+		err  bool
+	}{
+		{
+			name: "WithValidName",
+			arg:  "Jacob",
+			err:  false,
+		},
+		{
+			name: "WithDuplicateName",
+			arg:  "Jacob",
+			err:  true,
+		},
+		{
+			name: "WithSecondValidName",
+			arg:  "Josh",
+			err:  false,
+		},
+	}
+
+	for _, test := range testCases {
+		t.Run(test.name, func(t *testing.T) {
+			w, err := createWaiter(test.arg, nil)
+			if test.err {
+				assert.Error(t, err, "Test that expected error is thrown")
+			} else {
+				assert.NoError(t, err, "Test that no unexpected errors are thrown")
+				waiters = append(waiters, w.(Waiter))
+			}
+		})
+	}
+	waiters = []Waiter{}
 }
 
 func TestRemoveCustomer(t *testing.T) {
@@ -72,7 +107,14 @@ func TestRemoveCustomer(t *testing.T) {
 }
 
 func TestRemoveWaiter(t *testing.T) {
-
+	waiters = []Waiter{{name: "Jacob"}, {name: "Josh"}, {name: "Dawood"}}
+	w := waiters[1]
+	w.Remove()
+	assert.Equal(t, 2, len(waiters), "Test that removing a waiter really removes the customer")
+	w.Remove()
+	assert.Equal(t, 2, len(waiters), "Test that removing a waiter twice does nothing")
+	waiters[0].Remove()
+	assert.Equal(t, 1, len(waiters), "Test that removing another waiter works correctly")
 }
 
 func TestOpenAndCloseWebsockets(t *testing.T) {
