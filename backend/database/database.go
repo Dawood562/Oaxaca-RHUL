@@ -153,7 +153,7 @@ func RemoveOrder(id uint) error {
 
 func removeAllOrderChildItems(id uint) error {
 	allOrderItems := fetchOrderItems()
-	// if id matches, fuck it off
+
 	for _, items := range allOrderItems {
 		if id == items.OrderID {
 			err := db.Delete(&models.OrderItem{OrderID: id})
@@ -165,10 +165,25 @@ func removeAllOrderChildItems(id uint) error {
 	return nil
 }
 
-func fetchOrders() []models.Order {
-	var data []models.Order
-	db.Model(&data).Find(&data)
-	return data
+func FetchOrders() ([]models.Order, error) {
+	var orderData []models.Order
+	var orderItemData = fetchOrderItems()
+	db.Model(&orderData).Find(&orderData)
+
+	// Iterate through each order and append its order items into Items field
+	for i, oData := range orderData {
+		for _, oiData := range orderItemData {
+			if oData.ID == oiData.OrderID {
+				beforeSize := len(orderData[i].Items)
+				orderData[i].Items = append(orderData[i].Items, oiData)
+				if len(orderData[i].Items) <= beforeSize {
+					return nil, errors.New("OrderItem was not appended to the order successfully")
+				}
+			}
+		}
+	}
+
+	return orderData, nil
 }
 
 func fetchOrderItems() []models.OrderItem {
