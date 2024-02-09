@@ -54,7 +54,6 @@ func TestCreateCustomer(t *testing.T) {
 			}
 		})
 	}
-	customers = []Customer{}
 }
 
 func TestCreateWaiter(t *testing.T) {
@@ -98,7 +97,6 @@ func TestCreateWaiter(t *testing.T) {
 			}
 		})
 	}
-	waiters = []Waiter{}
 }
 
 func TestRemoveCustomer(t *testing.T) {
@@ -190,6 +188,9 @@ func TestOpenAndCloseWebsockets(t *testing.T) {
 }
 
 func TestCustomerCallWaiter(t *testing.T) {
+	customers = []Customer{}
+	waiters = []Waiter{}
+
 	app := createTestServer()
 	defer app.Shutdown()
 
@@ -223,16 +224,41 @@ func TestCustomerCallWaiter(t *testing.T) {
 		},
 	}
 
+	// Initialise customer connections
+	csockets := []*gwebsocket.Conn{createTestWebsocket(t), createTestWebsocket(t)}
+	for i, c := range csockets {
+		defer c.Close()
+		err := c.WriteMessage(gwebsocket.TextMessage, []byte(fmt.Sprintf("CUSTOMER:%d", i+1)))
+		assert.NoError(t, err, "Test that sending initial message creates no errors")
+		_, m, err := c.ReadMessage()
+		assert.Equal(t, "WELCOME", string(m), "Test that server accepted connection and authentication")
+	}
+	// Initialize waiter connections
+	wsockets := []*gwebsocket.Conn{createTestWebsocket(t), createTestWebsocket(t)}
+	for i, w := range wsockets {
+		defer w.Close()
+		err := w.WriteMessage(gwebsocket.TextMessage, []byte(fmt.Sprintf("WAITER:%d", i+1)))
+		assert.NoError(t, err, "Test that sending initial message creates no errors")
+		_, m, err := w.ReadMessage()
+		assert.Equal(t, "WELCOME", string(m), "Test that server accepted connection and authentication")
+	}
+
 	for _, test := range testCases {
 		t.Run(test.name, func(t *testing.T) {
-			// Initialise customer connections
-			customers := []*gwebsocket.Conn{createTestWebsocket(t), createTestWebsocket(t)}
-			for i, c := range customers {
-				defer c.Close()
-				err := c.WriteMessage(gwebsocket.TextMessage, []byte(fmt.Sprintf("CUSTOMER:%d", i+1)))
-				assert.NoError(t, err, "Test that sending initial message creates no errors")
-				_, m, err := c.ReadMessage()
-				assert.Equal(t, "WELCOME", string(m), "Test that server accepted connection and authentication")
+			// Use specified client to send test message
+			err := csockets[test.cid].WriteMessage(gwebsocket.TextMessage, []byte(test.cmsg))
+			assert.NoError(t, err, "Test that sending help message creates no errors")
+			// Read response from server
+			_, m, err := csockets[test.cid].ReadMessage()
+			assert.NoError(t, err, "Test that receiving response from server creates no errors")
+			assert.Equal(t, test.resp, string(m), "Test that the server gave the expected response")
+			// Check what the waiters received
+			for i, w := range wsockets {
+				if len(test.wrecv) > 0 {
+					_, m, err = w.ReadMessage()
+					assert.NoError(t, err, "Test that reading from waiter socket creates no errors")
+					assert.Equal(t, test.wrecv, string(m), fmt.Sprintf("Test that waiter %d received the expected message", i))
+				}
 			}
 		})
 	}

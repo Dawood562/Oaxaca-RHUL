@@ -53,15 +53,42 @@ func HandleConnection(ws *websocket.Conn) {
 		if _, m, err = ws.ReadMessage(); err != nil {
 			break
 		}
-		HandleMessage(string(m), u)
+		err := HandleMessage(string(m), u)
+		if err != nil {
+			// TODO: use helpful error message instead
+			ws.WriteMessage(websocket.TextMessage, []byte("ERROR"))
+		}
 	}
 	// Cleanup
 	u.Remove()
 }
 
-// Handle message processed the given message sent by the given user
-func HandleMessage(m string, u User) {
+// Handle message processed the given message sent by the given user.
+// Returns any errors created during handling.
+func HandleMessage(m string, u User) error {
+	c, ok := u.(Customer)
+	if ok {
+		// Connection is a customer
+		if m == "HELP" {
+			r := fmt.Sprintf("HELP:%d", c.table)
+			BroadcastToWaiters(r)
+			return c.ws.WriteMessage(websocket.TextMessage, []byte("OK"))
+		}
+	} else {
+		_, _ = u.(Waiter)
+		// Connection is a waiter
+	}
 
+	return errors.New("Invalid command")
+}
+
+// BroadcastToWaiters sends m to all connected waiters
+func BroadcastToWaiters(m string) {
+	for _, w := range waiters {
+		if w.ws != nil {
+			w.ws.WriteMessage(websocket.TextMessage, []byte(m))
+		}
+	}
 }
 
 // NewConnection registers a new connection to the system given its websocket connection.
