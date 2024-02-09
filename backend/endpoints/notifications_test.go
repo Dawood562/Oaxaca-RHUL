@@ -13,6 +13,8 @@ import (
 )
 
 func TestCreateCustomer(t *testing.T) {
+	customers = []Customer{}
+
 	testCases := []struct {
 		name string
 		arg  string
@@ -22,6 +24,11 @@ func TestCreateCustomer(t *testing.T) {
 			name: "WithValidTableNumber",
 			arg:  "4",
 			err:  false,
+		},
+		{
+			name: "WithDuplicateTableNumber",
+			arg:  "4",
+			err:  true,
 		},
 		{
 			name: "WithSecondValidTableNumber",
@@ -37,22 +44,31 @@ func TestCreateCustomer(t *testing.T) {
 
 	for _, test := range testCases {
 		t.Run(test.name, func(t *testing.T) {
-			_, err := createCustomer(test.arg, nil)
+			c, err := createCustomer(test.arg, nil)
 			if test.err {
 				assert.Error(t, err, "Test that expected error is thrown")
 			} else {
 				assert.NoError(t, err, "Test that no unexpected errors are thrown")
+				customers = append(customers, c.(Customer))
 			}
 		})
 	}
+	customers = []Customer{}
 }
 
 func TestCreateWaiter(t *testing.T) {
 
 }
 
-func TestRemoveCustoner(t *testing.T) {
-
+func TestRemoveCustomer(t *testing.T) {
+	customers = []Customer{{table: 1}, {table: 2}, {table: 3}}
+	c := customers[1]
+	c.Remove()
+	assert.Equal(t, 2, len(customers), "Test that removing a customer really removes the customer")
+	c.Remove()
+	assert.Equal(t, 2, len(customers), "Test that removing a customer twice does nothing")
+	customers[0].Remove()
+	assert.Equal(t, 1, len(customers), "Test that removing another customer works correctly")
 }
 
 func TestRemoveWaiter(t *testing.T) {
