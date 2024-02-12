@@ -223,23 +223,22 @@ async function requestMenu(userSearchTerm, userMaxPrice, userMaxCalories) {
 }
 function addToBasket(index, itemName, price, calories) {
   let order = JSON.parse(localStorage.getItem('order')) || [];
-
+  const existingItemIndex = order.findIndex(item => item.index === index);
+  if (existingItemIndex > -1) {
+   order[existingItemIndex].quantity++;
+ } else {
   const item = {
     index: index,
     itemName: itemName,
     price: price,
-    calories: calories
+    calories: calories,
+    quantity: 1
   };
+  
   order.push(item);
+  }
   localStorage.setItem('order', JSON.stringify(order));
-  const orderDetailsDiv = document.getElementById('orderDetails');
-  const li = document.createElement('li');
-  li.innerHTML = `
-        <h3>${item.itemName}</h3>
-        <p>Price: £${item.price.toFixed(2)}</p>
-        <p>Calories: ${item.calories} kcal</p>
-    `;
-  orderDetailsDiv.appendChild(li);
+  updateOrderDetails();
 
 
 }
@@ -248,22 +247,22 @@ function updateOrderDetails() {
   const order = JSON.parse(localStorage.getItem('order'));
   const orderDetailsDiv = document.getElementById('orderDetails');
   const totalDiv = document.getElementById('totalPrice');
-  orderDetailsDiv.innerHTML = ''; // Clear existing content
-  let total = 0;
-
+  orderDetailsDiv.innerHTML = ''; 
+  let orderTotal = 0;
   if (order && order.length > 0) {
     order.forEach(item => {
-      total += item.price;
+      orderTotal += item.price * item.quantity;
       const li = document.createElement('li');
       li.innerHTML = `
                <h3>${item.itemName}</h3>
-               <p>Price: £${item.price.toFixed(2)}</p>
-               <p>Calories: ${item.calories} kcal</p>
+               <p> quantity: ${item.quantity}</p>
+               <p>Calories: ${item.calories * item.quantity} kcal</p>
+               <p>Price: £${(item.price * item.quantity).toFixed(2)}</p>
                <button class="removeButton">Remove</button>
            `;
       orderDetailsDiv.appendChild(li);
     });
-    totalDiv.textContent = `Total: £${total.toFixed(2)}`;
+    totalDiv.textContent = `Total: £${orderTotal.toFixed(2)}`;
     const removeButtons = document.querySelectorAll('.removeButton');
     removeButtons.forEach(button => {
       button.addEventListener('click', () => {
@@ -278,14 +277,13 @@ function updateOrderDetails() {
 
 
 
-
 function removeFromOrder(itemName) {
   let order = JSON.parse(localStorage.getItem('order')) || [];
   const itemIndex = order.findIndex(item => item.itemName === itemName);
-  if (itemIndex !== -1) {
+  if (itemIndex >-1) {
     order.splice(itemIndex, 1);
     localStorage.setItem('order', JSON.stringify(order));
-    updateOrderDetails(); // Update the order details displayed on the page
+    updateOrderDetails(); 
   }
 }
 document.addEventListener('DOMContentLoaded', function() {
