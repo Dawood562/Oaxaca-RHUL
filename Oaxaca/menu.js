@@ -87,6 +87,16 @@ function EditMenuField(index){
     document.getElementById("item"+index).innerHTML += "<button index='"+index+"' id='itemEditButton32' class='editMenuItem'>Submit</button>"
     document.getElementById("itemEditButton32").addEventListener('click', function (){
         submitMenuEdit(index);
+        let toRemove = document.getElementsByClassName("editMenuItemPrompt")
+        toRemove[0].innerHTML = "<label>Submitted!</label>"
+        for(let i=1; i<toRemove.length; i++){
+            toRemove[i].innerHTML = ""
+        }
+        document.getElementById("nameEditPrompt").remove()
+        document.getElementById("priceEditPrompt").remove()
+        document.getElementById("caloriesEditPrompt").remove()
+        document.getElementById("itemEditButton32").remove()
+
     })
 
     // MUST REPLACE EDIT BUTTON TO BE CALLED SUBMIT AND MAKE IT CALL submitMenuEdit() FUNCTION
@@ -246,25 +256,24 @@ function addToBasket(index, itemName, price, calories) {
 
 }
 
-    function updateOrderDetails(){
-        const order = JSON.parse(localStorage.getItem('order'));
-        const orderDetailsDiv = document.getElementById('orderDetails');
-   
-        if (order && order.length > 0) {
-            order.forEach(item => {
-                const li = document.createElement('li');
-                li.innerHTML = `
-                    <h3>${item.itemName}</h3>
-                    <p>Price: £${item.price.toFixed(2)}</p>
-                    <p>Calories: ${item.calories} kcal</p>
-                `;
-                orderDetailsDiv.appendChild(li);
-            });
-        } else {
-     
-            orderDetailsDiv.innerHTML = `<p>No items selected.</p>`;
-        }
+function updateOrderDetails(){
+    const order = JSON.parse(localStorage.getItem('order'));
+    const orderDetailsDiv = document.getElementById('orderDetails');
+
+    if (order && order.length > 0) {
+        order.forEach(item => {
+            const li = document.createElement('li');
+            li.innerHTML = `
+                <h3>${item.itemName}</h3>
+                <p>Price: £${item.price.toFixed(2)}</p>
+                <p>Calories: ${item.calories} kcal</p>
+            `;
+            orderDetailsDiv.appendChild(li);
+        });
+    } else {
+        orderDetailsDiv.innerHTML = `<p>No items selected.</p>`;
     }
+}
 
 document.addEventListener('DOMContentLoaded', function () {
     updateOrderDetails();
