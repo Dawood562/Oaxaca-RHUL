@@ -9,7 +9,6 @@ function initMenuAll(){
 
     let data = requestMenu(0,0,0); // Zero value = none specified
     data.then(r => {
-        console.log(r)
         currentMenu = r
         let index = 0;
         document.getElementById("MenuItemGridLayout").innerHTML = ""
@@ -23,7 +22,7 @@ function initMenuAll(){
 // Function that takes in data and turns into menu item to be displayed
 function createMenuItem(index, itemName, price, calories) {
     let comp = "<div class='MenuItemDiv' id='item" + index + "'> <img class='MenuItemImg' src='image/foodimg.jpg'><br> <div class='MenuItemDetails'><label class='MenuItemName'>" + itemName + "</label><br><label class='MenuItemPrice'>£" + price.toFixed(2) + "</label><label class='MenuItemCalories'>" + calories + "kcal</label></div>";
-    comp += "<button onclick='addToBasket(" + index + ", \"" + itemName + "\", " + price + ", " + calories + ")'>Add to Basket</button></a></div>";
+    comp += "<button class='addBasketButton' onclick='addToBasket(" + index + ", \"" + itemName + "\", " + price + ", " + calories + ")'>Add to Basket</button></a></div>";
     return comp;
 }
 
@@ -38,6 +37,7 @@ function editMenu(){
         // Add edit button to each menu item
         for(let i = 0; i < currentMenu.length; i++){
             document.getElementById("item"+i).innerHTML += "<button index='"+i+"' id='itemEditButton' class='editMenuItem'>EDIT</button>"
+            let thing = document.getElementById("item"+i).childNodes[5].remove()
         }
 
         // Retrieve all edit buttons into iterable
@@ -109,8 +109,6 @@ async function submitMenuEdit(index){
     let name = document.getElementById("nameEditPrompt").value;
     let itemPrice = parseFloat(document.getElementById("priceEditPrompt").value);
     let itemCalories = parseInt(document.getElementById("caloriesEditPrompt").value);
-    console.log(id+","+name+","+itemPrice+","+itemCalories);
-    console.log(document.getElementById("nameEditPrompt"));
 
     try{
         let response = await fetch("http://localhost:4444/edit_item", {
@@ -176,7 +174,6 @@ function getIdFromName(name){
 
 // Contacts backend to remove menu item
 async function removeItem(name){
-    console.log(currentMenu)
     nameId = String(getIdFromName(name))
     try{
         let response = await fetch("http://localhost:4444/remove_item?" + new URLSearchParams({
