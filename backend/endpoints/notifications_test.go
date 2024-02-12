@@ -14,7 +14,7 @@ import (
 )
 
 func TestCreateCustomer(t *testing.T) {
-	customers = []Customer{}
+	customers.users = make([]User, 0)
 
 	testCases := []struct {
 		name string
@@ -50,14 +50,14 @@ func TestCreateCustomer(t *testing.T) {
 				assert.Error(t, err, "Test that expected error is thrown")
 			} else {
 				assert.NoError(t, err, "Test that no unexpected errors are thrown")
-				customers = append(customers, c.(Customer))
+				customers.Append(c)
 			}
 		})
 	}
 }
 
 func TestCreateWaiter(t *testing.T) {
-	waiters = []Waiter{}
+	waiters.users = make([]User, 0)
 
 	testCases := []struct {
 		name string
@@ -93,32 +93,32 @@ func TestCreateWaiter(t *testing.T) {
 				assert.Error(t, err, "Test that expected error is thrown")
 			} else {
 				assert.NoError(t, err, "Test that no unexpected errors are thrown")
-				waiters = append(waiters, w.(Waiter))
+				waiters.Append(w)
 			}
 		})
 	}
 }
 
 func TestRemoveCustomer(t *testing.T) {
-	customers = []Customer{{table: 1}, {table: 2}, {table: 3}}
-	c := customers[1]
+	customers.users = []User{Customer{table: 1}, Customer{table: 2}, Customer{table: 3}}
+	c := customers.users[1]
 	c.Remove()
-	assert.Equal(t, 2, len(customers), "Test that removing a customer really removes the customer")
+	assert.Equal(t, 2, len(customers.users), "Test that removing a customer really removes the customer")
 	c.Remove()
-	assert.Equal(t, 2, len(customers), "Test that removing a customer twice does nothing")
-	customers[0].Remove()
-	assert.Equal(t, 1, len(customers), "Test that removing another customer works correctly")
+	assert.Equal(t, 2, len(customers.users), "Test that removing a customer twice does nothing")
+	customers.users[0].Remove()
+	assert.Equal(t, 1, len(customers.users), "Test that removing another customer works correctly")
 }
 
 func TestRemoveWaiter(t *testing.T) {
-	waiters = []Waiter{{name: "Jacob"}, {name: "Josh"}, {name: "Dawood"}}
-	w := waiters[1]
+	waiters.users = []User{Waiter{name: "Jacob"}, Waiter{name: "Josh"}, Waiter{name: "Dawood"}}
+	w := waiters.users[1]
 	w.Remove()
-	assert.Equal(t, 2, len(waiters), "Test that removing a waiter really removes the customer")
+	assert.Equal(t, 2, len(waiters.users), "Test that removing a waiter really removes the customer")
 	w.Remove()
-	assert.Equal(t, 2, len(waiters), "Test that removing a waiter twice does nothing")
-	waiters[0].Remove()
-	assert.Equal(t, 1, len(waiters), "Test that removing another waiter works correctly")
+	assert.Equal(t, 2, len(waiters.users), "Test that removing a waiter twice does nothing")
+	waiters.users[0].Remove()
+	assert.Equal(t, 1, len(waiters.users), "Test that removing another waiter works correctly")
 }
 
 func TestOpenAndCloseWebsockets(t *testing.T) {
@@ -188,8 +188,8 @@ func TestOpenAndCloseWebsockets(t *testing.T) {
 }
 
 func TestCustomerCallWaiter(t *testing.T) {
-	customers = []Customer{}
-	waiters = []Waiter{}
+	customers.users = []User{}
+	waiters.users = []User{}
 
 	app := createTestServer()
 	defer app.Shutdown()

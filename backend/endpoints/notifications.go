@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"sync"
 
 	"github.com/gofiber/contrib/websocket"
 )
@@ -26,8 +27,20 @@ type Waiter struct {
 	name string
 }
 
-var waiters []Waiter
-var customers []Customer
+// Kitchen staff are anonymous
+type Kitchen struct {
+	ws *websocket.Conn
+}
+
+// Registry is a thread-safe slice type
+type Registry struct {
+	sync.Mutex
+	users []User
+}
+
+var waiters Registry
+var customers Registry
+var kitchens Registry
 
 // HandleConnection spawns a handler to manage one websocket connection to the server
 func HandleConnection(ws *websocket.Conn) {
@@ -38,12 +51,17 @@ func HandleConnection(ws *websocket.Conn) {
 	}
 	defer ws.Close()
 
+	// Sort the created connection into the correct registry
 	w, ok := u.(Waiter)
 	if ok {
-		waiters = append(waiters, w)
+		waiters.Append(w)
 	} else {
-		c, _ := u.(Customer)
-		customers = append(customers, c)
+		c, ok := u.(Customer)
+		if ok {
+			customers.Append(c)
+		} else {
+			kitchens.Append(u.(Kitchen))
+		}
 	}
 
 	// Enter a loop to handle further interaction
@@ -84,7 +102,10 @@ func HandleMessage(m string, u User) error {
 
 // BroadcastToWaiters sends m to all connected waiters
 func BroadcastToWaiters(m string) {
-	for _, w := range waiters {
+	waiters.Lock()
+	defer waiters.Unlock()
+	for _, w := range waiters.users {
+		w := w.(Waiter)
 		if w.ws != nil {
 			w.ws.WriteMessage(websocket.TextMessage, []byte(m))
 		}
@@ -135,7 +156,10 @@ func createCustomer(arg string, ws *websocket.Conn) (User, error) {
 	if err != nil {
 		return Customer{}, errors.New("Table number must be a number")
 	}
-	for _, c := range customers {
+	customers.Lock()
+	defer customers.Unlock()
+	for _, c := range customers.users {
+		c := c.(Customer)
 		if int(c.table) == int(n) {
 			return Customer{}, fmt.Errorf("Table number %d is already connected", n)
 		}
@@ -145,11 +169,14 @@ func createCustomer(arg string, ws *websocket.Conn) (User, error) {
 
 // Remove removes this customer from the server register
 func (c Customer) Remove() {
-	for i, cu := range customers {
+	customers.Lock()
+	defer customers.Unlock()
+	for i, cu := range customers.users {
+		cu := cu.(Customer)
 		if cu.table == c.table {
 			// Remove the customer
-			customers[i] = customers[len(customers)-1]
-			customers = customers[:len(customers)-1]
+			customers.users[i] = customers.users[len(customers.users)-1]
+			customers.users = customers.users[:len(customers.users)-1]
 		}
 	}
 }
@@ -159,8 +186,11 @@ func createWaiter(arg string, ws *websocket.Conn) (User, error) {
 	if len(arg) == 0 {
 		return Waiter{}, errors.New("Waiter name not provided")
 	}
-	for _, c := range waiters {
-		if c.name == arg {
+	waiters.Lock()
+	defer waiters.Unlock()
+	for _, w := range waiters.users {
+		w := w.(Waiter)
+		if w.name == arg {
 			return Waiter{}, errors.New("Waiter with that name is already connected")
 		}
 	}
@@ -169,11 +199,39 @@ func createWaiter(arg string, ws *websocket.Conn) (User, error) {
 
 // Remove removes a waiter from the server register
 func (w Waiter) Remove() {
-	for i, wa := range waiters {
+	waiters.Lock()
+	defer waiters.Unlock()
+	for i, wa := range waiters.users {
+		wa := wa.(Waiter)
 		if wa.name == w.name {
 			// Remove the waiter
-			waiters[i] = waiters[len(waiters)-1]
-			waiters = waiters[:len(waiters)-1]
+			waiters.users[i] = waiters.users[len(waiters.users)-1]
+			waiters.users = waiters.users[:len(waiters.users)-1]
 		}
 	}
+}
+
+// createKitchen creates a kitchen from the given websocket and returns it
+func createKitchen(ws *websocket.Conn) (User, error) {
+	return Kitchen{}, nil
+}
+
+// Remove removes a kitchen connection from the server register
+func (k Kitchen) Remove() {
+	kitchens.Lock()
+	defer kitchens.Unlock()
+	for i, ki := range kitchens.users {
+		ki := ki.(Kitchen)
+		if ki.ws == k.ws {
+			kitchens.users[i] = kitchens.users[len(kitchens.users)-1]
+			kitchens.users = kitchens.users[:len(kitchens.users)-1]
+		}
+	}
+}
+
+// Append appends to a thread-safe registry
+func (r *Registry) Append(u User) {
+	r.Lock()
+	defer r.Unlock()
+	r.users = append(r.users, u)
 }
