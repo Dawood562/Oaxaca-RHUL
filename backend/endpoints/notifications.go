@@ -132,21 +132,23 @@ func NewConnection(ws *websocket.Conn) (User, error) {
 // Returns true if the connection is a customer.
 func registerConnection(m string, ws *websocket.Conn) (User, error) {
 	segments := strings.Split(string(m), ":")
+	if len(segments) == 1 {
+		if segments[0] == "KITCHEN" {
+			return createKitchen(ws)
+		}
+	}
 	if len(segments) != 2 {
 		return nil, errors.New("Invalid payload format")
 	}
 
-	var ret User
-	var err error
 	switch segments[0] {
 	case "CUSTOMER":
-		ret, err = createCustomer(segments[1], ws)
+		return createCustomer(segments[1], ws)
 	case "WAITER":
-		ret, err = createWaiter(segments[1], ws)
+		return createWaiter(segments[1], ws)
 	default:
-		err = errors.New("Invalid identifier given")
+		return Customer{}, errors.New("Invalid identifier given")
 	}
-	return ret, err
 }
 
 // createCustomer creates a customer with the given websocket with the given table number.
@@ -177,6 +179,7 @@ func (c Customer) Remove() {
 			// Remove the customer
 			customers.users[i] = customers.users[len(customers.users)-1]
 			customers.users = customers.users[:len(customers.users)-1]
+			return
 		}
 	}
 }
@@ -207,6 +210,7 @@ func (w Waiter) Remove() {
 			// Remove the waiter
 			waiters.users[i] = waiters.users[len(waiters.users)-1]
 			waiters.users = waiters.users[:len(waiters.users)-1]
+			return
 		}
 	}
 }
@@ -223,8 +227,10 @@ func (k Kitchen) Remove() {
 	for i, ki := range kitchens.users {
 		ki := ki.(Kitchen)
 		if ki.ws == k.ws {
+			// Remove the kitchen staff
 			kitchens.users[i] = kitchens.users[len(kitchens.users)-1]
 			kitchens.users = kitchens.users[:len(kitchens.users)-1]
+			return
 		}
 	}
 }

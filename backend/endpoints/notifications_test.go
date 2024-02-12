@@ -121,6 +121,15 @@ func TestRemoveWaiter(t *testing.T) {
 	assert.Equal(t, 1, len(waiters.users), "Test that removing another waiter works correctly")
 }
 
+func TestRemoveKitchen(t *testing.T) {
+	kitchens.users = []User{Kitchen{}, Kitchen{}, Kitchen{}}
+	k := kitchens.users[1]
+	k.Remove()
+	assert.Equal(t, 2, len(kitchens.users), "Test that removing a kitchen really removes the customer")
+	kitchens.users[0].Remove()
+	assert.Equal(t, 1, len(kitchens.users), "Test that removing another kitchen works correctly")
+}
+
 func TestOpenAndCloseWebsockets(t *testing.T) {
 	app := createTestServer()
 	defer app.Shutdown()
@@ -149,6 +158,11 @@ func TestOpenAndCloseWebsockets(t *testing.T) {
 			name: "WaiterWithNoNameSeparator",
 			msg:  "WAITER",
 			resp: "ERROR",
+		},
+		{
+			name: "Kitchen",
+			msg:  "KITCHEN",
+			resp: "WELCOME",
 		},
 		{
 			name: "CustomerWithNoTableNumber",
