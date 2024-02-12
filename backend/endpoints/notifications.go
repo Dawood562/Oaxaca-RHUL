@@ -91,6 +91,9 @@ func HandleMessage(m string, u User) error {
 			r := fmt.Sprintf("HELP:%d", c.table)
 			BroadcastToWaiters(r)
 			return c.ws.WriteMessage(websocket.TextMessage, []byte("OK"))
+		} else if m == "NEW" {
+			BroadcastToWaiters("NEW")
+			return c.ws.WriteMessage(websocket.TextMessage, []byte("OK"))
 		}
 	} else {
 		_, ok = u.(Waiter)

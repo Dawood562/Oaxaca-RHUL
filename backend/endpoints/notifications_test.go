@@ -232,26 +232,7 @@ func TestCustomerCallWaiter(t *testing.T) {
 		},
 	}
 
-	// Initialise customer connections
-	csockets := []*gwebsocket.Conn{createTestWebsocket(t), createTestWebsocket(t)}
-	for i, c := range csockets {
-		defer c.Close()
-		err := c.WriteMessage(gwebsocket.TextMessage, []byte(fmt.Sprintf("CUSTOMER:%d", i+1)))
-		assert.NoError(t, err, "Test that sending initial message creates no errors")
-		_, m, err := c.ReadMessage()
-		assert.Equal(t, "WELCOME", string(m), "Test that server accepted connection and authentication")
-	}
-	// Initialize waiter connections
-	wsockets := []*gwebsocket.Conn{createTestWebsocket(t), createTestWebsocket(t)}
-	for i, w := range wsockets {
-		defer w.Close()
-		err := w.WriteMessage(gwebsocket.TextMessage, []byte(fmt.Sprintf("WAITER:%d", i+1)))
-		assert.NoError(t, err, "Test that sending initial message creates no errors")
-		_, m, err := w.ReadMessage()
-		assert.Equal(t, "WELCOME", string(m), "Test that server accepted connection and authentication")
-	}
-
-	testWebsocketBroadcast(t, csockets, wsockets, testCases)
+	testWebsocketBroadcast(t, createCustomerSockets(t, 2), createWaiterSockets(t, 2), testCases)
 }
 
 func TestKitchenCallWaiters(t *testing.T) {
@@ -285,26 +266,41 @@ func TestKitchenCallWaiters(t *testing.T) {
 		},
 	}
 
-	// Initialise customer connections
-	ksockets := []*gwebsocket.Conn{createTestWebsocket(t), createTestWebsocket(t)}
-	for _, k := range ksockets {
-		defer k.Close()
-		err := k.WriteMessage(gwebsocket.TextMessage, []byte(fmt.Sprintf("KITCHEN")))
-		assert.NoError(t, err, "Test that sending initial message creates no errors")
-		_, m, err := k.ReadMessage()
-		assert.Equal(t, "WELCOME", string(m), "Test that server accepted connection and authentication")
-	}
-	// Initialize waiter connections
-	wsockets := []*gwebsocket.Conn{createTestWebsocket(t), createTestWebsocket(t)}
-	for i, w := range wsockets {
-		defer w.Close()
-		err := w.WriteMessage(gwebsocket.TextMessage, []byte(fmt.Sprintf("WAITER:%d", i+1)))
-		assert.NoError(t, err, "Test that sending initial message creates no errors")
-		_, m, err := w.ReadMessage()
-		assert.Equal(t, "WELCOME", string(m), "Test that server accepted connection and authentication")
+	testWebsocketBroadcast(t, createKitchenSockets(t, 2), createWaiterSockets(t, 2), testCases)
+}
+
+func TestCustomerNewOrder(t *testing.T) {
+	customers.users = []User{}
+	waiters.users = []User{}
+
+	app := createTestServer()
+	defer app.Shutdown()
+
+	testCases := []BroadcastTestCase{
+		{
+			name:  "ValidNewOrder",
+			sid:   0,
+			smsg:  "NEW",
+			resp:  "OK",
+			rrecv: "NEW",
+		},
+		{
+			name:  "ValidNewOrderSecond",
+			sid:   1,
+			smsg:  "NEW",
+			resp:  "OK",
+			rrecv: "NEW",
+		},
+		{
+			name:  "InvalidMessage",
+			sid:   0,
+			smsg:  "TEST",
+			resp:  "ERROR",
+			rrecv: "",
+		},
 	}
 
-	testWebsocketBroadcast(t, ksockets, wsockets, testCases)
+	testWebsocketBroadcast(t, createCustomerSockets(t, 2), createWaiterSockets(t, 2), testCases)
 }
 
 type BroadcastTestCase struct {
@@ -317,6 +313,13 @@ type BroadcastTestCase struct {
 
 // testWebsocketBroadcast tests server response by sending a message to the server and checking the responses received by all clients
 func testWebsocketBroadcast(t *testing.T, senders []*gwebsocket.Conn, receivers []*gwebsocket.Conn, cases []BroadcastTestCase) {
+	for _, s := range senders {
+		defer s.Close()
+	}
+	for _, r := range receivers {
+		defer r.Close()
+	}
+
 	for _, test := range cases {
 		t.Run(test.name, func(t *testing.T) {
 			// Use specified client to send test message
@@ -336,6 +339,48 @@ func testWebsocketBroadcast(t *testing.T, senders []*gwebsocket.Conn, receivers 
 			}
 		})
 	}
+}
+
+// createCustomerSockets creates a slice of n customer sockets and initializes them
+func createCustomerSockets(t *testing.T, n int) []*gwebsocket.Conn {
+	csockets := []*gwebsocket.Conn{}
+	for i := 0; i < n; i++ {
+		c := createTestWebsocket(t)
+		csockets = append(csockets, c)
+		err := c.WriteMessage(gwebsocket.TextMessage, []byte(fmt.Sprintf("CUSTOMER:%d", i+1)))
+		assert.NoError(t, err, "Test that sending initial message creates no errors")
+		_, m, err := c.ReadMessage()
+		assert.Equal(t, "WELCOME", string(m), "Test that server accepted connection and authentication")
+	}
+	return csockets
+}
+
+// createWaiterSockets creates a slice of n waiter sockets and initializes them
+func createWaiterSockets(t *testing.T, n int) []*gwebsocket.Conn {
+	wsockets := []*gwebsocket.Conn{}
+	for i := 0; i < n; i++ {
+		w := createTestWebsocket(t)
+		wsockets = append(wsockets, w)
+		err := w.WriteMessage(gwebsocket.TextMessage, []byte(fmt.Sprintf("WAITER:%d", i+1)))
+		assert.NoError(t, err, "Test that sending initial message creates no errors")
+		_, m, err := w.ReadMessage()
+		assert.Equal(t, "WELCOME", string(m), "Test that server accepted connection and authentication")
+	}
+	return wsockets
+}
+
+// createKitchenSockets creates a slice of n kitchen sockets and initializes them
+func createKitchenSockets(t *testing.T, n int) []*gwebsocket.Conn {
+	ksockets := []*gwebsocket.Conn{}
+	for i := 0; i < n; i++ {
+		k := createTestWebsocket(t)
+		ksockets = append(ksockets, k)
+		err := k.WriteMessage(gwebsocket.TextMessage, []byte(fmt.Sprintf("KITCHEN")))
+		assert.NoError(t, err, "Test that sending initial message creates no errors")
+		_, m, err := k.ReadMessage()
+		assert.Equal(t, "WELCOME", string(m), "Test that server accepted connection and authentication")
+	}
+	return ksockets
 }
 
 // createTestWebsocket creates a test websocket connection and returns it
