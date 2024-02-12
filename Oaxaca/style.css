@@ -285,3 +285,7 @@ strong {
 .removeButton:hover {
    background-color: brown;
 }
+.itemQuantityInput{
+	 width: 60%;
+}
+

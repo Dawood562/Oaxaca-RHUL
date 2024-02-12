@@ -23,7 +23,10 @@ function initMenuAll() {
 // Function that takes in data and turns into menu item to be displayed
 function createMenuItem(index, itemName, price, calories) {
   let comp = "<div class='MenuItemDiv' id='item" + index + "'> <img class='MenuItemImg' src='image/foodimg.jpg'><br> <div class='MenuItemDetails'><label class='MenuItemName'>" + itemName + "</label><br><label class='MenuItemPrice'>£" + price.toFixed(2) + "</label><label class='MenuItemCalories'>" + calories + "kcal</label></div>";
-  comp += "<button onclick='addToBasket(" + index + ", \"" + itemName + "\", " + price + ", " + calories + ")'>Add to Basket</button></a></div>"; return comp;
+   comp += "<input type='number' id='itemQuantityInput" + index + "' min='1' value='1' class='itemQuantityInput'>";
+   comp += "<button id='addToBasketButton" + index + "' onclick='addToBasket(" + index + ", \"" + itemName + "\", " + price + ", " + calories + ")'>Add to Basket</button></a></div>";
+
+  return comp;
 }
 
 
@@ -223,16 +226,18 @@ async function requestMenu(userSearchTerm, userMaxPrice, userMaxCalories) {
 }
 function addToBasket(index, itemName, price, calories) {
   let order = JSON.parse(localStorage.getItem('order')) || [];
-  const existingItemIndex = order.findIndex(item => item.index === index);
-  if (existingItemIndex > -1) {
-   order[existingItemIndex].quantity++;
+  let existingItemIndex = order.findIndex(item => item.index === index);
+  let quantity = parseInt(document.getElementById('itemQuantityInput' + index).value);
+
+  if (existingItemIndex >=0) {
+   order[existingItemIndex].quantity+=quantity;
  } else {
-  const item = {
+  let item = {
     index: index,
     itemName: itemName,
     price: price,
     calories: calories,
-    quantity: 1
+    quantity: quantity
   };
   
   order.push(item);
@@ -244,15 +249,15 @@ function addToBasket(index, itemName, price, calories) {
 }
 
 function updateOrderDetails() {
-  const order = JSON.parse(localStorage.getItem('order'));
-  const orderDetailsDiv = document.getElementById('orderDetails');
-  const totalDiv = document.getElementById('totalPrice');
+  let order = JSON.parse(localStorage.getItem('order'));
+  let orderDetailsDiv = document.getElementById('orderDetails');
+  let totalDiv = document.getElementById('orderTotal');
   orderDetailsDiv.innerHTML = ''; 
   let orderTotal = 0;
   if (order && order.length > 0) {
     order.forEach(item => {
       orderTotal += item.price * item.quantity;
-      const li = document.createElement('li');
+      let li = document.createElement('li');
       li.innerHTML = `
                <h3>${item.itemName}</h3>
                <p> quantity: ${item.quantity}</p>
@@ -263,7 +268,7 @@ function updateOrderDetails() {
       orderDetailsDiv.appendChild(li);
     });
     totalDiv.textContent = `Total: £${orderTotal.toFixed(2)}`;
-    const removeButtons = document.querySelectorAll('.removeButton');
+    let removeButtons = document.querySelectorAll('.removeButton');
     removeButtons.forEach(button => {
       button.addEventListener('click', () => {
         removeFromOrder(button.parentElement.querySelector('h3').textContent);
@@ -280,7 +285,7 @@ function updateOrderDetails() {
 function removeFromOrder(itemName) {
   let order = JSON.parse(localStorage.getItem('order')) || [];
   const itemIndex = order.findIndex(item => item.itemName === itemName);
-  if (itemIndex >-1) {
+  if (itemIndex >=0) {
     order.splice(itemIndex, 1);
     localStorage.setItem('order', JSON.stringify(order));
     updateOrderDetails(); 
