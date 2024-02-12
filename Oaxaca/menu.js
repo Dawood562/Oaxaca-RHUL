@@ -130,11 +130,16 @@ async function submitMenuEdit(index){
 }
 
 // Functions to add and delete menu items
-function addMenuItem(){
+async function addMenuItem(){
     let nameValue = document.getElementById("newItemNameField").value;
     let priceValue = parseFloat(document.getElementById("newItemPriceField").value);
     let caloriesValue = parseInt(document.getElementById("newItemCaloriesField").value);
-    addItemToDB(nameValue, priceValue, caloriesValue);
+    let result = await addItemToDB(nameValue, priceValue, caloriesValue);
+
+    if(result >= 0){
+        document.getElementById("MenuItemGridLayout").innerHTML+= createMenuItem(currentMenu.length, nameValue, priceValue, caloriesValue);
+    }
+    
 }
 
 function deleteMenuItem(){
@@ -156,8 +161,10 @@ async function addItemToDB(name, _price, _calories){
                 calories: _calories
             }) 
         })
+        return 0
     }catch(error){
         console.error(error)
+        return -1
     }
 }
 
