@@ -278,6 +278,83 @@ func TestCustomerCallWaiter(t *testing.T) {
 	}
 }
 
+func TestKitchenCallWaiters(t *testing.T) {
+	kitchens.users = []User{}
+	waiters.users = []User{}
+
+	app := createTestServer()
+	defer app.Shutdown()
+
+	testCases := []struct {
+		name  string
+		kid   int    // Index of kitchen to send service call
+		kmsg  string // Message sent from kitchen to server
+		resp  string // Expected response from server
+		wrecv string // Expected message received by waiter socket
+	}{
+		{
+			name:  "ValidKitchenCall",
+			kid:   0,
+			kmsg:  "SERVICE",
+			resp:  "OK",
+			wrecv: "SERVICE",
+		},
+		{
+			name:  "ValidKitchenCallSecond",
+			kid:   1,
+			kmsg:  "SERVICE",
+			resp:  "OK",
+			wrecv: "SERVICE",
+		},
+		{
+			name:  "InvalidMessage",
+			kid:   0,
+			kmsg:  "TEST",
+			resp:  "ERROR",
+			wrecv: "",
+		},
+	}
+
+	// Initialise customer connections
+	ksockets := []*gwebsocket.Conn{createTestWebsocket(t), createTestWebsocket(t)}
+	for _, k := range ksockets {
+		defer k.Close()
+		err := k.WriteMessage(gwebsocket.TextMessage, []byte(fmt.Sprintf("KITCHEN")))
+		assert.NoError(t, err, "Test that sending initial message creates no errors")
+		_, m, err := k.ReadMessage()
+		assert.Equal(t, "WELCOME", string(m), "Test that server accepted connection and authentication")
+	}
+	// Initialize waiter connections
+	wsockets := []*gwebsocket.Conn{createTestWebsocket(t), createTestWebsocket(t)}
+	for i, w := range wsockets {
+		defer w.Close()
+		err := w.WriteMessage(gwebsocket.TextMessage, []byte(fmt.Sprintf("WAITER:%d", i+1)))
+		assert.NoError(t, err, "Test that sending initial message creates no errors")
+		_, m, err := w.ReadMessage()
+		assert.Equal(t, "WELCOME", string(m), "Test that server accepted connection and authentication")
+	}
+
+	for _, test := range testCases {
+		t.Run(test.name, func(t *testing.T) {
+			// Use specified client to send test message
+			err := ksockets[test.kid].WriteMessage(gwebsocket.TextMessage, []byte(test.kmsg))
+			assert.NoError(t, err, "Test that sending help message creates no errors")
+			// Read response from server
+			_, m, err := ksockets[test.kid].ReadMessage()
+			assert.NoError(t, err, "Test that receiving response from server creates no errors")
+			assert.Equal(t, test.resp, string(m), "Test that the server gave the expected response")
+			// Check what the waiters received
+			for i, w := range wsockets {
+				if len(test.wrecv) > 0 {
+					_, m, err = w.ReadMessage()
+					assert.NoError(t, err, "Test that reading from waiter socket creates no errors")
+					assert.Equal(t, test.wrecv, string(m), fmt.Sprintf("Test that waiter %d received the expected message", i))
+				}
+			}
+		})
+	}
+}
+
 // createTestWebsocket creates a test websocket connection and returns it
 func createTestWebsocket(t *testing.T) *gwebsocket.Conn {
 	retries := 3

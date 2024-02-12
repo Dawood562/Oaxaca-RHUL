@@ -60,7 +60,7 @@ func HandleConnection(ws *websocket.Conn) {
 		if ok {
 			customers.Append(c)
 		} else {
-			kitchens.Append(u.(Kitchen))
+			kitchens.Append(u)
 		}
 	}
 
@@ -93,8 +93,16 @@ func HandleMessage(m string, u User) error {
 			return c.ws.WriteMessage(websocket.TextMessage, []byte("OK"))
 		}
 	} else {
-		_, _ = u.(Waiter)
-		// Connection is a waiter
+		_, ok = u.(Waiter)
+		if ok {
+			// Connection is a waiter
+		} else {
+			// Connection is kitchen staff
+			if m == "SERVICE" {
+				BroadcastToWaiters("SERVICE")
+				return u.(Kitchen).ws.WriteMessage(websocket.TextMessage, []byte("OK"))
+			}
+		}
 	}
 
 	return errors.New("Invalid command")
@@ -217,7 +225,7 @@ func (w Waiter) Remove() {
 
 // createKitchen creates a kitchen from the given websocket and returns it
 func createKitchen(ws *websocket.Conn) (User, error) {
-	return Kitchen{}, nil
+	return Kitchen{ws: ws}, nil
 }
 
 // Remove removes a kitchen connection from the server register
