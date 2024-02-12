@@ -303,6 +303,40 @@ func TestCustomerNewOrder(t *testing.T) {
 	testWebsocketBroadcast(t, createCustomerSockets(t, 2), createWaiterSockets(t, 2), testCases)
 }
 
+func TestWaiterConfirmOrder(t *testing.T) {
+	customers.users = []User{}
+	waiters.users = []User{}
+
+	app := createTestServer()
+	defer app.Shutdown()
+
+	testCases := []BroadcastTestCase{
+		{
+			name:  "ValidConfirmOrder",
+			sid:   0,
+			smsg:  "CONFIRM",
+			resp:  "OK",
+			rrecv: "CONFIRM",
+		},
+		{
+			name:  "ValidConfirmOrderSecond",
+			sid:   1,
+			smsg:  "CONFIRM",
+			resp:  "OK",
+			rrecv: "CONFIRM",
+		},
+		{
+			name:  "InvalidMessage",
+			sid:   0,
+			smsg:  "TEST",
+			resp:  "ERROR",
+			rrecv: "",
+		},
+	}
+
+	testWebsocketBroadcast(t, createWaiterSockets(t, 2), createKitchenSockets(t, 2), testCases)
+}
+
 type BroadcastTestCase struct {
 	name  string
 	sid   int    // Index of sender socket to use

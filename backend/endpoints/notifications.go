@@ -96,9 +96,13 @@ func HandleMessage(m string, u User) error {
 			return c.ws.WriteMessage(websocket.TextMessage, []byte("OK"))
 		}
 	} else {
-		_, ok = u.(Waiter)
+		w, ok := u.(Waiter)
 		if ok {
 			// Connection is a waiter
+			if m == "CONFIRM" {
+				BroadcastToKitchen("CONFIRM")
+				return w.ws.WriteMessage(websocket.TextMessage, []byte("OK"))
+			}
 		} else {
 			// Connection is kitchen staff
 			if m == "SERVICE" {
@@ -119,6 +123,18 @@ func BroadcastToWaiters(m string) {
 		w := w.(Waiter)
 		if w.ws != nil {
 			w.ws.WriteMessage(websocket.TextMessage, []byte(m))
+		}
+	}
+}
+
+// BroadcastToKitchen sends m to all connected kitchen staff
+func BroadcastToKitchen(m string) {
+	kitchens.Lock()
+	defer kitchens.Unlock()
+	for _, k := range kitchens.users {
+		k := k.(Kitchen)
+		if k.ws != nil {
+			k.ws.WriteMessage(websocket.TextMessage, []byte(m))
 		}
 	}
 }
