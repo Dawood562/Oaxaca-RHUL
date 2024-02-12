@@ -102,6 +102,9 @@ func HandleMessage(m string, u User) error {
 			if m == "CONFIRM" {
 				BroadcastToKitchen("CONFIRM")
 				return w.ws.WriteMessage(websocket.TextMessage, []byte("OK"))
+			} else if m == "CANCEL" {
+				BroadcastToKitchen("CANCEL")
+				return w.ws.WriteMessage(websocket.TextMessage, []byte("OK"))
 			}
 		} else {
 			// Connection is kitchen staff
