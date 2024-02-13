@@ -144,7 +144,21 @@ async function addMenuItem(){
 
 function deleteMenuItem(){
     let nameValue = document.getElementById("deleteItemNameField").value;
-    removeItem(nameValue);
+    removeItem(nameValue).then(r => {
+        if (r >= 0){
+            // First childNodes holds each item on menu
+            // Second childNodes holds the details of the first childnodes menu item
+            // Third childNodes holds the actual details. index 0 is name
+            for (let i = 0; i < document.getElementById("MenuItemGridLayout").childNodes.length; i++){
+                if (document.getElementById("MenuItemGridLayout").childNodes[i].childNodes[4].childNodes[0].innerHTML == nameValue){
+                    let gridLayout = document.getElementById("MenuItemGridLayout");
+                    let itemToRemove = document.getElementById("MenuItemGridLayout").childNodes[0];
+                    gridLayout.removeChild(itemToRemove);
+                }
+            }
+        }
+    })
+    
 }
 
 // Add menu item
@@ -188,9 +202,10 @@ async function removeItem(name){
         }).toString(), {
             method: "DELETE"
         })
-
+        return 0
     }catch(error){
         console.error(error)
+        return -1
     }
 }
 
