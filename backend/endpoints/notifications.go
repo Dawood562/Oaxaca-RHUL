@@ -71,7 +71,7 @@ func HandleConnection(ws *websocket.Conn) {
 		if _, m, err = ws.ReadMessage(); err != nil {
 			break
 		}
-		err := HandleMessage(string(m), u)
+		err := HandleMessage(strings.TrimSpace(string(m)), u)
 		if err != nil {
 			// TODO: use helpful error message instead
 			ws.WriteMessage(websocket.TextMessage, []byte("ERROR"))
@@ -161,7 +161,7 @@ func NewConnection(ws *websocket.Conn) (User, error) {
 // A useful error message is returned if the information given is incomplete.
 // Returns true if the connection is a customer.
 func registerConnection(m string, ws *websocket.Conn) (User, error) {
-	segments := strings.Split(string(m), ":")
+	segments := strings.Split(strings.TrimSpace(string(m)), ":")
 	if len(segments) == 1 {
 		if segments[0] == "KITCHEN" {
 			return createKitchen(ws)
