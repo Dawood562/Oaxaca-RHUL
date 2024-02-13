@@ -80,7 +80,7 @@
 
             </div>
           </section>
-          <div id="basketIcon">🛒 0</div>
+          <div id="basketIcon" onclick="goToOrderPage()">🛒 0</div>
 
 
         </div>
@@ -97,6 +97,11 @@
   </div>
 
   <script>
+
+    function goToOrderPage() {
+      window.location.href = "order.html";
+    }
+
     document.addEventListener("DOMContentLoaded", function () {
       initializeMenu();
       initializeCategoryFilter();
