@@ -23,7 +23,10 @@ function initMenuAll() {
 // Function that takes in data and turns into menu item to be displayed
 function createMenuItem(index, itemName, price, calories) {
   let comp = "<div class='MenuItemDiv' id='item" + index + "'> <img class='MenuItemImg' src='image/foodimg.jpg'><br> <div class='MenuItemDetails'><label class='MenuItemName'>" + itemName + "</label><br><label class='MenuItemPrice'>£" + price.toFixed(2) + "</label><label class='MenuItemCalories'>" + calories + "kcal</label></div>";
-  comp += "<button onclick='addToBasket(" + index + ", \"" + itemName + "\", " + price + ", " + calories + ")'>Add to Basket</button></a></div>"; return comp;
+   comp += "<input type='number' id='itemQuantityInput" + index + "' min='1' value='1' class='itemQuantityInput'>";
+   comp += "<button id='addToBasketButton" + index + "' onclick='addToBasket(" + index + ", \"" + itemName + "\", " + price + ", " + calories + ")'>Add to Basket</button></a></div>";
+
+  return comp;
 }
 
 
@@ -223,48 +226,49 @@ async function requestMenu(userSearchTerm, userMaxPrice, userMaxCalories) {
 }
 function addToBasket(index, itemName, price, calories) {
   let order = JSON.parse(localStorage.getItem('order')) || [];
+  let existingItemIndex = order.findIndex(item => item.index === index);
+  let quantity = parseInt(document.getElementById('itemQuantityInput' + index).value);
 
-  const item = {
+  if (existingItemIndex >=0) {
+   order[existingItemIndex].quantity+=quantity;
+ } else {
+  let item = {
     index: index,
     itemName: itemName,
     price: price,
-    calories: calories
+    calories: calories,
+    quantity: quantity
   };
+  
   order.push(item);
+  }
   localStorage.setItem('order', JSON.stringify(order));
-  const orderDetailsDiv = document.getElementById('orderDetails');
-  const li = document.createElement('li');
-  li.innerHTML = `
-        <h3>${item.itemName}</h3>
-        <p>Price: £${item.price.toFixed(2)}</p>
-        <p>Calories: ${item.calories} kcal</p>
-    `;
-  orderDetailsDiv.appendChild(li);
+  updateOrderDetails();
 
 
 }
 
 function updateOrderDetails() {
-  const order = JSON.parse(localStorage.getItem('order'));
-  const orderDetailsDiv = document.getElementById('orderDetails');
-  const totalDiv = document.getElementById('totalPrice');
-  orderDetailsDiv.innerHTML = ''; // Clear existing content
-  let total = 0;
-
+  let order = JSON.parse(localStorage.getItem('order'));
+  let orderDetailsDiv = document.getElementById('orderDetails');
+  let totalDiv = document.getElementById('orderTotal');
+  orderDetailsDiv.innerHTML = ''; 
+  let orderTotal = 0;
   if (order && order.length > 0) {
     order.forEach(item => {
-      total += item.price;
-      const li = document.createElement('li');
+      orderTotal += item.price * item.quantity;
+      let li = document.createElement('li');
       li.innerHTML = `
                <h3>${item.itemName}</h3>
-               <p>Price: £${item.price.toFixed(2)}</p>
-               <p>Calories: ${item.calories} kcal</p>
+               <p> quantity: ${item.quantity}</p>
+               <p>Calories: ${item.calories * item.quantity} kcal</p>
+               <p>Price: £${(item.price * item.quantity).toFixed(2)}</p>
                <button class="removeButton">Remove</button>
            `;
       orderDetailsDiv.appendChild(li);
     });
-    totalDiv.textContent = `Total: £${total.toFixed(2)}`;
-    const removeButtons = document.querySelectorAll('.removeButton');
+    totalDiv.textContent = `Total: £${orderTotal.toFixed(2)}`;
+    let removeButtons = document.querySelectorAll('.removeButton');
     removeButtons.forEach(button => {
       button.addEventListener('click', () => {
         removeFromOrder(button.parentElement.querySelector('h3').textContent);
@@ -278,14 +282,13 @@ function updateOrderDetails() {
 
 
 
-
 function removeFromOrder(itemName) {
   let order = JSON.parse(localStorage.getItem('order')) || [];
   const itemIndex = order.findIndex(item => item.itemName === itemName);
-  if (itemIndex !== -1) {
+  if (itemIndex >=0) {
     order.splice(itemIndex, 1);
     localStorage.setItem('order', JSON.stringify(order));
-    updateOrderDetails(); // Update the order details displayed on the page
+    updateOrderDetails(); 
   }
 }
 document.addEventListener('DOMContentLoaded', function() {
