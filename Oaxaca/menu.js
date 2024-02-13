@@ -198,9 +198,9 @@ async function removeItem(name){
 async function requestMenu(userSearchTerm, userMaxPrice, userMaxCalories){
     try{
         let response = await fetch("http://localhost:4444/menu?" + new URLSearchParams({
-            ItemName: userSearchTerm,
-            Price: userMaxPrice,
-            Calories: userMaxCalories 
+            searchTerm: userSearchTerm,
+            maxPrice: userMaxPrice,
+            maxCalories: userMaxCalories 
         }).toString())
 
         if(!response.ok){
@@ -282,3 +282,23 @@ function updateOrderDetails(){
 document.addEventListener('DOMContentLoaded', function () {
     updateOrderDetails();
 });
+
+function filterItems(){
+    let searchTerm = document.getElementById('searchTerm').value;
+    let maxCalories = parseInt(document.getElementById('maxCalories').value) || 0;
+    let maxPrice = parseFloat(document.getElementById('maxPrice').value) || 0;
+
+    if (searchTerm.length <= 0){
+        searchTerm = 0;
+    }
+
+    let data = requestMenu(searchTerm, maxPrice, maxCalories);
+    data.then(r =>{
+        let index = 0;
+        document.getElementById("MenuItemGridLayout").innerHTML = "";
+        r.forEach(element => {
+            document.getElementById("MenuItemGridLayout").innerHTML+= createMenuItem(index, element.itemName, element.price, element.calories);
+            index++;
+        });
+    })
+}

@@ -121,6 +121,8 @@
 
 
     function applyFilter() {
+      filterItems();
+      return;
       const searchTerm = document.getElementById('searchTerm').value.toLowerCase();
       const maxCalories = parseInt(document.getElementById('maxCalories').value) || 0;
       const maxPrice = parseFloat(document.getElementById('maxPrice').value) || 0;
