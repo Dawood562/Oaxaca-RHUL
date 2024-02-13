@@ -23,8 +23,8 @@ function initMenuAll() {
 // Function that takes in data and turns into menu item to be displayed
 function createMenuItem(index, itemName, price, calories) {
   let comp = "<div class='MenuItemDiv' id='item" + index + "'> <img class='MenuItemImg' src='image/foodimg.jpg'><br> <div class='MenuItemDetails'><label class='MenuItemName'>" + itemName + "</label><br><label class='MenuItemPrice'>£" + price.toFixed(2) + "</label><label class='MenuItemCalories'>" + calories + "kcal</label></div>";
-   comp += "<input type='number' id='itemQuantityInput" + index + "' min='1' value='1' class='itemQuantityInput'>";
-   comp += "<button id='addToBasketButton" + index + "' onclick='addToBasket(" + index + ", \"" + itemName + "\", " + price + ", " + calories + ")'>Add to Basket</button></a></div>";
+  comp += "<input type='number' id='itemQuantityInput" + index + "' min='1' value='1' class='itemQuantityInput'>";
+  comp += "<button id='addToBasketButton" + index + "' onclick='addToBasket(" + index + ", \"" + itemName + "\", " + price + ", " + calories + ")'>Add to Basket</button></a></div>";
 
   return comp;
 }
@@ -229,30 +229,38 @@ function addToBasket(index, itemName, price, calories) {
   let existingItemIndex = order.findIndex(item => item.index === index);
   let quantity = parseInt(document.getElementById('itemQuantityInput' + index).value);
 
-  if (existingItemIndex >=0) {
-   order[existingItemIndex].quantity+=quantity;
- } else {
-  let item = {
-    index: index,
-    itemName: itemName,
-    price: price,
-    calories: calories,
-    quantity: quantity
-  };
-  
-  order.push(item);
+  if (existingItemIndex >= 0) {
+    order[existingItemIndex].quantity += quantity;
+  } else {
+    let item = {
+      index: index,
+      itemName: itemName,
+      price: price,
+      calories: calories,
+      quantity: quantity
+    };
+
+    order.push(item);
   }
   localStorage.setItem('order', JSON.stringify(order));
+  updateBasketIcon();
   updateOrderDetails();
 
 
 }
+function updateBasketIcon() {
+  let order = JSON.parse(localStorage.getItem('order')) || [];
+  let basketIcon = document.getElementById('basketIcon');
+  let totalQuantity = order.reduce((total, item) => total + item.quantity, 0);
+  basketIcon.textContent = `🛒 ${totalQuantity}`;
+}
+
 
 function updateOrderDetails() {
   let order = JSON.parse(localStorage.getItem('order'));
   let orderDetailsDiv = document.getElementById('orderDetails');
   let totalDiv = document.getElementById('orderTotal');
-  orderDetailsDiv.innerHTML = ''; 
+  orderDetailsDiv.innerHTML = '';
   let orderTotal = 0;
   if (order && order.length > 0) {
     order.forEach(item => {
@@ -285,13 +293,14 @@ function updateOrderDetails() {
 function removeFromOrder(itemName) {
   let order = JSON.parse(localStorage.getItem('order')) || [];
   const itemIndex = order.findIndex(item => item.itemName === itemName);
-  if (itemIndex >=0) {
+  if (itemIndex >= 0) {
     order.splice(itemIndex, 1);
     localStorage.setItem('order', JSON.stringify(order));
-    updateOrderDetails(); 
+    updateOrderDetails();
   }
 }
 document.addEventListener('DOMContentLoaded', function() {
   updateOrderDetails();
+  updateBasketIcon();
 });
 
