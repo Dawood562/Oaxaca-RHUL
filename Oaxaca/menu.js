@@ -265,6 +265,8 @@ function addToBasket(index, itemName, price, calories) {
     };
     order.push(item);
     localStorage.setItem('order', JSON.stringify(order));
+    updateBasketIcon();
+
     const orderDetailsDiv = document.getElementById('orderDetails');
     const li = document.createElement('li');
     li.innerHTML = `
@@ -315,6 +317,7 @@ function removeFromOrder(itemName) {
 
 document.addEventListener('DOMContentLoaded', function () {
     updateOrderDetails();
+    updateBasketIcon();
 });
 
 function filterItems(){
