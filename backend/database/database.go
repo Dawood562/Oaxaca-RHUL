@@ -131,16 +131,12 @@ func fetchDBAuth() (string, string, string) {
 }
 
 func AddOrder(item *models.Order) error {
-	feedback := db.Create(item)
+	// Do not re-create menu items when adding them to an OrderItem
+	feedback := db.Omit("Items.Item.*").Create(item)
 	return feedback.Error
 }
 
 func RemoveOrder(id uint) error {
-	err := removeAllOrderChildItems(id)
-	if err != nil {
-		return err
-	}
-
 	feedback := db.Delete(&models.Order{ID: id})
 	if feedback.Error != nil {
 		return feedback.Error
@@ -151,25 +147,10 @@ func RemoveOrder(id uint) error {
 	return nil
 }
 
-func removeAllOrderChildItems(id uint) error {
-	allOrderItems := fetchOrderItems()
-
-	for _, items := range allOrderItems {
-		if id == items.OrderID {
-			err := db.Delete(&models.OrderItem{OrderID: id})
-			if err.Error != nil || err.RowsAffected == 0 {
-				return errors.New("Did not remove child items?!?!?")
-			}
-		}
-	}
-	return nil
-}
-
-func FetchOrders(filter ...models.Order) ([]models.Order, error) {
+func FetchOrders(filter ...models.Order) ([]*models.Order, error) {
 	dbCopy := *db
 	dbLocal := &dbCopy
-	var orderData []models.Order
-	var orderItemData = fetchOrderItems()
+	var orderData []*models.Order
 
 	if len(filter) > 0 {
 
@@ -180,26 +161,7 @@ func FetchOrders(filter ...models.Order) ([]models.Order, error) {
 			dbLocal = dbLocal.Where("Status = ?", filter[0].Status)
 		}
 	}
-	dbLocal.Model(&orderData).Find(&orderData)
-
-	// Iterate through each order and append its order items into Items field
-	for i, oData := range orderData {
-		for _, oiData := range orderItemData {
-			if oData.ID == oiData.OrderID {
-				beforeSize := len(orderData[i].Items)
-				orderData[i].Items = append(orderData[i].Items, oiData)
-				if len(orderData[i].Items) <= beforeSize {
-					return nil, errors.New("OrderItem was not appended to the order successfully")
-				}
-			}
-		}
-	}
+	dbLocal.Model(&models.Order{}).Preload("Items").Preload("Items.Item").Find(&orderData)
 
 	return orderData, nil
-}
-
-func fetchOrderItems() []models.OrderItem {
-	var data []models.OrderItem
-	db.Model(&data).Find(&data)
-	return data
 }
