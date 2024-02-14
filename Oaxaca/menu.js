@@ -7,17 +7,16 @@ function initMenuAll() {
     editMenu()
   }
 
-  let data = requestMenu(0, 0, 0); // Zero value = none specified
-  data.then(r => {
-    console.log(r)
-    currentMenu = r
-    let index = 0;
-    document.getElementById("MenuItemGridLayout").innerHTML = ""
-    r.forEach(element => {
-      document.getElementById("MenuItemGridLayout").innerHTML += createMenuItem(index, element.itemName, element.price, element.calories);
-      index++;
-    });
-  })
+    let data = requestMenu(0,0,0); // Zero value = none specified
+    data.then(r => {
+        currentMenu = r
+        let index = 0;
+        document.getElementById("MenuItemGridLayout").innerHTML = ""
+        r.forEach(element => {
+            document.getElementById("MenuItemGridLayout").innerHTML+= createMenuItem(index, element.itemName, element.price, element.calories);
+            index++;
+        });
+    })
 }
 
 // Function that takes in data and turns into menu item to be displayed
@@ -33,14 +32,15 @@ function createMenuItem(index, itemName, price, calories) {
 // Toggle edit mode
 function editMenu() {
 
-  if (!editMode) {
-    document.getElementById("MenuEditSection").innerHTML += "<div id='newItemDiv'><h3>Add new menu item:</h3><p><label>Name:</label><input type='text' id='newItemNameField'>  <label>Price:</label><input type='text' id='newItemPriceField'>  <label>Calories:</label><input type='text' id='newItemCaloriesField'>    <button onclick='addMenuItem()'>+</button></p></div>";
-    document.getElementById("MenuEditSection").innerHTML += "<div id='removeItemDiv'><h3>Delete menu item:</h3><p><label>Enter the name of the item you want to delete from the menu:</label><input type='text' id='deleteItemNameField'> <button onclick='deleteMenuItem()'>-</button></p></div>";
-
-    // Add edit button to each menu item
-    for (let i = 0; i < currentMenu.length; i++) {
-      document.getElementById("item" + i).innerHTML += "<button index='" + i + "' id='itemEditButton' class='editMenuItem'>EDIT</button>"
-    }
+    if(!editMode){
+        document.getElementById("MenuEditSection").innerHTML += "<div id='newItemDiv'><h3>Add new menu item:</h3><p><label>Name:</label><input type='text' id='newItemNameField'>  <label>Price:</label><input type='text' id='newItemPriceField'>  <label>Calories:</label><input type='text' id='newItemCaloriesField'>    <button onclick='addMenuItem()'>+</button></p></div>";
+        document.getElementById("MenuEditSection").innerHTML += "<div id='removeItemDiv'><h3>Delete menu item:</h3><p><label>Enter the name of the item you want to delete from the menu:</label><input type='text' id='deleteItemNameField'> <button onclick='deleteMenuItem()'>-</button></p></div>";
+        
+        // Add edit button to each menu item
+        for(let i = 0; i < currentMenu.length; i++){
+            document.getElementById("item"+i).innerHTML += "<button index='"+i+"' id='itemEditButton' class='editMenuItem'>EDIT</button>"
+            let thing = document.getElementById("item"+i).childNodes[5].remove()
+        }
 
     // Retrieve all edit buttons into iterable
     const editButtons = document.querySelectorAll(".editMenuItem")
@@ -85,24 +85,32 @@ function EditMenuField(index) {
   itemToEdit[2].innerHTML = "<label class='editMenuItemPrompt'>New price:</label><input id='priceEditPrompt' class='editMenuItemPrompt' type='text'>";
   itemToEdit[3].innerHTML = "<label class='editMenuItemPrompt'>New calories:</label><input id='caloriesEditPrompt' class='editMenuItemPrompt' type='text'>";
 
-  document.getElementById("itemEditButton").remove();
-  document.getElementById("item" + index).innerHTML += "<button index='" + index + "' id='itemEditButton32' class='editMenuItem'>Submit</button>"
-  document.getElementById("itemEditButton32").addEventListener('click', function() {
-    submitMenuEdit(index);
-  })
+    document.getElementById("itemEditButton").remove();
+    document.getElementById("item"+index).innerHTML += "<button index='"+index+"' id='itemEditButton32' class='editMenuItem'>Submit</button>"
+    document.getElementById("itemEditButton32").addEventListener('click', function (){
+        submitMenuEdit(index);
+        let toRemove = document.getElementsByClassName("editMenuItemPrompt")
+        toRemove[0].innerHTML = "<label>Submitted!</label>"
+        for(let i=1; i<toRemove.length; i++){
+            toRemove[i].innerHTML = ""
+        }
+        document.getElementById("nameEditPrompt").remove()
+        document.getElementById("priceEditPrompt").remove()
+        document.getElementById("caloriesEditPrompt").remove()
+        document.getElementById("itemEditButton32").remove()
+
+    })
 
   // MUST REPLACE EDIT BUTTON TO BE CALLED SUBMIT AND MAKE IT CALL submitMenuEdit() FUNCTION
   // SHOULD THEN REPLACE ALL THE BOXES WITH A SIMPLE "SUCCESSFUL" LABEL TO INDICATE CHANGE
 }
 
 // Needs to take in index so that it can get id
-async function submitMenuEdit(index) {
-  let id = currentMenu[index].itemId;
-  let name = document.getElementById("nameEditPrompt").value;
-  let itemPrice = parseFloat(document.getElementById("priceEditPrompt").value);
-  let itemCalories = parseInt(document.getElementById("caloriesEditPrompt").value);
-  console.log(id + "," + name + "," + itemPrice + "," + itemCalories);
-  console.log(document.getElementById("nameEditPrompt"));
+async function submitMenuEdit(index){
+    let id = currentMenu[index].itemId;
+    let name = document.getElementById("nameEditPrompt").value;
+    let itemPrice = parseFloat(document.getElementById("priceEditPrompt").value);
+    let itemCalories = parseInt(document.getElementById("caloriesEditPrompt").value);
 
   try {
     let response = await fetch("http://localhost:4444/edit_item", {
@@ -124,35 +132,56 @@ async function submitMenuEdit(index) {
 }
 
 // Functions to add and delete menu items
-function addMenuItem() {
-  let nameValue = document.getElementById("newItemNameField").value;
-  let priceValue = parseFloat(document.getElementById("newItemPriceField").value);
-  let caloriesValue = parseInt(document.getElementById("newItemCaloriesField").value);
-  addItemToDB(nameValue, priceValue, caloriesValue);
+async function addMenuItem(){
+    let nameValue = document.getElementById("newItemNameField").value;
+    let priceValue = parseFloat(document.getElementById("newItemPriceField").value);
+    let caloriesValue = parseInt(document.getElementById("newItemCaloriesField").value);
+    let result = await addItemToDB(nameValue, priceValue, caloriesValue);
+
+    if(result >= 0){
+        document.getElementById("MenuItemGridLayout").innerHTML+= createMenuItem(currentMenu.length, nameValue, priceValue, caloriesValue);
+    }
+    
 }
 
-function deleteMenuItem() {
-  let nameValue = document.getElementById("deleteItemNameField").value;
-  removeItem(nameValue);
+function deleteMenuItem(){
+    let nameValue = document.getElementById("deleteItemNameField").value;
+    removeItem(nameValue).then(r => {
+        if (r >= 0){
+            // First childNodes holds each item on menu
+            // Second childNodes holds the details of the first childnodes menu item
+            // Third childNodes holds the actual details. index 0 is name
+            for (let i = 0; i < document.getElementById("MenuItemGridLayout").childNodes.length; i++){
+                if (document.getElementById("MenuItemGridLayout").childNodes[i].childNodes[4].childNodes[0].innerHTML == nameValue){
+                    let gridLayout = document.getElementById("MenuItemGridLayout");
+                    let itemToRemove = document.getElementById("MenuItemGridLayout").childNodes[0];
+                    gridLayout.removeChild(itemToRemove);
+                }
+            }
+        }
+    })
+    
 }
 
 // Add menu item
-async function addItemToDB(name, _price, _calories) {
-  try {
-    let response = await fetch("http://localhost:4444/add_item", {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        itemName: name,
-        price: _price,
-        calories: _calories
-      })
-    })
-  } catch (error) {
-    console.error(error)
-  }
+async function addItemToDB(name, _price, _calories){
+    try{
+        let response = await fetch("http://localhost:4444/add_item", {
+            method:'POST',
+            headers:{
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                itemName: name,
+                price: _price,
+                calories: _calories
+            }) 
+        })
+        return 0
+    }catch(error){
+        console.error(error)
+        return -1
+    }
 }
 
 // Takes in name and returns id if found
@@ -167,29 +196,29 @@ function getIdFromName(name) {
 }
 
 // Contacts backend to remove menu item
-async function removeItem(name) {
-  console.log(currentMenu)
-  nameId = String(getIdFromName(name))
-  try {
-    let response = await fetch("http://localhost:4444/remove_item?" + new URLSearchParams({
-      itemId: nameId
-    }).toString(), {
-      method: "DELETE"
-    })
-
-  } catch (error) {
-    console.error(error)
-  }
+async function removeItem(name){
+    nameId = String(getIdFromName(name))
+    try{
+        let response = await fetch("http://localhost:4444/remove_item?" + new URLSearchParams({
+            itemId: nameId
+        }).toString(), {
+            method: "DELETE"
+        })
+        return 0
+    }catch(error){
+        console.error(error)
+        return -1
+    }
 }
 
 // Fetches data from backend or throws error to console and provides example menu data
-async function requestMenu(userSearchTerm, userMaxPrice, userMaxCalories) {
-  try {
-    let response = await fetch("http://localhost:4444/menu?" + new URLSearchParams({
-      ItemName: userSearchTerm,
-      Price: userMaxPrice,
-      Calories: userMaxCalories
-    }).toString())
+async function requestMenu(userSearchTerm, userMaxPrice, userMaxCalories){
+    try{
+        let response = await fetch("http://localhost:4444/menu?" + new URLSearchParams({
+            searchTerm: userSearchTerm,
+            maxPrice: userMaxPrice,
+            maxCalories: userMaxCalories 
+        }).toString())
 
     if (!response.ok) {
       console.log("ERROR fetching menu")
@@ -224,30 +253,30 @@ async function requestMenu(userSearchTerm, userMaxPrice, userMaxCalories) {
       }])
   }
 }
+
 function addToBasket(index, itemName, price, calories) {
-  let order = JSON.parse(localStorage.getItem('order')) || [];
-  let existingItemIndex = order.findIndex(item => item.index === index);
-  let quantity = parseInt(document.getElementById('itemQuantityInput' + index).value);
+    let order = JSON.parse(localStorage.getItem('order')) || [];
 
-  if (existingItemIndex >= 0) {
-    order[existingItemIndex].quantity += quantity;
-  } else {
-    let item = {
-      index: index,
-      itemName: itemName,
-      price: price,
-      calories: calories,
-      quantity: quantity
+    const item = {
+        index: index,
+        itemName: itemName,
+        price: price,
+        calories: calories
     };
-
     order.push(item);
-  }
-  localStorage.setItem('order', JSON.stringify(order));
-  updateBasketIcon();
-  updateOrderDetails();
+    localStorage.setItem('order', JSON.stringify(order));
+    const orderDetailsDiv = document.getElementById('orderDetails');
+    const li = document.createElement('li');
+    li.innerHTML = `
+        <h3>${item.itemName}</h3>
+        <p>Price: £${item.price.toFixed(2)}</p>
+        <p>Calories: ${item.calories} kcal</p>
+    `;
+    orderDetailsDiv.appendChild(li);
 
 
 }
+
 function updateBasketIcon() {
   let order = JSON.parse(localStorage.getItem('order')) || [];
   let basketIcon = document.getElementById('basketIcon');
@@ -255,40 +284,24 @@ function updateBasketIcon() {
   basketIcon.textContent = `🛒 ${totalQuantity}`;
 }
 
+function updateOrderDetails(){
+    const order = JSON.parse(localStorage.getItem('order'));
+    const orderDetailsDiv = document.getElementById('orderDetails');
 
-function updateOrderDetails() {
-  let order = JSON.parse(localStorage.getItem('order'));
-  let orderDetailsDiv = document.getElementById('orderDetails');
-  let totalDiv = document.getElementById('orderTotal');
-  orderDetailsDiv.innerHTML = '';
-  let orderTotal = 0;
-  if (order && order.length > 0) {
-    order.forEach(item => {
-      orderTotal += item.price * item.quantity;
-      let li = document.createElement('li');
-      li.innerHTML = `
-               <h3>${item.itemName}</h3>
-               <p> quantity: ${item.quantity}</p>
-               <p>Calories: ${item.calories * item.quantity} kcal</p>
-               <p>Price: £${(item.price * item.quantity).toFixed(2)}</p>
-               <button class="removeButton">Remove</button>
-           `;
-      orderDetailsDiv.appendChild(li);
-    });
-    totalDiv.textContent = `Total: £${orderTotal.toFixed(2)}`;
-    let removeButtons = document.querySelectorAll('.removeButton');
-    removeButtons.forEach(button => {
-      button.addEventListener('click', () => {
-        removeFromOrder(button.parentElement.querySelector('h3').textContent);
-      });
-    });
-  } else {
-    orderDetailsDiv.innerHTML = `basket empty`;
-    totalDiv.textContent = '';
-  }
+    if (order && order.length > 0) {
+        order.forEach(item => {
+            const li = document.createElement('li');
+            li.innerHTML = `
+                <h3>${item.itemName}</h3>
+                <p>Price: £${item.price.toFixed(2)}</p>
+                <p>Calories: ${item.calories} kcal</p>
+            `;
+            orderDetailsDiv.appendChild(li);
+        });
+    } else {
+        orderDetailsDiv.innerHTML = `<p>No items selected.</p>`;
+    }
 }
-
-
 
 function removeFromOrder(itemName) {
   let order = JSON.parse(localStorage.getItem('order')) || [];
@@ -299,8 +312,27 @@ function removeFromOrder(itemName) {
     updateOrderDetails();
   }
 }
-document.addEventListener('DOMContentLoaded', function() {
-  updateOrderDetails();
-  updateBasketIcon();
+
+document.addEventListener('DOMContentLoaded', function () {
+    updateOrderDetails();
 });
 
+function filterItems(){
+    let searchTerm = document.getElementById('searchTerm').value;
+    let maxCalories = parseInt(document.getElementById('maxCalories').value) || 0;
+    let maxPrice = parseFloat(document.getElementById('maxPrice').value) || 0;
+
+    if (searchTerm.length <= 0){
+        searchTerm = 0;
+    }
+
+    let data = requestMenu(searchTerm, maxPrice, maxCalories);
+    data.then(r =>{
+        let index = 0;
+        document.getElementById("MenuItemGridLayout").innerHTML = "";
+        r.forEach(element => {
+            document.getElementById("MenuItemGridLayout").innerHTML+= createMenuItem(index, element.itemName, element.price, element.calories);
+            index++;
+        });
+    })
+}
