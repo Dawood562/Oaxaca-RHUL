@@ -240,7 +240,7 @@ strong {
 }
 #MenuItemGridLayout{
     display:grid;
-    grid-template-columns: auto auto auto;
+    grid-template-columns: 0.33fr 0.33fr 0.33fr;
     padding-left: 10%;
 }
 
@@ -272,4 +272,18 @@ strong {
 #KitchenPage{
     background-color: #EFA00B;
     height: 100vh;
+}
+
+#orderDetails{
+	text-align: left;
+    font-family:Georgia, 'Times New Roman', Times, serif;
+}
+#orderDetails li {
+	background-color: beige;
+    font-family: 'Courier New', Courier, monospace;
+    color:black;
+    font-size:10px;
+    border: 2px solid #591F0A;
+    margin-bottom: 10px; 
+    padding: 10px; 
 }
