@@ -19,10 +19,10 @@
         <ul>
           <li><a href="index.html">Home</a></li>
           <li><a href="menu.html">Menu</a></li>
+          <li><a href="order.html#">Order</a></li>
           <li><a href="#">Link</a></li>
           <li><a href="#">Link</a></li>
-          <li><a href="#">Link</a></li>
-        </ul>
+        </ul> 
       </nav>
     </div>
 
@@ -50,7 +50,7 @@
               <input type="number" id="maxPrice" placeholder="Enter max price">
             </div>
 
-            <button onclick="applyFilter()" class="filterButton">Apply Filter</button>
+            <button onclick="filterItems()" class="filterButton">Apply Filter</button>
             <button onclick="resetFilter()" class="filterButton">Reset Filter</button>
 
             <div class="filterOption" id="categoryFilter">
@@ -99,9 +99,10 @@
       initializeCategoryFilter();
       //initMenuAll()
     });
+    
 
-    function initializeMenu() {
-      const activeButton = document.querySelector('#menuFilter button.active');
+   function initializeMenu() {
+     const activeButton = document.querySelector('#menuFilter button.active');
 
       if (activeButton) {
         const category = activeButton.getAttribute('data-category');
@@ -113,24 +114,8 @@
         };
         filterMenu(filter, activeButton);
       } else {
-        applyFilter();
+        filterItems();
       }
-    }
-
-    function applyFilter() {
-      const searchTerm = document.getElementById('searchTerm').value.toLowerCase();
-      const maxCalories = parseInt(document.getElementById('maxCalories').value) || 0;
-      const maxPrice = parseFloat(document.getElementById('maxPrice').value) || 0;
-
-      const filter = {
-        searchTerm: searchTerm,
-        maxCalories: maxCalories,
-        maxPrice: maxPrice,
-        category: 'all'
-      };
-
-      filterMenu(filter, document.querySelector('#menuFilter button.filterButton'));
-      showFilterFeedback();
     }
 
     function resetFilter() {
@@ -138,7 +123,7 @@
       document.getElementById('maxCalories').value = '';
       document.getElementById('maxPrice').value = '';
 
-      applyFilter();
+      filterItems();
     }
 
     function filterMenu(filter, button) {
