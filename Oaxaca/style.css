@@ -249,7 +249,7 @@ strong {
 }
 #MenuItemGridLayout{
     display:grid;
-    grid-template-columns: auto auto auto;
+    grid-template-columns: 0.33fr 0.33fr 0.33fr;
     padding-left: 10%;
 }
 #orderDetails{
