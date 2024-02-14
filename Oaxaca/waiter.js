@@ -26,8 +26,12 @@ function handleMessages(e){
         console.log("Notification successfully received");
     }else if (e.data == "SERVICE"){
         // NOTIFICATION SENT BY KITCHEN STAFF TO WAITERS - DO STUFF HERE
-    }
-    else{
+    }else if (e.data.includes("HELP")){
+        // NOTIFICATION SENT BY CUSTOMER TO WAITERS - CUSTOMER IS AT TABLE 'tableNumber' - DO STUFF BELOW
+        let tableNumber = e.data.split(":")[1]
+    }else if(e.data == "NEW"){
+        // NOTIFICATION TO WAITER WHEN CUSTOMER HAS PLACED ORDER
+    }else{
         console.log(e); // Display entire message if something went wrong for debugging
     }
 }
