@@ -22,7 +22,7 @@
           <li><a href="order.html#">Order</a></li>
           <li><a href="#">Link</a></li>
           <li><a href="#">Link</a></li>
-        </ul> 
+        </ul>
       </nav>
     </div>
 
@@ -107,10 +107,10 @@
       initializeCategoryFilter();
       //initMenuAll()
     });
-    
 
-   function initializeMenu() {
-     const activeButton = document.querySelector('#menuFilter button.active');
+
+    function initializeMenu() {
+      const activeButton = document.querySelector('#menuFilter button.active');
 
       if (activeButton) {
         const category = activeButton.getAttribute('data-category');
@@ -124,6 +124,24 @@
       } else {
         filterItems();
       }
+    }
+
+
+
+    function filterItems() {
+      const searchTerm = document.getElementById('searchTerm').value.toLowerCase();
+      const maxCalories = parseInt(document.getElementById('maxCalories').value) || 0;
+      const maxPrice = parseFloat(document.getElementById('maxPrice').value) || 0;
+
+      const filter = {
+        searchTerm: searchTerm,
+        maxCalories: maxCalories,
+        maxPrice: maxPrice,
+        category: 'all'
+      };
+
+      filterMenu(filter, document.querySelector('#menuFilter button.filterButton'));
+      showFilterFeedback();
     }
 
     function resetFilter() {
