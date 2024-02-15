@@ -9,7 +9,10 @@ function initMenuAll(){
 
     let data = requestMenu(0,0,0); // Zero value = none specified
     data.then(r => {
+<<<<<<< HEAD
         console.log(r)
+=======
+>>>>>>> main
         currentMenu = r
         let index = 0;
         document.getElementById("MenuItemGridLayout").innerHTML = ""
@@ -21,11 +24,21 @@ function initMenuAll(){
 }
 
 // Function that takes in data and turns into menu item to be displayed
+<<<<<<< HEAD
 function createMenuItem(index, itemName, price, calories){
     let comp = "<div class='MenuItemDiv' id='item"+index+"'> <img class='MenuItemImg' src='image/foodimg.jpg'><br> <div class='MenuItemDetails'><label class='MenuItemName'>"+itemName+"</label><br><label class='MenuItemPrice'>£"+price.toFixed(2)+"</label><label class='MenuItemCalories'>"+calories+"kcal</label></div></div>";
     return comp;
 }
 
+=======
+function createMenuItem(index, itemName, price, calories) {
+    let comp = "<div class='MenuItemDiv' id='item" + index + "'> <img class='MenuItemImg' src='image/foodimg.jpg'><br> <div class='MenuItemDetails'><label class='MenuItemName'>" + itemName + "</label><br><label class='MenuItemPrice'>£" + price.toFixed(2) + "</label><label class='MenuItemCalories'>" + calories + "kcal</label></div>";
+    comp += "<button class='addBasketButton' onclick='addToBasket(" + index + ", \"" + itemName + "\", " + price + ", " + calories + ")'>Add to Basket</button></a></div>";
+    return comp;
+}
+
+
+>>>>>>> main
 // Toggle edit mode
 function editMenu(){
 
@@ -36,6 +49,10 @@ function editMenu(){
         // Add edit button to each menu item
         for(let i = 0; i < currentMenu.length; i++){
             document.getElementById("item"+i).innerHTML += "<button index='"+i+"' id='itemEditButton' class='editMenuItem'>EDIT</button>"
+<<<<<<< HEAD
+=======
+            let thing = document.getElementById("item"+i).childNodes[5].remove()
+>>>>>>> main
         }
 
         // Retrieve all edit buttons into iterable
@@ -85,6 +102,19 @@ function EditMenuField(index){
     document.getElementById("item"+index).innerHTML += "<button index='"+index+"' id='itemEditButton32' class='editMenuItem'>Submit</button>"
     document.getElementById("itemEditButton32").addEventListener('click', function (){
         submitMenuEdit(index);
+<<<<<<< HEAD
+=======
+        let toRemove = document.getElementsByClassName("editMenuItemPrompt")
+        toRemove[0].innerHTML = "<label>Submitted!</label>"
+        for(let i=1; i<toRemove.length; i++){
+            toRemove[i].innerHTML = ""
+        }
+        document.getElementById("nameEditPrompt").remove()
+        document.getElementById("priceEditPrompt").remove()
+        document.getElementById("caloriesEditPrompt").remove()
+        document.getElementById("itemEditButton32").remove()
+
+>>>>>>> main
     })
 
     // MUST REPLACE EDIT BUTTON TO BE CALLED SUBMIT AND MAKE IT CALL submitMenuEdit() FUNCTION
@@ -97,8 +127,11 @@ async function submitMenuEdit(index){
     let name = document.getElementById("nameEditPrompt").value;
     let itemPrice = parseFloat(document.getElementById("priceEditPrompt").value);
     let itemCalories = parseInt(document.getElementById("caloriesEditPrompt").value);
+<<<<<<< HEAD
     console.log(id+","+name+","+itemPrice+","+itemCalories);
     console.log(document.getElementById("nameEditPrompt"));
+=======
+>>>>>>> main
 
     try{
         let response = await fetch("http://localhost:4444/edit_item", {
@@ -120,16 +153,47 @@ async function submitMenuEdit(index){
 }
 
 // Functions to add and delete menu items
+<<<<<<< HEAD
 function addMenuItem(){
     let nameValue = document.getElementById("newItemNameField").value;
     let priceValue = parseFloat(document.getElementById("newItemPriceField").value);
     let caloriesValue = parseInt(document.getElementById("newItemCaloriesField").value);
     addItemToDB(nameValue, priceValue, caloriesValue);
+=======
+async function addMenuItem(){
+    let nameValue = document.getElementById("newItemNameField").value;
+    let priceValue = parseFloat(document.getElementById("newItemPriceField").value);
+    let caloriesValue = parseInt(document.getElementById("newItemCaloriesField").value);
+    let result = await addItemToDB(nameValue, priceValue, caloriesValue);
+
+    if(result >= 0){
+        document.getElementById("MenuItemGridLayout").innerHTML+= createMenuItem(currentMenu.length, nameValue, priceValue, caloriesValue);
+    }
+    
+>>>>>>> main
 }
 
 function deleteMenuItem(){
     let nameValue = document.getElementById("deleteItemNameField").value;
+<<<<<<< HEAD
     removeItem(nameValue);
+=======
+    removeItem(nameValue).then(r => {
+        if (r >= 0){
+            // First childNodes holds each item on menu
+            // Second childNodes holds the details of the first childnodes menu item
+            // Third childNodes holds the actual details. index 0 is name
+            for (let i = 0; i < document.getElementById("MenuItemGridLayout").childNodes.length; i++){
+                if (document.getElementById("MenuItemGridLayout").childNodes[i].childNodes[4].childNodes[0].innerHTML == nameValue){
+                    let gridLayout = document.getElementById("MenuItemGridLayout");
+                    let itemToRemove = document.getElementById("MenuItemGridLayout").childNodes[0];
+                    gridLayout.removeChild(itemToRemove);
+                }
+            }
+        }
+    })
+    
+>>>>>>> main
 }
 
 // Add menu item
@@ -146,8 +210,15 @@ async function addItemToDB(name, _price, _calories){
                 calories: _calories
             }) 
         })
+<<<<<<< HEAD
     }catch(error){
         console.error(error)
+=======
+        return 0
+    }catch(error){
+        console.error(error)
+        return -1
+>>>>>>> main
     }
 }
 
@@ -164,7 +235,10 @@ function getIdFromName(name){
 
 // Contacts backend to remove menu item
 async function removeItem(name){
+<<<<<<< HEAD
     console.log(currentMenu)
+=======
+>>>>>>> main
     nameId = String(getIdFromName(name))
     try{
         let response = await fetch("http://localhost:4444/remove_item?" + new URLSearchParams({
@@ -172,9 +246,16 @@ async function removeItem(name){
         }).toString(), {
             method: "DELETE"
         })
+<<<<<<< HEAD
 
     }catch(error){
         console.error(error)
+=======
+        return 0
+    }catch(error){
+        console.error(error)
+        return -1
+>>>>>>> main
     }
 }
 
@@ -182,9 +263,15 @@ async function removeItem(name){
 async function requestMenu(userSearchTerm, userMaxPrice, userMaxCalories){
     try{
         let response = await fetch("http://localhost:4444/menu?" + new URLSearchParams({
+<<<<<<< HEAD
             ItemName: userSearchTerm,
             Price: userMaxPrice,
             Calories: userMaxCalories 
+=======
+            searchTerm: userSearchTerm,
+            maxPrice: userMaxPrice,
+            maxCalories: userMaxCalories 
+>>>>>>> main
         }).toString())
 
         if(!response.ok){
@@ -220,3 +307,72 @@ async function requestMenu(userSearchTerm, userMaxPrice, userMaxCalories){
         }])
     }
 }
+<<<<<<< HEAD
+=======
+
+function addToBasket(index, itemName, price, calories) {
+    let order = JSON.parse(localStorage.getItem('order')) || [];
+
+    const item = {
+        index: index,
+        itemName: itemName,
+        price: price,
+        calories: calories
+    };
+    order.push(item);
+    localStorage.setItem('order', JSON.stringify(order));
+    const orderDetailsDiv = document.getElementById('orderDetails');
+    const li = document.createElement('li');
+    li.innerHTML = `
+        <h3>${item.itemName}</h3>
+        <p>Price: £${item.price.toFixed(2)}</p>
+        <p>Calories: ${item.calories} kcal</p>
+    `;
+    orderDetailsDiv.appendChild(li);
+
+
+}
+
+function updateOrderDetails(){
+    const order = JSON.parse(localStorage.getItem('order'));
+    const orderDetailsDiv = document.getElementById('orderDetails');
+
+    if (order && order.length > 0) {
+        order.forEach(item => {
+            const li = document.createElement('li');
+            li.innerHTML = `
+                <h3>${item.itemName}</h3>
+                <p>Price: £${item.price.toFixed(2)}</p>
+                <p>Calories: ${item.calories} kcal</p>
+            `;
+            orderDetailsDiv.appendChild(li);
+        });
+    } else {
+        orderDetailsDiv.innerHTML = `<p>No items selected.</p>`;
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    updateOrderDetails();
+});
+
+function filterItems(){
+    let searchTerm = document.getElementById('searchTerm').value;
+    let maxCalories = parseInt(document.getElementById('maxCalories').value) || 0;
+    let maxPrice = parseFloat(document.getElementById('maxPrice').value) || 0;
+
+    if (searchTerm.length <= 0){
+        searchTerm = 0;
+    }
+
+    let data = requestMenu(searchTerm, maxPrice, maxCalories);
+    data.then(r =>{
+        let index = 0;
+        document.getElementById("MenuItemGridLayout").innerHTML = "";
+        r.forEach(element => {
+            document.getElementById("MenuItemGridLayout").innerHTML+= createMenuItem(index, element.itemName, element.price, element.calories);
+            index++;
+        });
+    })
+}
+>>>>>>> main
