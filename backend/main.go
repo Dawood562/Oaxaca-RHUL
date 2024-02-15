@@ -29,6 +29,10 @@ func main() {
 	app.Delete("/remove_item", endpoints.RemoveItem)
 	app.Put("/edit_item", endpoints.EditItem)
 
+	app.Post("/add_order", endpoints.AddOrder)
+	app.Delete("/remove_order", endpoints.RemoveOrder)
+	app.Get("/orders", endpoints.GetOrders)
+
 	// Register websocket endpoint
 	app.Get("/notifications", websocket.New(func(c *websocket.Conn) {
 		endpoints.HandleConnection(c)
