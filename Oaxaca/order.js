@@ -41,3 +41,55 @@ function notifyNew(){
     sock.send("NEW")
 }
 
+   function showConfirmationSection() {
+  document.getElementById('confirmationSection').style.display = 'block';
+}
+
+
+function submitOrder() {
+     alert('you have submitted sucessfully');
+} 
+// havent tested yet
+/* let order = JSON.parse(localStorage.getItem('order')) || [];
+
+  if (order.length === 0) {
+    alert('Your basket is empty. Add items before submitting your order.');
+    return;
+  }
+
+ let orderType = document.getElementById('orderType').value;
+ let tableNumber = document.getElementById('tableNumber').value;
+
+ let orderData = {
+   orderType: orderType,
+  tableNumber: tableNumber,
+    orderDetails: order,
+  };
+
+ //  Checking if the WebSocket connection is established
+ if (sock.readyState !== WebSocket.OPEN) {
+   alert('Error: WebSocket connection not established. Please refresh the page and try again.');
+   return;
+ }
+
+  fetch('http://localhost:4444/add_order', {
+   method: 'POST',
+    headers: {
+     'Content-Type': 'application/json',
+   },
+   body: JSON.stringify(orderData),
+  })
+    .then(response => response.json())
+    .then(data => {
+     console.log('Order submitted successfully:', data);
+
+     localStorage.removeItem('order'); // Clears the basket after a successful order
+      updateOrderDetails();
+      updateBasketIcon();
+      notifyNew(); // Notify backend about the new order
+    })
+    .catch(error => {
+      console.error('Error submitting order:', error);
+    });
+}
+*/
