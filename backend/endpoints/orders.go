@@ -1,31 +1,33 @@
 package endpoints
 
 import (
-	"fmt"
+	"strconv"
+	"teamproject/database"
 	"teamproject/database/models"
-	"time"
 
 	"github.com/gofiber/fiber/v2"
 )
 
 func GetOrders(c *fiber.Ctx) error {
+	tableNumRaw := c.Query("tableNumber")
+	status := c.Query("Status")
 
-	exampleItems := []models.MenuItem{models.MenuItem{ID: 1, Name: "Tequila", Description: "the good stuff", Price: 22.99, Calories: 753},
-		models.MenuItem{ID: 2, Name: "Vodka", Description: "the wake up in a bush stuff", Price: 16.99, Calories: 713}}
+	tableNum := uint(0)
 
-	exampleOrderItems := []models.OrderItem{models.OrderItem{OrderID: 1, Item: exampleItems[0], Notes: "Good order"},
-		models.OrderItem{OrderID: 2, Item: exampleItems[1], Notes: "Questionable order"}}
-
-	exampleOrder := models.Order{
-		ID:          1,
-		Time:        time.Now(),
-		TableNumber: 13,
-		Bill:        6.99,
-		Status:      "Ready",
-		Items:       exampleOrderItems,
+	if len(tableNumRaw) > 0 {
+		temp, err := strconv.ParseUint(tableNumRaw, 10, 32)
+		if err != nil {
+			c.SendString(err.Error())
+		}
+		tableNum = uint(temp)
 	}
 
-	fmt.Println(exampleOrder)
+	filter := models.Order{TableNumber: tableNum, Status: status}
 
-	return c.JSON(exampleOrder)
+	data, err := database.FetchOrders(filter)
+	if err != nil {
+		return c.SendString(err.Error())
+	}
+
+	return c.JSON(data)
 }
