@@ -120,20 +120,28 @@ footer {
 
 h1,
 h3 {
-    color: #591F0A;
-}
-
+    color: #591F0A; }
 h1 {
     font-family: Mexican Tequila;
-    font-size: 100px;
-    text-align: center;
-}
-h2{
+    font-size: 70px; }
+h2 {
 	font-family: Mexican Tequila;
-    font-size: 60px;
+    font-size: 40px; }
+
+td {
     text-align: center;
-    
+    background-color: white;
+    border-width: 2px;
+    border-style: solid;
+    border-color: initial;
+    border-image: initial;
+    box-sizing: border-box;
+    display: table-cell;
+    vertical-align: inherit;
     }
+
+
+
 strong {
     color: #591F0A;
 }

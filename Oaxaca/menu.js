@@ -298,6 +298,23 @@ document.addEventListener('DOMContentLoaded', function () {
     updateOrderDetails();
 });
 
+//Display the orders with time and bill
+function displayOrders(orders) {
+    const ordersContainer = document.getElementById('Orders');
+
+    orders.forEach(order => {
+        const orderElement = document.createElement('div');
+        orderElement.className = 'order';
+        const orderTime = new Date(order.orderTime).toString();
+        orderElement.innerHTML = `
+            <h3>Order #${order.ID} - Table #${order.TableNumber}</h3>
+            <p>Order Time: ${order.Time}</p>
+            <p>Bill: $${order.bill}</p>
+        `;
+        ordersContainer.appendChild(orderElement);
+    });
+}
+
 function filterItems(){
     let searchTerm = document.getElementById('searchTerm').value;
     let maxCalories = parseInt(document.getElementById('maxCalories').value) || 0;
