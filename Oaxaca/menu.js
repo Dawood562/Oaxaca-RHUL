@@ -9,10 +9,7 @@ function initMenuAll(){
 
     let data = requestMenu(0,0,0); // Zero value = none specified
     data.then(r => {
-<<<<<<< HEAD
         console.log(r)
-=======
->>>>>>> main
         currentMenu = r
         let index = 0;
         document.getElementById("MenuItemGridLayout").innerHTML = ""
@@ -24,21 +21,11 @@ function initMenuAll(){
 }
 
 // Function that takes in data and turns into menu item to be displayed
-<<<<<<< HEAD
 function createMenuItem(index, itemName, price, calories){
     let comp = "<div class='MenuItemDiv' id='item"+index+"'> <img class='MenuItemImg' src='image/foodimg.jpg'><br> <div class='MenuItemDetails'><label class='MenuItemName'>"+itemName+"</label><br><label class='MenuItemPrice'>£"+price.toFixed(2)+"</label><label class='MenuItemCalories'>"+calories+"kcal</label></div></div>";
     return comp;
 }
 
-=======
-function createMenuItem(index, itemName, price, calories) {
-    let comp = "<div class='MenuItemDiv' id='item" + index + "'> <img class='MenuItemImg' src='image/foodimg.jpg'><br> <div class='MenuItemDetails'><label class='MenuItemName'>" + itemName + "</label><br><label class='MenuItemPrice'>£" + price.toFixed(2) + "</label><label class='MenuItemCalories'>" + calories + "kcal</label></div>";
-    comp += "<button class='addBasketButton' onclick='addToBasket(" + index + ", \"" + itemName + "\", " + price + ", " + calories + ")'>Add to Basket</button></a></div>";
-    return comp;
-}
-
-
->>>>>>> main
 // Toggle edit mode
 function editMenu(){
 
@@ -49,10 +36,6 @@ function editMenu(){
         // Add edit button to each menu item
         for(let i = 0; i < currentMenu.length; i++){
             document.getElementById("item"+i).innerHTML += "<button index='"+i+"' id='itemEditButton' class='editMenuItem'>EDIT</button>"
-<<<<<<< HEAD
-=======
-            let thing = document.getElementById("item"+i).childNodes[5].remove()
->>>>>>> main
         }
 
         // Retrieve all edit buttons into iterable
