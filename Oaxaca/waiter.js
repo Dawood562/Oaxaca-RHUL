@@ -40,10 +40,19 @@ function handleMessages(e){
 }
 
 async function refreshOrders(){
+    let table = document.getElementById("order_table");
+    table.innerHTML = `<caption>Customer Orders</caption>
+                        <tr>
+                            <th>Table</th>
+                            <th>Items</th>
+                            <th>Status</th>
+                            <th></th>
+                            <th></th>
+                        </tr>`;
     let response = await fetch("http://localhost:4444/orders")
     let data = await response.json()
     for(var order of data) {
-        document.getElementById("order_table").innerHTML += createOrder(order)
+        table.innerHTML += createOrder(order)
     }
 }
 
