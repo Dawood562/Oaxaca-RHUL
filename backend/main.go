@@ -4,6 +4,7 @@ import (
 	"teamproject/endpoints"
 
 	"github.com/gofiber/contrib/swagger"
+	"github.com/gofiber/contrib/websocket"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
@@ -27,6 +28,11 @@ func main() {
 	app.Post("/add_item", endpoints.AddItem)
 	app.Delete("/remove_item", endpoints.RemoveItem)
 	app.Put("/edit_item", endpoints.EditItem)
+
+	// Register websocket endpoint
+	app.Get("/notifications", websocket.New(func(c *websocket.Conn) {
+		endpoints.HandleConnection(c)
+	}))
 
 	// Start server
 	app.Listen(":4444")

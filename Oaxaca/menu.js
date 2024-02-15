@@ -23,8 +23,8 @@ function initMenuAll() {
 // Function that takes in data and turns into menu item to be displayed
 function createMenuItem(index, itemName, price, calories) {
   let comp = "<div class='MenuItemDiv' id='item" + index + "'> <img class='MenuItemImg' src='image/foodimg.jpg'><br> <div class='MenuItemDetails'><label class='MenuItemName'>" + itemName + "</label><br><label class='MenuItemPrice'>£" + price.toFixed(2) + "</label><label class='MenuItemCalories'>" + calories + "kcal</label></div>";
-   comp += "<input type='number' id='itemQuantityInput" + index + "' min='1' value='1' class='itemQuantityInput'>";
-   comp += "<button id='addToBasketButton" + index + "' onclick='addToBasket(" + index + ", \"" + itemName + "\", " + price + ", " + calories + ")'>Add to Basket</button></a></div>";
+  comp += "<input type='number' id='itemQuantityInput" + index + "' min='1' value='1' class='itemQuantityInput'>";
+  comp += "<button id='addToBasketButton" + index + "' onclick='addToBasket(" + index + ", \"" + itemName + "\", " + price + ", " + calories + ")'>Add to Basket</button></a></div>";
 
   return comp;
 }
@@ -40,6 +40,7 @@ function editMenu() {
     // Add edit button to each menu item
     for (let i = 0; i < currentMenu.length; i++) {
       document.getElementById("item" + i).innerHTML += "<button index='" + i + "' id='itemEditButton' class='editMenuItem'>EDIT</button>"
+      let thing = document.getElementById("item"+i).childNodes[5].remove()
     }
 
     // Retrieve all edit buttons into iterable
@@ -89,7 +90,18 @@ function EditMenuField(index) {
   document.getElementById("item" + index).innerHTML += "<button index='" + index + "' id='itemEditButton32' class='editMenuItem'>Submit</button>"
   document.getElementById("itemEditButton32").addEventListener('click', function() {
     submitMenuEdit(index);
-  })
+      let toRemove = document.getElementsByClassName("editMenuItemPrompt")
+        toRemove[0].innerHTML = "<label>Submitted!</label>"
+        for(let i=1; i<toRemove.length; i++){
+            toRemove[i].innerHTML = ""
+        }
+        document.getElementById("nameEditPrompt").remove()
+        document.getElementById("priceEditPrompt").remove()
+        document.getElementById("caloriesEditPrompt").remove()
+        document.getElementById("itemEditButton32").remove()
+
+    })
+
 
   // MUST REPLACE EDIT BUTTON TO BE CALLED SUBMIT AND MAKE IT CALL submitMenuEdit() FUNCTION
   // SHOULD THEN REPLACE ALL THE BOXES WITH A SIMPLE "SUCCESSFUL" LABEL TO INDICATE CHANGE
@@ -124,16 +136,35 @@ async function submitMenuEdit(index) {
 }
 
 // Functions to add and delete menu items
-function addMenuItem() {
-  let nameValue = document.getElementById("newItemNameField").value;
-  let priceValue = parseFloat(document.getElementById("newItemPriceField").value);
-  let caloriesValue = parseInt(document.getElementById("newItemCaloriesField").value);
-  addItemToDB(nameValue, priceValue, caloriesValue);
+async function addMenuItem(){
+    let nameValue = document.getElementById("newItemNameField").value;
+    let priceValue = parseFloat(document.getElementById("newItemPriceField").value);
+    let caloriesValue = parseInt(document.getElementById("newItemCaloriesField").value);
+    let result = await addItemToDB(nameValue, priceValue, caloriesValue);
+
+    if(result >= 0){
+        document.getElementById("MenuItemGridLayout").innerHTML+= createMenuItem(currentMenu.length, nameValue, priceValue, caloriesValue);
+    }
+    
 }
 
-function deleteMenuItem() {
-  let nameValue = document.getElementById("deleteItemNameField").value;
-  removeItem(nameValue);
+function deleteMenuItem(){
+    let nameValue = document.getElementById("deleteItemNameField").value;
+    removeItem(nameValue).then(r => {
+        if (r >= 0){
+            // First childNodes holds each item on menu
+            // Second childNodes holds the details of the first childnodes menu item
+            // Third childNodes holds the actual details. index 0 is name
+            for (let i = 0; i < document.getElementById("MenuItemGridLayout").childNodes.length; i++){
+                if (document.getElementById("MenuItemGridLayout").childNodes[i].childNodes[4].childNodes[0].innerHTML == nameValue){
+                    let gridLayout = document.getElementById("MenuItemGridLayout");
+                    let itemToRemove = document.getElementById("MenuItemGridLayout").childNodes[0];
+                    gridLayout.removeChild(itemToRemove);
+                }
+            }
+        }
+    })
+    
 }
 
 // Add menu item
@@ -150,8 +181,10 @@ async function addItemToDB(name, _price, _calories) {
         calories: _calories
       })
     })
+     return 0
   } catch (error) {
     console.error(error)
+     return -1
   }
 }
 
@@ -176,9 +209,10 @@ async function removeItem(name) {
     }).toString(), {
       method: "DELETE"
     })
-
+return 0
   } catch (error) {
     console.error(error)
+    return -1
   }
 }
 
@@ -186,7 +220,7 @@ async function removeItem(name) {
 async function requestMenu(userSearchTerm, userMaxPrice, userMaxCalories) {
   try {
     let response = await fetch("http://localhost:4444/menu?" + new URLSearchParams({
-      ItemName: userSearchTerm,
+      searchTerm: userSearchTerm,
       Price: userMaxPrice,
       Calories: userMaxCalories
     }).toString())
@@ -229,30 +263,38 @@ function addToBasket(index, itemName, price, calories) {
   let existingItemIndex = order.findIndex(item => item.index === index);
   let quantity = parseInt(document.getElementById('itemQuantityInput' + index).value);
 
-  if (existingItemIndex >=0) {
-   order[existingItemIndex].quantity+=quantity;
- } else {
-  let item = {
-    index: index,
-    itemName: itemName,
-    price: price,
-    calories: calories,
-    quantity: quantity
-  };
-  
-  order.push(item);
+  if (existingItemIndex >= 0) {
+    order[existingItemIndex].quantity += quantity;
+  } else {
+    let item = {
+      index: index,
+      itemName: itemName,
+      price: price,
+      calories: calories,
+      quantity: quantity
+    };
+
+    order.push(item);
   }
   localStorage.setItem('order', JSON.stringify(order));
+  updateBasketIcon();
   updateOrderDetails();
 
 
 }
+function updateBasketIcon() {
+  let order = JSON.parse(localStorage.getItem('order')) || [];
+  let basketIcon = document.getElementById('basketIcon');
+  let totalQuantity = order.reduce((total, item) => total + item.quantity, 0);
+  basketIcon.textContent = `🛒 ${totalQuantity}`;
+}
+
 
 function updateOrderDetails() {
   let order = JSON.parse(localStorage.getItem('order'));
   let orderDetailsDiv = document.getElementById('orderDetails');
   let totalDiv = document.getElementById('orderTotal');
-  orderDetailsDiv.innerHTML = ''; 
+  orderDetailsDiv.innerHTML = '';
   let orderTotal = 0;
   if (order && order.length > 0) {
     order.forEach(item => {
@@ -285,13 +327,34 @@ function updateOrderDetails() {
 function removeFromOrder(itemName) {
   let order = JSON.parse(localStorage.getItem('order')) || [];
   const itemIndex = order.findIndex(item => item.itemName === itemName);
-  if (itemIndex >=0) {
+  if (itemIndex >= 0) {
     order.splice(itemIndex, 1);
     localStorage.setItem('order', JSON.stringify(order));
-    updateOrderDetails(); 
+    updateOrderDetails();
   }
 }
 document.addEventListener('DOMContentLoaded', function() {
   updateOrderDetails();
+  updateBasketIcon();
 });
 
+
+function filterItems(){
+    let searchTerm = document.getElementById('searchTerm').value;
+    let maxCalories = parseInt(document.getElementById('maxCalories').value) || 0;
+    let maxPrice = parseFloat(document.getElementById('maxPrice').value) || 0;
+
+    if (searchTerm.length <= 0){
+        searchTerm = 0;
+    }
+
+    let data = requestMenu(searchTerm, maxPrice, maxCalories);
+    data.then(r =>{
+        let index = 0;
+        document.getElementById("MenuItemGridLayout").innerHTML = "";
+        r.forEach(element => {
+            document.getElementById("MenuItemGridLayout").innerHTML+= createMenuItem(index, element.itemName, element.price, element.calories);
+            index++;
+        });
+    })
+}
