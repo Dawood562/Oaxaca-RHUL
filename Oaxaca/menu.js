@@ -298,23 +298,9 @@ document.addEventListener('DOMContentLoaded', function () {
     updateOrderDetails();
 });
 
-//Fetches the orders from the backend
-async function fetchOrders() {
-    try {
-        let response = await fetch("http://localhost:4444/database?");
-        if (!response.ok) {
-            console.log("Error fetching orders");
-        }
-        let orders = await response.json();
-        displayOrders(orders);
-    } catch (error) {
-        console.error('Theres a problem with the fetch operation', error);
-    }
-}
-
 //Display the orders with time and bill
 function displayOrders(orders) {
-    const ordersContainer = document.getElementById('ordersContainer');
+    const ordersContainer = document.getElementById('Orders');
 
     orders.forEach(order => {
         const orderElement = document.createElement('div');
