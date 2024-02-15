@@ -1,9 +1,9 @@
 package models
 
 type MenuItem struct {
-	ID          uint    `json:"itemId" gorm:"column:item_id;primarykey"`
-	Name        string  `json:"itemName" gorm:"column:name;unique"`
-	Description string  `json:"itemDescription" gorm:"column:description"`
-	Price       float64 `json:"price" gorm:"column:price"`
-	Calories    float64 `json:"calories" gorm:"column:calories"`
+	ID          uint    `json:"itemId" gorm:"primarykey;autoincrement"`
+	Name        string  `json:"itemName" gorm:"unique"`
+	Description string  `json:"itemDescription"`
+	Price       float64 `json:"price"`
+	Calories    float64 `json:"calories"`
 }
