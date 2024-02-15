@@ -8,7 +8,8 @@
   <script type="text/javascript" src="order.js"></script>
   <title>Oaxaca</title>
   <link rel="stylesheet" href="style.css" type="text/css">
-
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  
 </head>
 
 <body>
@@ -29,9 +30,15 @@
     </div>
     <div id="flex">
       <main>
-        <h2>
+        <h2 id="orderHeading">
         Order Summary
+        </h2>
         <div id="orderDetails"></div>
+        
+        </main>
+        
+           <aside id="orderSidebar">
+        
          <div id="orderTotal"></div>
           <button id="confirmOrderButton" onclick="showConfirmationSection()">Confirm Order</button>
         <div id="confirmationSection" style="display: none;">
@@ -46,12 +53,12 @@
           <br>
           <button onclick="submitOrder()">Submit Order</button>
         </div>
-      </h2>
+        </aside>
+      
       
       
 
 
-    </main>
   </div>
   <footer id="footer">
     <a href="#">Work with us</a>&emsp; <a href="#">Get in touch</a>&emsp;

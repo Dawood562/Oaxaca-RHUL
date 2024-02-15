@@ -258,119 +258,97 @@ async function requestMenu(userSearchTerm, userMaxPrice, userMaxCalories) {
       }])
   }
 }
+//function to add menu item to basket
 function addToBasket(index, itemName, price, calories) {
-  let order = JSON.parse(localStorage.getItem('order')) || [];
-  let existingItemIndex = order.findIndex(item => item.index === index);
-  let quantity = parseInt(document.getElementById('itemQuantityInput' + index).value);
-
-  if (existingItemIndex >= 0) {
-    order[existingItemIndex].quantity += quantity;
-  } else {
-    let item = {
-      index: index,
-      itemName: itemName,
-      price: price,
-      calories: calories,
-      quantity: quantity
-    };
-
-    order.push(item);
-  }
-  localStorage.setItem('order', JSON.stringify(order));
-  updateBasketIcon();
-  updateOrderDetails();
-
-
+ let order = JSON.parse(localStorage.getItem('order')) || [];
+ let existingItemIndex = order.findIndex(item => item.index === index);
+ let quantity = parseInt(document.getElementById('itemQuantityInput' + index).value);
+ if (existingItemIndex >= 0) {
+   order[existingItemIndex].quantity += quantity;
+ } else {
+   let item = {
+     index: index,
+     itemName: itemName,
+     price: price,
+     calories: calories,
+     quantity: quantity
+   };
+   order.push(item);
+ }
+ localStorage.setItem('order', JSON.stringify(order));
+ updateBasketIcon();
+ updateOrderDetails();
 }
+//function to update basket icon with the item quantity in order
 function updateBasketIcon() {
-  let order = JSON.parse(localStorage.getItem('order')) || [];
-  let basketIcon = document.getElementById('basketIcon');
-  let totalQuantity = order.reduce((total, item) => total + item.quantity, 0);
-  basketIcon.textContent = `🛒 ${totalQuantity}`;
+ let order = JSON.parse(localStorage.getItem('order')) || [];
+ let basketIcon = document.getElementById('basketIcon');
+ let totalQuantity = order.reduce((total, item) => total + item.quantity, 0);
+ basketIcon.textContent = `🛒 ${totalQuantity}`;
 }
-
-
+//function to update order details with items in the order
 function updateOrderDetails() {
-  let order = JSON.parse(localStorage.getItem('order'));
-  let orderDetailsDiv = document.getElementById('orderDetails');
-  let totalDiv = document.getElementById('orderTotal');
-  orderDetailsDiv.innerHTML = '';
-  let orderTotal = 0;
-  if (order && order.length > 0) {
-    order.forEach(item => {
-      orderTotal += item.price * item.quantity;
-      let li = document.createElement('li');
-      li.innerHTML = `
-               <h3>${item.itemName}</h3>
-               <p> quantity: ${item.quantity}</p>
-               <p>Calories: ${item.calories * item.quantity} kcal</p>
-               <p>Price: £${(item.price * item.quantity).toFixed(2)}</p>
-               <button class="removeButton">Remove</button>
-           `;
-      orderDetailsDiv.appendChild(li);
-    });
-    totalDiv.textContent = `Total: £${orderTotal.toFixed(2)}`;
-    let removeButtons = document.querySelectorAll('.removeButton');
-    removeButtons.forEach(button => {
-      button.addEventListener('click', () => {
-        removeFromOrder(button.parentElement.querySelector('h3').textContent);
-      });
-    });
-  } else {
-    orderDetailsDiv.innerHTML = `basket empty`;
-    totalDiv.textContent = '';
-  }
+ let order = JSON.parse(localStorage.getItem('order'));
+ let orderDetailsDiv = document.getElementById('orderDetails');
+ let totalDiv = document.getElementById('orderTotal');
+ orderDetailsDiv.innerHTML = '';
+ let orderTotal = 0;
+ if (order && order.length > 0) {
+   order.forEach(item => {
+     orderTotal += item.price * item.quantity;
+     let li = document.createElement('li');
+     li.innerHTML = `
+              <h3>${item.itemName}</h3>
+              <p> quantity: ${item.quantity}</p>
+              <p>Calories: ${item.calories * item.quantity} kcal</p>
+              <p>Price: £${(item.price * item.quantity).toFixed(2)}</p>
+              <button class="removeButton"><i class = "fa fa-trash"></i></button>
+          `;
+     orderDetailsDiv.appendChild(li);
+   });
+   totalDiv.textContent = `Total: £${orderTotal.toFixed(2)}`;
+   let removeButtons = document.querySelectorAll('.removeButton');
+   removeButtons.forEach(button => {
+     button.addEventListener('click', () => {
+       removeFromOrder(button.parentElement.querySelector('h3').textContent);
+     });
+   });
+ } else {
+   orderDetailsDiv.innerHTML = `basket empty`;
+   totalDiv.textContent = '';
+ }
 }
-
-
-
+//function ro remove menu item from the order
 function removeFromOrder(itemName) {
-  let order = JSON.parse(localStorage.getItem('order')) || [];
-  const itemIndex = order.findIndex(item => item.itemName === itemName);
-  if (itemIndex >= 0) {
-    order.splice(itemIndex, 1);
-    localStorage.setItem('order', JSON.stringify(order));
-    updateOrderDetails();
-  }
+ let order = JSON.parse(localStorage.getItem('order')) || [];
+ const itemIndex = order.findIndex(item => item.itemName === itemName);
+ if (itemIndex >= 0) {
+   order.splice(itemIndex, 1);
+   localStorage.setItem('order', JSON.stringify(order));
+   updateOrderDetails();
+ }
 }
+//updates order details and basket icon when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-  updateOrderDetails();
-  updateBasketIcon();
+ updateOrderDetails();
+ updateBasketIcon();
 });
-
-//Display the orders with time and bill
-function displayOrders(orders) {
-    const ordersContainer = document.getElementById('Orders');
-
-    orders.forEach(order => {
-        const orderElement = document.createElement('div');
-        orderElement.className = 'order';
-        const orderTime = new Date(order.orderTime).toString();
-        orderElement.innerHTML = `
-            <h3>Order #${order.ID} - Table #${order.TableNumber}</h3>
-            <p>Order Time: ${order.Time}</p>
-            <p>Bill: $${order.bill}</p>
-        `;
-        ordersContainer.appendChild(orderElement);
-    });
-}
-
 function filterItems(){
-    let searchTerm = document.getElementById('searchTerm').value;
-    let maxCalories = parseInt(document.getElementById('maxCalories').value) || 0;
-    let maxPrice = parseFloat(document.getElementById('maxPrice').value) || 0;
-
-    if (searchTerm.length <= 0){
-        searchTerm = 0;
-    }
-
-    let data = requestMenu(searchTerm, maxPrice, maxCalories);
-    data.then(r =>{
-        let index = 0;
-        document.getElementById("MenuItemGridLayout").innerHTML = "";
-        r.forEach(element => {
-            document.getElementById("MenuItemGridLayout").innerHTML+= createMenuItem(index, element.itemName, element.price, element.calories);
-            index++;
-        });
-    })
+   let searchTerm = document.getElementById('searchTerm').value;
+   let maxCalories = parseInt(document.getElementById('maxCalories').value) || 0;
+   let maxPrice = parseFloat(document.getElementById('maxPrice').value) || 0;
+   if (searchTerm.length <= 0){
+       searchTerm = 0;
+   }
+   let data = requestMenu(searchTerm, maxPrice, maxCalories);
+   data.then(r =>{
+       let index = 0;
+       document.getElementById("MenuItemGridLayout").innerHTML = "";
+       r.forEach(element => {
+           document.getElementById("MenuItemGridLayout").innerHTML+= createMenuItem(index, element.itemName, element.price, element.calories);
+           index++;
+       });
+   })
 }
+
+

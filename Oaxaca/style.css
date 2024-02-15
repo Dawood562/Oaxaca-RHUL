@@ -86,10 +86,12 @@ body {
 
 aside {
   background-color: #D65108;
-  width: 300px;
+  width: 450px;
   padding: 20px;
   border-right: 1px dashed white;
-
+   border-right: 1px dashed white;
+ border-left:1px dashed white;
+ border-top:1px dashed white;
 }
 
 main {
@@ -126,7 +128,8 @@ h1 {
     font-size: 70px; }
 h2 {
 	font-family: Mexican Tequila;
-    font-size: 40px; }
+    font-size: 40px; 
+    text-align: center;}
 
 td {
     text-align: center;
@@ -262,36 +265,78 @@ strong {
   padding-left: 10%;
 }
 
+/* order page styling */
+#orderHeading{
+ font-size:40px;
+ }
 #orderDetails {
-  text-align: left;
-  font-family: Georgia, 'Times New Roman', Times, serif;
+ text-align: center;
+ font-family: Georgia, 'Times New Roman', Times, serif;
+ border-radius:5px;
+ border-right: 1.5px dashed #996633;
+ border-left:1.5px dashed #996633 ;
+ border-top:1.5px dashed #996633;
+ border-bottom: 1.5px dashed #996633 ;
+ 
 }
-
 #orderDetails li {
-   display: flex; 
-   justify-content: space-between; 
-   align-items: center; 
-   background-color: beige;
-   font-family: 'Courier New', Courier, monospace;
-   color: black;
-   font-size: 10px;
-   border: 2px solid #591F0A;
-   margin-bottom: 10px;
-   padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: beige;
+  color: black;
+  font-size: 12px;
+  border: 1px solid #591F0A;
+  margin-bottom: 10px;
+  margin-top: 10px;
+  margin-left:10px;
+  margin-right: 10px;
+  padding:10px;
+  border-radius:5px;
 }
 .removeButton {
-   background-color:burlywood;
-   color: white;
-   border: none;
-   padding: 5px 10px;
-   cursor: pointer;
-   border-radius: 5px;
-   font-size: 10px;
+  background-color:burlywood;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 15px;
+ 
 }
 .removeButton:hover {
-   background-color: brown;
+  background-color: brown;
 }
 .itemQuantityInput{
-	 width: 60%;
+     width: 60%;
+}
+#basketIcon{
+    font-size:25px;
+    cursor:pointer;
+    color: white;
+ }
+#addToBasketButton:hover{
+    background-color: brown;
+}
+#orderTotal{
+   background-color: beige;
+   padding: 20px;
+   margin-top: 20px;
+   text-align: center;
+   border-radius: 5px;
+  
+}
+#orderSidebar{
+    order:3;
+    background-color: #996633  ;
+    opacity: 0.8;
+}
+.addToBasketButton {
+ background-color: #EFA00B; /* Initial background color */
+ color: white;
+ border: none;
+ padding: 10px 20px;
+ cursor: pointer;
+ border-radius: 5px;
 }
 
