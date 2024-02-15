@@ -8,7 +8,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/gofiber/fiber/v2/log"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -221,6 +220,7 @@ func TestRemoveItem(t *testing.T) {
 
 func TestRemovingMultipleData(t *testing.T) {
 	ClearMenu()
+	ClearOrders()
 	menuItem1 := models.MenuItem{Name: "Tequila"}
 	menuItem2 := models.MenuItem{Name: "Vodka"}
 	menuItem3 := models.MenuItem{Name: "Rum"}
@@ -237,8 +237,10 @@ func TestRemovingMultipleData(t *testing.T) {
 	testOrder := models.Order{ID: testItemID, Time: time.Now(), TableNumber: 16, Bill: 16.99, Status: "Ready", Items: testItemList1}
 	testOrder2 := models.Order{ID: testItemID2, Time: time.Now(), TableNumber: 17, Bill: 17.99, Status: "Preparing", Items: testItemList2}
 
-	AddOrder(&testOrder)
-	AddOrder(&testOrder2)
+	err := AddOrder(&testOrder)
+	assert.NoError(t, err)
+	err = AddOrder(&testOrder2)
+	assert.NoError(t, err)
 	data, err := FetchOrders()
 
 	assert.Equal(t, 2, len(data), "Order table should contain only 1 item")
@@ -314,14 +316,12 @@ func TestFetchingItemsWithFilter(t *testing.T) {
 	AddOrder(&testOrder2)
 	var count int64
 	db.Model(&models.OrderItem{}).Where("1=1").Count(&count)
-	log.Errorf("count: %d\n", count)
 
 	testData, err := FetchOrders(models.Order{TableNumber: 16})
 	assert.NoError(t, err, "Fetching order should not be throwing an error")
 	assert.Equal(t, 1, len(testData), "Did not fetch correct number of items")
 	assert.Equal(t, 2, len(testData[0].Items), "Test that the right number of items were returned with the order")
 	assert.Equal(t, "Item1", testData[0].Items[0].Notes, "Incorrect item returned from query")
-	log.Errorf("%v\n", testData[0].Items)
 
 	testData, err = FetchOrders(models.Order{Status: "Preparing"})
 	assert.NoError(t, err, "Did not fetch correct number of items")

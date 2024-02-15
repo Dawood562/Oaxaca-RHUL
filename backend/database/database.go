@@ -83,6 +83,16 @@ func QueryMenu(filter *MenuFilter) []models.MenuItem {
 	return data
 }
 
+// FetchItem retrieves the given item from the database
+func FetchItem(id int) (models.MenuItem, error) {
+	ret := models.MenuItem{}
+	res := db.Model(&models.MenuItem{}).Where("ID = ?", id).First(&ret)
+	if res.Error != nil {
+		return models.MenuItem{}, res.Error
+	}
+	return ret, nil
+}
+
 // prepareArgs applies defaults to a MenuFilter struct in preparation for use in a query
 func prepareArgs(filter *MenuFilter) *MenuFilter {
 	ret := &MenuFilter{}
@@ -131,6 +141,12 @@ func fetchDBAuth() (string, string, string) {
 }
 
 func AddOrder(item *models.Order) error {
+	// Check that there are no open orders with that table number already
+	var count int64
+	db.Model(&models.Order{}).Where("status != ? AND table_number = ?", "Complete", item.TableNumber).Count(&count)
+	if count > 0 {
+		return fmt.Errorf("there is already an open order for table %d", item.TableNumber)
+	}
 	// Do not re-create menu items when adding them to an OrderItem
 	feedback := db.Omit("Items.Item.*").Create(item)
 	return feedback.Error
