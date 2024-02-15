@@ -14,17 +14,17 @@ function initMenuAll() {
     let index = 0;
     document.getElementById("MenuItemGridLayout").innerHTML = ""
     r.forEach(element => {
-      document.getElementById("MenuItemGridLayout").innerHTML += createMenuItem(index, element.itemName, element.price, element.calories);
+      document.getElementById("MenuItemGridLayout").innerHTML += createMenuItem(index, element.itemId, element.itemName, element.price, element.calories);
       index++;
     });
   })
 }
 
 // Function that takes in data and turns into menu item to be displayed
-function createMenuItem(index, itemName, price, calories) {
+function createMenuItem(index, id, itemName, price, calories) {
   let comp = "<div class='MenuItemDiv' id='item" + index + "'> <img class='MenuItemImg' src='image/foodimg.jpg'><br> <div class='MenuItemDetails'><label class='MenuItemName'>" + itemName + "</label><br><label class='MenuItemPrice'>£" + price.toFixed(2) + "</label><label class='MenuItemCalories'>" + calories + "kcal</label></div>";
   comp += "<input type='number' id='itemQuantityInput" + index + "' min='1' value='1' class='itemQuantityInput'>";
-  comp += "<button id='addToBasketButton" + index + "' onclick='addToBasket(" + index + ", \"" + itemName + "\", " + price + ", " + calories + ")'>Add to Basket</button></a></div>";
+  comp += "<button id='addToBasketButton" + index + "' onclick='addToBasket(" + index + ", " + id + ", \"" + itemName + "\", " + price + ", " + calories + ")'>Add to Basket</button></a></div>";
 
   return comp;
 }
@@ -259,7 +259,7 @@ async function requestMenu(userSearchTerm, userMaxPrice, userMaxCalories) {
   }
 }
 //function to add menu item to basket
-function addToBasket(index, itemName, price, calories) {
+function addToBasket(index, itemId, itemName, price, calories) {
  let order = JSON.parse(localStorage.getItem('order')) || [];
  let existingItemIndex = order.findIndex(item => item.index === index);
  let quantity = parseInt(document.getElementById('itemQuantityInput' + index).value);
@@ -268,6 +268,7 @@ function addToBasket(index, itemName, price, calories) {
  } else {
    let item = {
      index: index,
+     itemId: itemId,
      itemName: itemName,
      price: price,
      calories: calories,

@@ -14,7 +14,7 @@ function initSock(){
     }
     sock.addEventListener("open", e =>{
         // WE NEED TO ADD A WAY TO GET USERS TABLE NUMBER
-        sock.send("CUSTOMER:7")
+        sock.send("CUSTOMER:1")
     })
 
     sock.addEventListener("message", e => handleMessages(e))
@@ -47,49 +47,44 @@ function notifyNew(){
 
 
 function submitOrder() {
-     alert('you have submitted sucessfully');
-} 
-// havent tested yet
-/* let order = JSON.parse(localStorage.getItem('order')) || [];
+    let order = JSON.parse(localStorage.getItem('order')) || [];
 
-  if (order.length === 0) {
-    alert('Your basket is empty. Add items before submitting your order.');
-    return;
-  }
+    if (order.length === 0) {
+        alert('Your basket is empty. Add items before submitting your order.');
+        return;
+    }
 
- let orderType = document.getElementById('orderType').value;
- let tableNumber = document.getElementById('tableNumber').value;
+    let tableNumber = document.getElementById('tableNumber').value;
 
- let orderData = {
-   orderType: orderType,
-  tableNumber: tableNumber,
-    orderDetails: order,
-  };
+    let itemObjects = [];
+    for(var i of order) {
+        itemObjects.push({item: i.itemId});
+    }
 
- //  Checking if the WebSocket connection is established
- if (sock.readyState !== WebSocket.OPEN) {
-   alert('Error: WebSocket connection not established. Please refresh the page and try again.');
-   return;
- }
+    let orderData = {
+        tableNumber: parseInt(tableNumber),
+        items: itemObjects
+    };
 
-  fetch('http://localhost:4444/add_order', {
-   method: 'POST',
-    headers: {
-     'Content-Type': 'application/json',
-   },
-   body: JSON.stringify(orderData),
-  })
-    .then(response => response.json())
-    .then(data => {
-     console.log('Order submitted successfully:', data);
+    //  Checking if the WebSocket connection is established
+    if (sock.readyState !== WebSocket.OPEN) {
+        alert('Error: WebSocket connection not established. Please refresh the page and try again.');
+        return;
+    }
 
-     localStorage.removeItem('order'); // Clears the basket after a successful order
-      updateOrderDetails();
-      updateBasketIcon();
-      notifyNew(); // Notify backend about the new order
+    fetch('http://localhost:4444/add_order', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(orderData),
     })
-    .catch(error => {
-      console.error('Error submitting order:', error);
+    .then(() => {
+        console.log('Order submitted successfully');
+
+        localStorage.removeItem('order'); // Clears the basket after a successful order
+        updateOrderDetails();
+        updateBasketIcon();
+        notifyNew(); // Notify backend about the new order
     });
 }
-*/
