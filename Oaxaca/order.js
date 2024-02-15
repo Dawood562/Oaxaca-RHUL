@@ -32,13 +32,12 @@ function handleMessages(e){
 }
 
 // Notifies backend a customer needs help
-function notifyHelp(){
+function sendHelp(){
     sock.send("HELP")
 }
 
 // Notifies backend a customer has ordered something
 function notifyNew(){
-    console.log("sendy sendy")
     sock.send("NEW")
 }
 
