@@ -5,10 +5,25 @@ document.addEventListener('DOMContentLoaded', e=>{
     initSock()
 })
 
-fetch("http://localhost:4444/notifications")
-.then(response => response.json())
-.then(data => console.log(data))
-.catch(error => console.log(error))
+async function fetchOrder(){
+    try{
+        let response = await fetch("http://localhost:4444" ({
+            ItemName: item 
+            }).toString())
+
+        if(!response.ok){
+            console.log("ERROR fetching menu")
+        }
+
+        let data = await response.json()
+        console.log(data)
+        var span = document.getElementById("r1.2");
+        span.innerHTML = "data"; //Adds the order onto the web page
+        return data
+    }catch(error){
+        console.error(error)
+    }
+}
 
 function initSock(){
     sock = new WebSocket("ws://localhost:4444/notifications")
@@ -31,10 +46,6 @@ function handleMessages(e){
         console.log("Notification successfully received");
     }else if (e.data == "SERVICE"){
         // NOTIFICATION SENT BY KITCHEN STAFF TO WAITERS - DO STUFF HERE
-        document.getElementById("b1").addEventListener("click",function() {
-            
-            notifyService()
-        });
     }else if(e.data == "CONFIRM"){
         // DO STUFF WHEN ORDER IS CONFIRMED
     }else if(e.data == "CANCEL"){
@@ -51,4 +62,5 @@ function notifyService(){
     }
     sock.send("SERVICE")
 }
+
 

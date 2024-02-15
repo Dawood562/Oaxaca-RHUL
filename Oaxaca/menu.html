@@ -19,17 +19,10 @@
         <ul>
           <li><a href="index.html">Home</a></li>
           <li><a href="menu.html">Menu</a></li>
-<<<<<<< HEAD
           <li><a href="#">Link</a></li>
           <li><a href="#">Link</a></li>
           <li><a href="#">Link</a></li>
         </ul>
-=======
-          <li><a href="order.html#">Order</a></li>
-          <li><a href="#">Link</a></li>
-          <li><a href="#">Link</a></li>
-        </ul> 
->>>>>>> main
       </nav>
     </div>
 
@@ -57,11 +50,7 @@
               <input type="number" id="maxPrice" placeholder="Enter max price">
             </div>
 
-<<<<<<< HEAD
             <button onclick="applyFilter()" class="filterButton">Apply Filter</button>
-=======
-            <button onclick="filterItems()" class="filterButton">Apply Filter</button>
->>>>>>> main
             <button onclick="resetFilter()" class="filterButton">Reset Filter</button>
 
             <div class="filterOption" id="categoryFilter">
@@ -110,16 +99,9 @@
       initializeCategoryFilter();
       //initMenuAll()
     });
-<<<<<<< HEAD
 
     function initializeMenu() {
       const activeButton = document.querySelector('#menuFilter button.active');
-=======
-    
-
-   function initializeMenu() {
-     const activeButton = document.querySelector('#menuFilter button.active');
->>>>>>> main
 
       if (activeButton) {
         const category = activeButton.getAttribute('data-category');
@@ -131,7 +113,6 @@
         };
         filterMenu(filter, activeButton);
       } else {
-<<<<<<< HEAD
         applyFilter();
       }
     }
@@ -152,22 +133,12 @@
       showFilterFeedback();
     }
 
-=======
-        filterItems();
-      }
-    }
-
->>>>>>> main
     function resetFilter() {
       document.getElementById('searchTerm').value = '';
       document.getElementById('maxCalories').value = '';
       document.getElementById('maxPrice').value = '';
 
-<<<<<<< HEAD
       applyFilter();
-=======
-      filterItems();
->>>>>>> main
     }
 
     function filterMenu(filter, button) {
