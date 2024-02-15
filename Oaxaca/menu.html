@@ -62,13 +62,13 @@
         </div>
 
         <div>
-        <p>
-        <button onclick="editMenu()">Edit Menu</button>
-        </p>
+          <p>
+            <button onclick="editMenu()">Edit Menu</button>
+          </p>
         </div>
-        
+
       </aside> <!--Above section is in sidebar for cleaner presentation-->
-      
+
       <main id="menuPage"> <!--Main section of page-->
         <div class="menuSection">
           <section class="appetizersSection" data-calories="200" data-price="10.00">
@@ -77,12 +77,15 @@
 
             </div>
             <div id="MenuEditSection">
-              
+
             </div>
           </section>
+          <div id="basketIcon" onclick="goToOrderPage()">🛒 0</div>
+
+
         </div>
       </main>
-    
+
     </div>
 
     <footer id="footer">
@@ -94,15 +97,20 @@
   </div>
 
   <script>
+
+    function goToOrderPage() {
+      window.location.href = "order.html";
+    }
+
     document.addEventListener("DOMContentLoaded", function () {
       initializeMenu();
       initializeCategoryFilter();
       //initMenuAll()
     });
-    
 
-   function initializeMenu() {
-     const activeButton = document.querySelector('#menuFilter button.active');
+
+    function initializeMenu() {
+      const activeButton = document.querySelector('#menuFilter button.active');
 
       if (activeButton) {
         const category = activeButton.getAttribute('data-category');
@@ -116,6 +124,24 @@
       } else {
         filterItems();
       }
+    }
+
+
+
+    function filterItems() {
+      const searchTerm = document.getElementById('searchTerm').value.toLowerCase();
+      const maxCalories = parseInt(document.getElementById('maxCalories').value) || 0;
+      const maxPrice = parseFloat(document.getElementById('maxPrice').value) || 0;
+
+      const filter = {
+        searchTerm: searchTerm,
+        maxCalories: maxCalories,
+        maxPrice: maxPrice,
+        category: 'all'
+      };
+
+      filterMenu(filter, document.querySelector('#menuFilter button.filterButton'));
+      showFilterFeedback();
     }
 
     function resetFilter() {

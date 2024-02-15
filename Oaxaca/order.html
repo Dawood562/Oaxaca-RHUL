@@ -1,18 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <script src="menu.js"></script>
-    <title>Oaxaca</title>
-    <link rel="stylesheet" href="style.css" type="text/css">
 
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <script src="menu.js"></script>
+  <script type="text/javascript" src="order.js"></script>
+  <title>Oaxaca</title>
+  <link rel="stylesheet" href="style.css" type="text/css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  
 </head>
+
 <body>
   <div id="container">
     <div id="headerArea">
       <div id="header"></div>
-      </div>
+    </div>
 
       <nav id="navbar">
         <ul>
@@ -26,17 +30,37 @@
     </div>
     <div id="flex">
       <main>
-        <h2>
+        <h2 id="orderHeading">
         Order Summary
-          <div id="orderDetails"></div>
         </h2>
+        <div id="orderDetails"></div>
         
-    
-    </main>
-       </div>
-    <footer id="footer">
-      <a href="#">Work with us</a>&emsp; <a href="#">Get in touch</a>&emsp;
-      <a href="#">Privacy policy</a>
-    </footer>
+        </main>
+        
+           <aside id="orderSidebar">
+        
+         <div id="orderTotal"></div>
+          <button id="confirmOrderButton" onclick="showConfirmationSection()">Confirm Order</button>
+          <button id="callHelpButton" onclick="sendHelp()">Call Waiter</button>
+        <div id="confirmationSection" style="display: none;">
+          <br>
+          <label for="tableNumber">Enter Table Number:</label>
+          <input type="text" id="tableNumber" placeholder="Table Number">
+          <br>
+          <button onclick="submitOrder()">Submit Order</button>
+        </div>
+        </aside>
+      
+      
+      
+
+
+  </div>
+  <footer id="footer">
+    <a href="#">Work with us</a>&emsp; <a href="#">Get in touch</a>&emsp;
+    <a href="#">Privacy policy</a>
+  </footer>
+
 </body>
+
 </html>
