@@ -38,6 +38,7 @@ function notifyHelp(){
 
 // Notifies backend a customer has ordered something
 function notifyNew(){
+    console.log("sendy sendy")
     sock.send("NEW")
 }
 
@@ -84,7 +85,6 @@ function submitOrder() {
 
         localStorage.removeItem('order'); // Clears the basket after a successful order
         updateOrderDetails();
-        updateBasketIcon();
         notifyNew(); // Notify backend about the new order
     });
 }

@@ -21,6 +21,7 @@ function initSock(){
 }
 
 function handleMessages(e){
+    console.log(e)
     if (e.data == "WELCOME"){
         console.log("Connected to backend websocket");
     }else if (e.data == "OK"){
