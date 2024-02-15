@@ -44,6 +44,7 @@ async function refreshOrders(){
     table.innerHTML = `<caption>Customer Orders</caption>
                         <tr>
                             <th>Table</th>
+                            <th>Time</th>
                             <th>Items</th>
                             <th>Status</th>
                             <th></th>
@@ -64,6 +65,7 @@ function createOrder(order) {
     }
     return `<tr>
         <td>${order.tableNumber}</td>
+        <td>${new Date(order.orderTime).toLocaleTimeString()}</td>
         <td>${itemsStr.substring(0, itemsStr.length - 2)}</td>
         <td>${order.status}</td>
         <td><button type="submit">Cancel Order</button></td>
