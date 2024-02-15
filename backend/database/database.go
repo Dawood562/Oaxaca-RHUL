@@ -129,3 +129,39 @@ func fetchDBAuth() (string, string, string) {
 	password := os.Getenv("DB_PASSWORD")
 	return username, dbname, password
 }
+
+func AddOrder(item *models.Order) error {
+	// Do not re-create menu items when adding them to an OrderItem
+	feedback := db.Omit("Items.Item.*").Create(item)
+	return feedback.Error
+}
+
+func RemoveOrder(id uint) error {
+	feedback := db.Delete(&models.Order{ID: id})
+	if feedback.Error != nil {
+		return feedback.Error
+	}
+	if feedback.RowsAffected == 0 {
+		return errors.New("no items removed from table")
+	}
+	return nil
+}
+
+func FetchOrders(filter ...models.Order) ([]*models.Order, error) {
+	dbCopy := *db
+	dbLocal := &dbCopy
+	var orderData []*models.Order
+
+	if len(filter) > 0 {
+
+		if filter[0].TableNumber > 0 {
+			dbLocal = dbLocal.Where("Table_Number = ?", filter[0].TableNumber)
+		}
+		if len(filter[0].Status) > 0 {
+			dbLocal = dbLocal.Where("Status = ?", filter[0].Status)
+		}
+	}
+	dbLocal.Model(&models.Order{}).Preload("Items").Preload("Items.Item").Find(&orderData)
+
+	return orderData, nil
+}
