@@ -20,6 +20,26 @@ function initSock(){
     sockInit = true;
 }
 
+// Function to fetch orders using the WebSocket and display them
+function fetchOrders() {
+
+
+    sock.send(FetchOrders());
+
+    // Listen for messages from the WebSocket server
+    sock.onmessage = function(event) {
+        try {
+            const response = JSON.parse(event.data);
+
+            orders.forEach(order => {
+                console.log(`Order ID: ${order.ID}, Table Number: ${order.TableNumber}, Status: ${order.Status}`);
+            });
+        } catch (error) {
+            console.error("Error parsing message from server:", error);
+        }
+    };
+}
+
 function handleMessages(e){
     if (e.data == "WELCOME"){
         console.log("Connected to backend websocket");
