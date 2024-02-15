@@ -3,9 +3,12 @@
 package database
 
 import (
+	"strconv"
 	"teamproject/database/models"
 	"testing"
+	"time"
 
+	"github.com/gofiber/fiber/v2/log"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -136,4 +139,196 @@ func TestPrepareArgsNotEmpty(t *testing.T) {
 	assert.Equal(t, "%test%", args.SearchTerm, "Test search term preparation")
 	assert.Equal(t, float32(5.00), args.MaxPrice, "Test price preparation")
 	assert.Equal(t, 500, args.MaxCalories, "Test calorie preparation")
+}
+
+func TestOrderRetrievalUnfiltered(t *testing.T) {
+	// Check no data is returned to when no orders are in table
+	data, err := FetchOrders()
+	assert.Equal(t, 0, len(data), "Length of orders received should be 0 when no orders placed. Instead, received: "+strconv.Itoa(len(data)))
+
+	// Check example data is inserted into table and returned correctly
+	testData1 := models.Order{ID: 1, Time: time.Now(), TableNumber: 69, Bill: 42, Status: "Unknown"}
+	err = AddOrder(&testData1)
+	assert.NoError(t, err, "No error should be returned when adding empty order to Order table")
+	data, err = FetchOrders()
+	assert.Equal(t, 1, len(data), "Size of data is actually: "+strconv.Itoa(len(data)))
+	assert.Equal(t, 1, int(data[0].ID), "Returned id does not match expected id")
+	assert.Equal(t, 69, int(data[0].TableNumber), "Returned table number doesnt match expected")
+	assert.Equal(t, float64(42), data[0].Bill, "Returned bill does not match expected")
+	assert.Equal(t, "Unknown", data[0].Status, "Status of recieved is: "+data[0].Status)
+
+	RemoveOrder(testData1.ID)
+}
+
+func TestOrderQueryUnfiltered(t *testing.T) {
+	ClearMenu()
+	menuItem1 := models.MenuItem{Name: "Tequila"}
+	menuItem2 := models.MenuItem{Name: "Vodka"}
+	menuItem3 := models.MenuItem{Name: "Rum"}
+	AddItem(&menuItem1)
+	AddItem(&menuItem2)
+	AddItem(&menuItem3)
+
+	var TestId1 uint = 1
+	testItemList := []models.OrderItem{{OrderID: TestId1, Item: menuItem1}, {Item: menuItem2}, {Item: menuItem3}}
+	testOrder := models.Order{ID: TestId1, Time: time.Now(), TableNumber: 16, Bill: 16.99, Status: "Ready", Items: testItemList}
+
+	err := AddOrder(&testOrder)
+	if err != nil {
+		t.Fail()
+	}
+
+	returnedData, err := FetchOrders()
+	assert.Equal(t, 1, len(returnedData), "Incorrect number of data returned")
+
+	err = RemoveOrder(testOrder.ID)
+	assert.NoError(t, err, "Shouldnt throw error on removal")
+}
+
+func TestOrderRetrievalRejectDuplicate(t *testing.T) {
+	// Add test data
+	testData1 := models.Order{ID: 1, Time: time.Now(), TableNumber: 69, Bill: 42, Status: "Unknown"}
+	AddOrder(&testData1)
+
+	err := AddOrder(&testData1)
+	assert.Error(t, err, "Error should be thrown when duplicate item is added to order table")
+
+	// Remove test data
+	RemoveOrder(testData1.ID)
+}
+
+func TestRemoveItem(t *testing.T) {
+	// Add empty test item
+	testData1 := models.Order{ID: 1, Time: time.Now(), TableNumber: 69, Bill: 42, Status: "Unknown"}
+	AddOrder(&testData1)
+	err := AddOrder(&testData1)
+	assert.Error(t, err, "Error should be thrown when duplicate item is added to order table")
+
+	data, err := FetchOrders()
+	assert.Equal(t, 1, len(data), "Test item was not successfully added correctly")
+
+	// Attempt to remove test item normally
+	err = RemoveOrder(testData1.ID)
+	assert.NoError(t, err, "Item was not removed!")
+
+	err = RemoveOrder(testData1.ID)
+	assert.Error(t, err, "Attempting to remove an item that doesnt exist should throw an error")
+
+	// Check if item was really removed
+	data, err = FetchOrders()
+	assert.Equal(t, 0, len(data), "Numbers of orders remaining should be 0 after removing only test order")
+}
+
+func TestRemovingMultipleData(t *testing.T) {
+	ClearMenu()
+	menuItem1 := models.MenuItem{Name: "Tequila"}
+	menuItem2 := models.MenuItem{Name: "Vodka"}
+	menuItem3 := models.MenuItem{Name: "Rum"}
+	AddItem(&menuItem1)
+	AddItem(&menuItem2)
+	AddItem(&menuItem3)
+
+	var testItemID uint = 1
+	var testItemID2 uint = 2
+
+	testItemList1 := []models.OrderItem{{OrderID: testItemID, Item: menuItem1, Notes: "Item1"}, {OrderID: testItemID, Item: menuItem2, Notes: "Notes2"}}
+	testItemList2 := []models.OrderItem{{OrderID: testItemID2, Item: menuItem3, Notes: "Notes3"}}
+
+	testOrder := models.Order{ID: testItemID, Time: time.Now(), TableNumber: 16, Bill: 16.99, Status: "Ready", Items: testItemList1}
+	testOrder2 := models.Order{ID: testItemID2, Time: time.Now(), TableNumber: 17, Bill: 17.99, Status: "Preparing", Items: testItemList2}
+
+	AddOrder(&testOrder)
+	AddOrder(&testOrder2)
+	data, err := FetchOrders()
+
+	assert.Equal(t, 2, len(data), "Order table should contain only 1 item")
+
+	err = RemoveOrder(testItemID)
+	assert.NoError(t, err, "Removing item returned an error")
+
+	data, err = FetchOrders()
+	assert.Equal(t, 1, len(data), "Order table should contain no items!")
+	assert.Equal(t, "Preparing", data[0].Status, "Incorrect item deleted!")
+
+	RemoveOrder(testItemID2)
+	data, err = FetchOrders()
+	assert.Equal(t, 0, len(data), "Order table should contain no items!")
+}
+
+func TestFetchingOrdersCorrectlyBringsOrderItems(t *testing.T) {
+	ClearMenu()
+	menuItem1 := models.MenuItem{Name: "Tequila"}
+	menuItem2 := models.MenuItem{Name: "Vodka"}
+	menuItem3 := models.MenuItem{Name: "Rum"}
+	AddItem(&menuItem1)
+	AddItem(&menuItem2)
+	AddItem(&menuItem3)
+
+	var testItemID uint = 1
+	var testItemID2 uint = 2
+
+	testItemList1 := []models.OrderItem{{OrderID: testItemID, Item: menuItem1, Notes: "Item1"}, {OrderID: testItemID, Item: menuItem2, Notes: "Notes2"}}
+	testItemList2 := []models.OrderItem{{OrderID: testItemID2, Item: menuItem3, Notes: "Notes3"}}
+
+	testOrder := models.Order{ID: testItemID, Time: time.Now(), TableNumber: 16, Bill: 16.99, Status: "Ready", Items: testItemList1}
+	testOrder2 := models.Order{ID: testItemID2, Time: time.Now(), TableNumber: 17, Bill: 17.99, Status: "Preparing", Items: testItemList2}
+
+	AddOrder(&testOrder)
+	AddOrder(&testOrder2)
+
+	testData, err := FetchOrders()
+
+	assert.NoError(t, err, "Shouldnt throw an error here")
+	assert.Equal(t, 2, len(testData), "Incorrect amount of data fetched")
+	assert.Equal(t, "Item1", testData[0].Items[0].Notes, "Incorrect item retrieved from order fetch")
+
+	RemoveOrder(testItemID)
+	RemoveOrder(testItemID2)
+}
+
+func TestFetchingItemsWithFilter(t *testing.T) {
+	// Clear orders
+	db.Where("1=1").Delete(&models.Order{})
+	// Clear OrderItems
+	db.Where("1=1").Delete(&models.OrderItem{})
+	// Clear menu
+	ClearMenu()
+
+	menuItem1 := models.MenuItem{Name: "Tequila"}
+	menuItem2 := models.MenuItem{Name: "Vodka"}
+	menuItem3 := models.MenuItem{Name: "Rum"}
+	AddItem(&menuItem1)
+	AddItem(&menuItem2)
+	AddItem(&menuItem3)
+
+	var testItemID uint = 1
+	var testItemID2 uint = 2
+
+	testItemList1 := []models.OrderItem{{Item: menuItem1, Notes: "Item1"}, {Item: menuItem2, Notes: "Notes2"}}
+	testItemList2 := []models.OrderItem{{Item: menuItem3, Notes: "Notes3"}}
+
+	testOrder := models.Order{ID: testItemID, Time: time.Now(), TableNumber: 16, Bill: 16.99, Status: "Ready", Items: testItemList1}
+	testOrder2 := models.Order{ID: testItemID2, Time: time.Now(), TableNumber: 17, Bill: 17.99, Status: "Preparing", Items: testItemList2}
+
+	AddOrder(&testOrder)
+	AddOrder(&testOrder2)
+	var count int64
+	db.Model(&models.OrderItem{}).Where("1=1").Count(&count)
+	log.Errorf("count: %d\n", count)
+
+	testData, err := FetchOrders(models.Order{TableNumber: 16})
+	assert.NoError(t, err, "Fetching order should not be throwing an error")
+	assert.Equal(t, 1, len(testData), "Did not fetch correct number of items")
+	assert.Equal(t, 2, len(testData[0].Items), "Test that the right number of items were returned with the order")
+	assert.Equal(t, "Item1", testData[0].Items[0].Notes, "Incorrect item returned from query")
+	log.Errorf("%v\n", testData[0].Items)
+
+	testData, err = FetchOrders(models.Order{Status: "Preparing"})
+	assert.NoError(t, err, "Did not fetch correct number of items")
+	assert.Equal(t, 1, len(testData), "Did not fetch correct number of items")
+	assert.Equal(t, "Notes3", testData[0].Items[0].Notes, "Incorrect item returned from query")
+	assert.Equal(t, 1, len(testData[0].Items), "Test that the right number of items were returned with the order")
+
+	RemoveOrder(testItemID)
+	RemoveOrder(testItemID2)
 }
