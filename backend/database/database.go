@@ -83,6 +83,16 @@ func QueryMenu(filter *MenuFilter) []models.MenuItem {
 	return data
 }
 
+// FetchItem retrieves the given item from the database
+func FetchItem(id int) (models.MenuItem, error) {
+	ret := models.MenuItem{}
+	res := db.Model(&models.MenuItem{}).Where("ID = ?", id).First(&ret)
+	if res.Error != nil {
+		return models.MenuItem{}, res.Error
+	}
+	return ret, nil
+}
+
 // prepareArgs applies defaults to a MenuFilter struct in preparation for use in a query
 func prepareArgs(filter *MenuFilter) *MenuFilter {
 	ret := &MenuFilter{}
@@ -128,4 +138,46 @@ func fetchDBAuth() (string, string, string) {
 	dbname := os.Getenv("DB_NAME")
 	password := os.Getenv("DB_PASSWORD")
 	return username, dbname, password
+}
+
+func AddOrder(item *models.Order) error {
+	// Check that there are no open orders with that table number already
+	var count int64
+	db.Model(&models.Order{}).Where("status != ? AND table_number = ?", "Complete", item.TableNumber).Count(&count)
+	if count > 0 {
+		return fmt.Errorf("there is already an open order for table %d", item.TableNumber)
+	}
+	// Do not re-create menu items when adding them to an OrderItem
+	feedback := db.Omit("Items.Item.*").Create(item)
+	return feedback.Error
+}
+
+func RemoveOrder(id uint) error {
+	feedback := db.Delete(&models.Order{ID: id})
+	if feedback.Error != nil {
+		return feedback.Error
+	}
+	if feedback.RowsAffected == 0 {
+		return errors.New("no items removed from table")
+	}
+	return nil
+}
+
+func FetchOrders(filter ...models.Order) ([]*models.Order, error) {
+	dbCopy := *db
+	dbLocal := &dbCopy
+	var orderData []*models.Order
+
+	if len(filter) > 0 {
+
+		if filter[0].TableNumber > 0 {
+			dbLocal = dbLocal.Where("Table_Number = ?", filter[0].TableNumber)
+		}
+		if len(filter[0].Status) > 0 {
+			dbLocal = dbLocal.Where("Status = ?", filter[0].Status)
+		}
+	}
+	dbLocal.Model(&models.Order{}).Preload("Items").Preload("Items.Item").Find(&orderData)
+
+	return orderData, nil
 }
