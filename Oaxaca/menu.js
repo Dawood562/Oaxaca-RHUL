@@ -258,28 +258,20 @@ async function requestMenu(userSearchTerm, userMaxPrice, userMaxCalories) {
       }])
   }
 }
-//function to add menu item to basket
+// function to add menu item to basket
+// Stores menu items in basket using cookies
+// Cookie structure is CSV in form: id,itemName,price,calories,quantity
 function addToBasket(index, itemId, itemName, price, calories) {
- let order = JSON.parse(localStorage.getItem('order')) || [];
- let existingItemIndex = order.findIndex(item => item.index === index);
- let quantity = parseInt(document.getElementById('itemQuantityInput' + index).value);
- if (existingItemIndex >= 0) {
-   order[existingItemIndex].quantity += quantity;
- } else {
-   let item = {
-     index: index,
-     itemId: itemId,
-     itemName: itemName,
-     price: price,
-     calories: calories,
-     quantity: quantity
-   };
-   order.push(item);
- }
- localStorage.setItem('order', JSON.stringify(order));
- updateBasketIcon();
- updateOrderDetails();
+
+  let quantity = document.getElementById("itemQuantityInput"+index).value
+
+  // This will work for now as we only store 1 type of cookie
+  let previousCookieContent = document.cookie.split("basket=")[1]
+
+  document.cookie="basket="+itemId+","+itemName+","+price+","+calories+","+quantity+"#"+previousCookieContent;
+  console.log("Current basket:"+document.cookie);
 }
+
 //function to update basket icon with the item quantity in order
 function updateBasketIcon() {
  let order = JSON.parse(localStorage.getItem('order')) || [];
@@ -331,9 +323,12 @@ function removeFromOrder(itemName) {
 }
 //updates order details and basket icon when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
- updateOrderDetails();
- updateBasketIcon();
+  initializeMenu();
+  initializeCategoryFilter();
+  updateOrderDetails();
+  updateBasketIcon();
 });
+
 function filterItems(){
    let searchTerm = document.getElementById('searchTerm').value;
    let maxCalories = parseInt(document.getElementById('maxCalories').value) || 0;
