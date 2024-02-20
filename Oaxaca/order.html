@@ -10,6 +10,13 @@
   <link rel="stylesheet" href="style.css" type="text/css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   
+  <script type="text/javascript">
+    function sendPayment(){
+        //Check if the message "payed" went to the servers to notify the waiters
+        //TO DO:send messgae "payed" to the servers
+        alert("Payment successful");
+    }
+  </script>
 </head>
 
 <body>
@@ -49,7 +56,8 @@
           <br>
           <button onclick="submitOrder()">Submit Order</button>
           <br>
-          <button id="payButton"> PAY </button>
+          <br>
+          <button id="payButton" onclick="sendPayment()"> PAY </button>
         </div>
         </aside>
       
