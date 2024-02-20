@@ -262,14 +262,39 @@ async function requestMenu(userSearchTerm, userMaxPrice, userMaxCalories) {
 // Stores menu items in basket using cookies
 // Cookie structure is CSV in form: id,itemName,price,calories,quantity
 function addToBasket(index, itemId, itemName, price, calories) {
-
   let quantity = document.getElementById("itemQuantityInput"+index).value
 
   // This will work for now as we only store 1 type of cookie
   let previousCookieContent = document.cookie.split("basket=")[1]
 
-  document.cookie="basket="+itemId+","+itemName+","+price+","+calories+","+quantity+"#"+previousCookieContent;
+
+  let updated = false;
+
+
+  // Check that item is not already in basket
+  previousCookieContent.split("#").forEach(element => {
+    let splitCookie = element.split(",")
+    // Item found in basket
+    if(splitCookie[0] == itemId){
+      // Then update quantity instead
+      let newQuantity = Number(splitCookie[4])+Number(quantity);
+      
+      let indexOfItem = previousCookieContent.indexOf(element)
+      let indexOfEndOfItem = previousCookieContent.indexOf("#", indexOfItem)
+      let updatedCookieSegment = previousCookieContent.substring(indexOfItem, indexOfEndOfItem-1)+newQuantity
+      let updatedCookie = previousCookieContent.substring(0,indexOfItem)+updatedCookieSegment+previousCookieContent.substring(indexOfEndOfItem, previousCookieContent.length);
+      document.cookie = "basket="+updatedCookie;
+
+      updated = true;
+    }
+  });
+
+  if(!updated){
+    document.cookie="basket="+itemId+","+itemName+","+price+","+calories+","+quantity+"#"+previousCookieContent;
+  }
+
   console.log("Current basket:"+document.cookie);
+  
 }
 
 //function to update basket icon with the item quantity in order
@@ -328,6 +353,15 @@ document.addEventListener('DOMContentLoaded', function() {
   updateOrderDetails();
   updateBasketIcon();
 });
+
+function refreshCookies(){
+  // Only refresh cookies if loading menu page again.
+  // Should keep cookies when redirected to order page
+  if (document.title.indexOf("Menu") != -1){
+    document.cookie="basket=" // Reset basket on refresh or new session
+    console.log("Refreshed cookies!")
+  }
+}
 
 function filterItems(){
    let searchTerm = document.getElementById('searchTerm').value;
