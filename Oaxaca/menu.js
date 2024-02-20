@@ -291,6 +291,11 @@ function addToBasket(index, itemId, itemName, price, calories) {
 
   if(!updated){
     document.cookie="basket="+itemId+","+itemName+","+price+","+calories+","+quantity+"#"+previousCookieContent;
+
+    let previousBasket = document.getElementById("basketIcon").innerHTML;
+    let previousBasketQuantity = previousBasket.substring(previousBasket.length-1,previousBasket.length);
+    let newQuantity = Number(previousBasketQuantity)+1;
+    document.getElementById("basketIcon").innerHTML = "🛒 "+newQuantity;
   }
 
   console.log("Current basket:"+document.cookie);
