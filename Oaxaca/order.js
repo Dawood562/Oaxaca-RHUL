@@ -53,6 +53,7 @@ function showOrdersToPage(){
     // Get place to store menu items
     let orderStore = document.getElementById("orderHeading");
 
+    // Add each item from cookie to page
     cookieData.forEach(element => {
         let splitItemData = element.split(",")
         if(element.length > 0){
@@ -65,17 +66,8 @@ function showOrdersToPage(){
                 <label class='orderPageItemData'>Price: £${(Number(splitItemData[2]) * Number(splitItemData[4])).toFixed(2)}</label>
                 <button class="removeButton"><i class = "fa fa-trash"></i></button>`
             orderStore.appendChild(item)
-        }else{
-            console.log("Found empty element at end");
         }
     });
-
-    // let testItem = document.createElement('li')
-    // let testItem2 = document.createElement('li')
-    // testItem.innerHTML="<label class='orderPageItem'>hello</label>"
-    // testItem2.innerHTML="<label class='orderPageItem'>world</label>"
-    // orderStore.appendChild(testItem)
-    // orderStore.appendChild(testItem2)
 }
 
 function submitOrder() {

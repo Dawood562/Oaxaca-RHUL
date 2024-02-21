@@ -309,38 +309,7 @@ function updateBasketIcon() {
  let totalQuantity = order.reduce((total, item) => total + item.quantity, 0);
  basketIcon.textContent = `🛒 ${totalQuantity}`;
 }
-//function to update order details with items in the order
-function updateOrderDetails() {
- let order = JSON.parse(localStorage.getItem('order'));
- let orderDetailsDiv = document.getElementById('orderDetails');
- let totalDiv = document.getElementById('orderTotal');
- orderDetailsDiv.innerHTML = '';
- let orderTotal = 0;
- if (order && order.length > 0) {
-   order.forEach(item => {
-     orderTotal += item.price * item.quantity;
-     let li = document.createElement('li');
-     li.innerHTML = `
-              <h3>${item.itemName}</h3>
-              <p> quantity: ${item.quantity}</p>
-              <p>Calories: ${item.calories * item.quantity} kcal</p>
-              <p>Price: £${(item.price * item.quantity).toFixed(2)}</p>
-              <button class="removeButton"><i class = "fa fa-trash"></i></button>
-          `;
-     orderDetailsDiv.appendChild(li);
-   });
-   totalDiv.textContent = `Total: £${orderTotal.toFixed(2)}`;
-   let removeButtons = document.querySelectorAll('.removeButton');
-   removeButtons.forEach(button => {
-     button.addEventListener('click', () => {
-       removeFromOrder(button.parentElement.querySelector('h3').textContent);
-     });
-   });
- } else {
-   orderDetailsDiv.innerHTML = `basket empty`;
-   totalDiv.textContent = '';
- }
-}
+
 //function ro remove menu item from the order
 function removeFromOrder(itemName) {
  let order = JSON.parse(localStorage.getItem('order')) || [];
