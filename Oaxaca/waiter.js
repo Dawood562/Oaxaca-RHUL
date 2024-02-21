@@ -61,29 +61,29 @@ async function refreshOrders(){
 function createOrder(order) {
     let items = order.items.map((x) => x.itemId.itemName);
     let itemsStr = "";
-    for(var item of items) {
-        itemsStr += item + ", "
+    for (var item of items) {
+        itemsStr += item + ", ";
     }
     return `<tr>
         <td>${order.tableNumber}</td>
         <td>${new Date(order.orderTime).toLocaleTimeString()}</td>
         <td>${itemsStr.substring(0, itemsStr.length - 2)}</td>
         <td>${order.status}</td>
-        <td><button type="submit">Cancel Order</button></td>
+        <td><button type="submit" onclick="notifyCancellation(${order.orderId})">Cancel Order</button></td>
         <td><button type="submit">Complete</button></td>
     </tr>`;
 }
 
-function notifyConfirmation(){
-    if(!sockInit){
-        return console.error("SOCKET NOT INITIALISED - CANNOT NOTIFY CONFIRMATION")
+function notifyConfirmation() {
+    if (!sockInit) {
+        return console.error("SOCKET NOT INITIALIZED - CANNOT NOTIFY CONFIRMATION");
     }
     sock.send("CONFIRM");
 }
 
-function notifyCancellation(){
-    if(!sockInit){
-        return console.error("SOCKET NOT INITIALISED - CANNOT NOTIFY CANCELLATION")
+function notifyCancellation(orderId) {
+    if (!sockInit) {
+        return console.error("SOCKET NOT INITIALIZED - CANNOT NOTIFY CANCELLATION");
     }
-    sock.send("CANCEL");
+    sock.send(`CANCEL:${orderId}`);
 }
