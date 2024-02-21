@@ -72,16 +72,43 @@ function showOrdersToPage(){
     let orderStore = document.getElementById("orderHeading");
     basketData.forEach(itemData => {
         let item = document.createElement('li');
-        item.className = "orderPageItem"
+        item.className = "orderPageItem";
         item.innerHTML = `
+            <div class='orderItemEntry'>
             <label class='orderPageItemData'>${itemData.name}</label>
             <label class='orderPageItemData'>quantity: ${itemData.quantity}</label>
             <label class='orderPageItemData'>Calories: ${Number(itemData.calories) * Number(itemData.quantity)} kcal</label>
             <label class='orderPageItemData'>Price: £${(Number(itemData.price) * Number(itemData.quantity)).toFixed(2)}</label>
-            <button class="removeButton"><i class = "fa fa-trash"></i></button>`
-        orderStore.appendChild(item)
+            <button class="removeButton" onclick='removeOrderFromList(`+itemData.id+`)'><i class = "fa fa-trash"></i></button>
+            <div>`
+        orderStore.appendChild(item);
     });
 }
+
+function removeOrderFromList(id){
+    let removedItem = false;
+    for(let i = 0; i < basketData.length; i++){
+        if (basketData[i].id == id){
+            basketData.splice(i, 1);
+            i = basketData.length;
+            removedItem = true;
+            console.log("New size of basketData: "+basketData.length)
+        }
+    }
+
+    if(removedItem){
+        // Clear orders from page:
+        let orderList = document.getElementById("orderHeading").childNodes;
+        console.log(orderList);
+        // Backwards for loop because when element 1 removed, element 2 takes 1's place
+        for(let i = orderList.length-1; i > 0; i--){
+            orderList[1].remove();
+        }
+        showOrdersToPage();
+    }
+
+}
+
 
 function submitOrder() {
     let tableNum = Number(document.getElementById('tableNumber').value);
