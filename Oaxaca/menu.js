@@ -355,4 +355,18 @@ function filterItems(){
    })
 }
 
-
+function initializeMenu() {
+  const activeButton = document.querySelector('#menuFilter button.active');
+  if (activeButton) {
+    const category = activeButton.getAttribute('data-category');
+    const filter = {
+      searchTerm: '',
+      maxCalories: 0,
+      maxPrice: 0,
+      category: category
+    };
+    filterMenu(filter, activeButton);
+  } else {
+    filterItems();
+  }
+}

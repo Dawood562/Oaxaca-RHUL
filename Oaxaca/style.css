@@ -18,7 +18,7 @@
 body {
   font-family: 'Crete Round', sans-serif;
   margin: 0;
-  background-color: white;
+  background-color:burlywood;
   color: #591F0A;
 }
 
@@ -118,6 +118,9 @@ footer {
   text-align: center;
   font-size: 12px;
   border-top: 1px dashed white;
+  position:absolute;
+  bottom:0;
+  height: 2.5rem;
 }
 
 h1,
