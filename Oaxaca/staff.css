@@ -48,3 +48,7 @@ body {
 .button-box:hover {
   cursor: pointer;
 }
+
+a {
+  text-decoration: none;
+}
