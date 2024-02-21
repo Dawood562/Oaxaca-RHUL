@@ -84,27 +84,20 @@ function showOrdersToPage(){
 }
 
 function submitOrder() {
-    let tableNumber = document.getElementById('tableNumber').value;
+    let tableNum = Number(document.getElementById('tableNumber').value);
 
-    // Parse data into json
-    let order = JSON.parse(localStorage.getItem('order')) || [];
-
-    if (order.length === 0) {
+    if (basketData.length == 0) {
         alert('Your basket is empty. Add items before submitting your order.');
         return;
     }
 
-    
-
+    // Fill in body of item array to send to backend
+    let totalBill = 0.0;
     let itemObjects = [];
-    for(var i of order) {
-        itemObjects.push({item: i.itemId});
-    }
-
-    let orderData = {
-        tableNumber: parseInt(tableNumber),
-        items: itemObjects
-    };
+    basketData.forEach(element => {
+        itemObjects.push({item: Number(element.id), notes:"Stuff"});
+        totalBill += Number(element.price);
+    });
 
     //  Checking if the WebSocket connection is established
     if (sock.readyState !== WebSocket.OPEN) {
@@ -112,12 +105,17 @@ function submitOrder() {
         return;
     }
 
-    fetch('http://localhost:4444/add_order', {
+    
+    fetch('http://localhost:4444/add_order?', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/json'
         },
-        body: JSON.stringify(orderData),
+        body: JSON.stringify({
+            bill: totalBill,
+            tableNumber: tableNum,
+            items: itemObjects
+        })
     })
     .then(() => {
         console.log('Order submitted successfully');
