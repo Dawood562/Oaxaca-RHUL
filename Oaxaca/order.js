@@ -24,7 +24,6 @@ function initBasketData(){
             basketData.push(itemData)
         }     
     });
-    console.log(basketData)
 
 }
 

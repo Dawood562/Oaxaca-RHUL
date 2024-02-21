@@ -9,7 +9,6 @@ function initMenuAll() {
 
   let data = requestMenu(0, 0, 0); // Zero value = none specified
   data.then(r => {
-    console.log(r)
     currentMenu = r
     let index = 0;
     document.getElementById("MenuItemGridLayout").innerHTML = ""
@@ -322,10 +321,12 @@ function removeFromOrder(itemName) {
 }
 //updates order details and basket icon when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-  initializeMenu();
-  initializeCategoryFilter();
-  updateOrderDetails();
-  updateBasketIcon();
+  if(document.title.indexOf("Menu") != -1){
+    initializeMenu();
+    initializeCategoryFilter();
+    updateOrderDetails();
+    updateBasketIcon();
+  }
 });
 
 function refreshCookies(){
