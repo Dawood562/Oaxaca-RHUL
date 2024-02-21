@@ -1,10 +1,32 @@
 var sock
 var sockInit = false
+var basketData = []
 
 document.addEventListener('DOMContentLoaded', e=>{
     initSock();
+    initBasketData()
     showOrdersToPage();
 })
+
+function initBasketData(){
+    let basketCookies = document.cookie.split("basket=")[1].split("#");
+    basketCookies.forEach(item => {
+        if(item.length > 0){
+            // For each item in basket
+            let splitData = item.split(",")
+            let itemData = {
+                id:splitData[0],
+                name:splitData[1],
+                price:splitData[2],
+                calories:splitData[3],
+                quantity:splitData[4]
+            }
+            basketData.push(itemData)
+        }     
+    });
+    console.log(basketData)
+
+}
 
 // Called when page is initialised and initialises websocket connection
 function initSock(){
@@ -47,30 +69,24 @@ function notifyNew(){
 }
 
 function showOrdersToPage(){
-    let cookieData = document.cookie.split("basket=")[1].split("#");
-    console.log(cookieData);
-
-    // Get place to store menu items
     let orderStore = document.getElementById("orderHeading");
-
-    // Add each item from cookie to page
-    cookieData.forEach(element => {
-        let splitItemData = element.split(",")
-        if(element.length > 0){
-            let item = document.createElement('li');
-            item.className = "orderPageItem"
-            item.innerHTML = `
-                <label class='orderPageItemData'>${splitItemData[1]}</label>
-                <label class='orderPageItemData'>quantity: ${splitItemData[4]}</label>
-                <label class='orderPageItemData'>Calories: ${Number(splitItemData[3]) * Number(splitItemData[4])} kcal</label>
-                <label class='orderPageItemData'>Price: £${(Number(splitItemData[2]) * Number(splitItemData[4])).toFixed(2)}</label>
-                <button class="removeButton"><i class = "fa fa-trash"></i></button>`
-            orderStore.appendChild(item)
-        }
+    basketData.forEach(itemData => {
+        let item = document.createElement('li');
+        item.className = "orderPageItem"
+        item.innerHTML = `
+            <label class='orderPageItemData'>${itemData.name}</label>
+            <label class='orderPageItemData'>quantity: ${itemData.quantity}</label>
+            <label class='orderPageItemData'>Calories: ${Number(itemData.calories) * Number(itemData.quantity)} kcal</label>
+            <label class='orderPageItemData'>Price: £${(Number(itemData.price) * Number(itemData.quantity)).toFixed(2)}</label>
+            <button class="removeButton"><i class = "fa fa-trash"></i></button>`
+        orderStore.appendChild(item)
     });
 }
 
 function submitOrder() {
+    let tableNumber = document.getElementById('tableNumber').value;
+
+    // Parse data into json
     let order = JSON.parse(localStorage.getItem('order')) || [];
 
     if (order.length === 0) {
@@ -78,7 +94,7 @@ function submitOrder() {
         return;
     }
 
-    let tableNumber = document.getElementById('tableNumber').value;
+    
 
     let itemObjects = [];
     for(var i of order) {
