@@ -1,19 +1,55 @@
 body {
-    background-color: grey;
-    margin: 0; 
-    height: 100vh; 
-    display: flex; 
+    background-color: white;
+    margin: 0;
+    height: 100vh;
+    display: flex;
     align-items: center;
     justify-content: center;
-  }
-  
-  .button-box {
+}
+
+.button-box {
     background-color: white;
     padding: 30px;
     border-radius: 5px;
-    width: 25%;  
-    margin: 10px; 
+    width: 50%;
+    height: 50%;
+    margin: 10px;
     text-align: center;
-    font-size: 24px; 
-    cursor: pointer; 
-  }  
+    font-size: 35px;
+    border: 1px solid black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.button-box:hover {
+    cursor: pointer;
+}
+
+.kitchen-button {
+  position: relative;
+}
+
+.kitchen-button img {
+  max-width: 100%;
+  height: 100%;
+  margin-bottom: 10px;
+  opacity: 0.5;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.waiter-button {
+  position: relative;
+}
+
+.waiter-button img {
+  max-width: 100%;
+  height: 100%;
+  margin-bottom: 10px;
+  opacity: 0.5;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
