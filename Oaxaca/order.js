@@ -2,7 +2,8 @@ var sock
 var sockInit = false
 
 document.addEventListener('DOMContentLoaded', e=>{
-    initSock()
+    initSock();
+    showOrdersToPage();
 })
 
 // Called when page is initialised and initialises websocket connection
@@ -45,6 +46,37 @@ function notifyNew(){
   document.getElementById('confirmationSection').style.display = 'block';
 }
 
+function showOrdersToPage(){
+    let cookieData = document.cookie.split("basket=")[1].split("#");
+    console.log(cookieData);
+
+    // Get place to store menu items
+    let orderStore = document.getElementById("orderHeading");
+
+    cookieData.forEach(element => {
+        let splitItemData = element.split(",")
+        if(element.length > 0){
+            let item = document.createElement('li');
+            item.className = "orderPageItem"
+            item.innerHTML = `
+                <label class='orderPageItemData'>${splitItemData[1]}</label>
+                <label class='orderPageItemData'>quantity: ${splitItemData[4]}</label>
+                <label class='orderPageItemData'>Calories: ${Number(splitItemData[3]) * Number(splitItemData[4])} kcal</label>
+                <label class='orderPageItemData'>Price: £${(Number(splitItemData[2]) * Number(splitItemData[4])).toFixed(2)}</label>
+                <button class="removeButton"><i class = "fa fa-trash"></i></button>`
+            orderStore.appendChild(item)
+        }else{
+            console.log("Found empty element at end");
+        }
+    });
+
+    // let testItem = document.createElement('li')
+    // let testItem2 = document.createElement('li')
+    // testItem.innerHTML="<label class='orderPageItem'>hello</label>"
+    // testItem2.innerHTML="<label class='orderPageItem'>world</label>"
+    // orderStore.appendChild(testItem)
+    // orderStore.appendChild(testItem2)
+}
 
 function submitOrder() {
     let order = JSON.parse(localStorage.getItem('order')) || [];

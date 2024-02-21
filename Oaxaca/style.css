@@ -339,4 +339,10 @@ strong {
  cursor: pointer;
  border-radius: 5px;
 }
-
+.orderPageItem{
+  font-family: 'Crete Round', sans-serif;
+  font-size:26px;
+}
+.orderPageItemData{
+  padding-left: 5%;
+}
