@@ -41,12 +41,19 @@ body {
   opacity: 0.5;
 }
 
-.kitchen-button img {
+.button-box:hover {
+  cursor: pointer;
+}
+
+#kitchen-button {
+  visibility: hidden;
+}
+#kitchen-button img {
   width: 45%;
 }
 
-.button-box:hover {
-  cursor: pointer;
+#waiter-button {
+  visibility: hidden;
 }
 
 a {
