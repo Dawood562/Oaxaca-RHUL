@@ -45,6 +45,12 @@ func addGenericTestData() {
 	AddWaiter(waiter2)
 }
 
+func TestGetWaitersWithInvalidFilter(t *testing.T) {
+	addGenericTestData()
+	data := GetWaiter(Waiter{ID: 3})
+	assert.Nil(t, data, "Fetching data with invalid id should return nil")
+}
+
 func removePreviousWaiterData() {
 	activeWaiters = []Waiter{} // Replace old waiter list with empty one
 }
