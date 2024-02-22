@@ -340,7 +340,7 @@ strong {
  border-radius: 5px;
 }
 
-body {
+#staff-page {
   background-color: white;
   margin: 0;
   height: 100vh;
@@ -350,7 +350,15 @@ body {
   font-family:Arial, Helvetica, sans-serif;
 }
 
-#loginbox{
+#staff-page a {
+  text-decoration: none;
+}
+
+#loginbox a{
+  text-decoration: none;
+}
+
+#loginbox {
   margin: 0; 
   margin-left: 40%; 
   margin-right: 40%;
@@ -386,6 +394,7 @@ body {
   color: white;
   padding: 5px 10px;
   border-radius: 5px;
+  text-decoration: none;
 }
 
 .button-box img {
@@ -405,14 +414,11 @@ body {
 #kitchen-button {
   visibility: hidden;
 }
+
 #kitchen-button img {
   width: 45%;
 }
 
 #waiter-button {
   visibility: hidden;
-}
-
-a {
-  text-decoration: none;
 }
