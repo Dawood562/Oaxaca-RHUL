@@ -22,3 +22,19 @@ func RemoveWaiter(waiter Waiter) {
 		}
 	}
 }
+
+// Gets waiter by provided id or if no waiter provided then gets all waiters
+// Returns nil if waiter id provided and none
+// Returns list of waiters
+func GetWaiter(waiter ...Waiter) *[]Waiter {
+	if len(waiter) > 0 {
+		for _, w := range activeWaiters {
+			if waiter[0].ID == w.ID {
+				return &[]Waiter{w}
+			}
+		}
+		return nil
+	} else {
+		return &activeWaiters
+	}
+}
