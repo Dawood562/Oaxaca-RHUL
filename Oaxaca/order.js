@@ -92,20 +92,39 @@ function removeOrderFromList(id){
             i = basketData.length;
             removedItem = true;
             console.log("New size of basketData: "+basketData.length)
+            removeOrderFromCookie(id);
         }
     }
 
     if(removedItem){
         // Clear orders from page:
-        let orderList = document.getElementById("orderHeading").childNodes;
-        console.log(orderList);
-        // Backwards for loop because when element 1 removed, element 2 takes 1's place
-        for(let i = orderList.length-1; i > 0; i--){
-            orderList[1].remove();
-        }
+        removeAllOrders();
         showOrdersToPage();
     }
 
+}
+
+function removeAllOrders(){
+    let orderList = document.getElementById("orderHeading").childNodes;
+    // Backwards for loop because when element 1 removed, element 2 takes 1's place
+    for(let i = orderList.length-1; i > 0; i--){
+        orderList[1].remove();
+    }
+}
+
+function removeOrderFromCookie(id){
+    let cookies = document.cookie.split("basket=")[1].split("#");
+    let newCookieData = "basket=";
+    cookies.forEach(cookie =>{
+        if(cookie.length > 0){
+            // If cookie doesnt match expected cookie to remove then add it back to cookie 
+            if(cookie.split(",")[0] != id){
+                newCookieData+=cookie+"#";
+            }
+        }
+    })
+    // Update cookies
+    document.cookie=newCookieData;
 }
 
 
