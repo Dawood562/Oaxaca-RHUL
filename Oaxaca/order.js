@@ -95,7 +95,9 @@ function sendPayment(){
         method: "POST",
         headers: { "Content-Type": "application/json",
         },
-        body: JSON.stringify("PAYMENT SUCCESSFUL \n Details:\n" + submitOrder.orderData),
+        body: JSON.stringify("PAYMENT SUCCESSFUL \n Details:\n" + submitOrder.orderData), 
+        //TO DO:
+        //Check if payment was valid or not
     })
     .then(() => { //when connection is successful and message is sent ot the servers, we notify via a window on the webpaage
         alert("Payment successful");
