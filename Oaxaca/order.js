@@ -87,3 +87,17 @@ function submitOrder() {
         notifyNew(); // Notify backend about the new order
     });
 }
+
+function sendPayment(){
+    //Check if the message "payed" went to the servers to notify the waiters
+    //TO DO:send messgae "payed" to the servers
+    fetch("http://localhost:4444/docs", {
+        method: "POST",
+        headers: { "Content-Type": "application/json",
+        },
+        body: JSON.stringify("PAYMENT SUCCESSFUL \n Details:\n" + submitOrder.orderData),
+    })
+    .then(() => { //when connection is successful and message is sent ot the servers, we notify via a window on the webpaage
+        alert("Payment successful");
+    });
+}
