@@ -8,5 +8,6 @@ type Order struct {
 	TableNumber uint        `json:"tableNumber"`
 	Bill        float64     `json:"bill"`
 	Status      string      `json:"status"`
+	Paid        bool        `json:"paid" gorm:"default:false"`
 	Items       []OrderItem `json:"items" gorm:"constraint:OnDelete:CASCADE,OnUpdate:CASCADE"`
 }

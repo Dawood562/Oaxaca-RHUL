@@ -332,3 +332,41 @@ func TestFetchingItemsWithFilter(t *testing.T) {
 	RemoveOrder(testItemID)
 	RemoveOrder(testItemID2)
 }
+
+func TestPayOrder(t *testing.T) {
+	ClearMenu()
+	ClearOrders()
+
+	menuItem1 := models.MenuItem{Name: "Tequila"}
+	menuItem2 := models.MenuItem{Name: "Vodka"}
+	menuItem3 := models.MenuItem{Name: "Rum"}
+	AddItem(&menuItem1)
+	AddItem(&menuItem2)
+	AddItem(&menuItem3)
+
+	orderItems := []models.OrderItem{
+		{
+			Item:  menuItem1,
+			Notes: "First Item",
+		},
+		{
+			Item:  menuItem2,
+			Notes: "Second Item",
+		},
+		{
+			Item:  menuItem3,
+			Notes: "Third Item",
+		},
+	}
+
+	err := AddOrder(&models.Order{ID: 1, TableNumber: 4, Items: orderItems})
+	assert.NoError(t, err)
+
+	paid, err := OrderPaid(1)
+	assert.NoError(t, err, "Test that retrieving payment status for a valid order does not create an error")
+	assert.False(t, paid, "Test that fresh order is unpaid")
+
+	paid, err = OrderPaid(4)
+	assert.Error(t, err, "Test that retrieving payment status for an invalid order creates an error")
+	assert.False(t, paid, "Test that an order that doesn't exist is not paid")
+}

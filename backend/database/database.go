@@ -181,3 +181,17 @@ func FetchOrders(filter ...models.Order) ([]*models.Order, error) {
 
 	return orderData, nil
 }
+
+// OrderPaid returns true if the order with the given ID has been paid for, returns error if that order does not exist
+func OrderPaid(id uint) (bool, error) {
+	order := &models.Order{ID: id}
+	result := db.Model(order).First(&order)
+	if result.Error != nil {
+		return false, result.Error
+	}
+	if result.RowsAffected == 0 {
+		return false, errors.New("order not found")
+	}
+
+	return order.Paid, nil
+}
