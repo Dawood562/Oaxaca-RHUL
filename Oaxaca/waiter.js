@@ -73,7 +73,7 @@ function createOrder(order) {
         <td>${itemsStr.substring(0, itemsStr.length - 2)}</td>
         <td>${order.status}</td>
         <td><button type="button" onclick="notifyCancellation(${order.orderId})">Cancel Order</button></td>
-        <td><button type="button">Complete</button></td>
+        <td><button type="button"> onclick="notifyConfirmation(${order.orderId})">Confirm Order</button></td>
     </tr>`;
 }
 
@@ -100,10 +100,22 @@ function notifyCancellation(orderId) {
         console.error(`Row with order ID ${orderId} not found.`);
     }
 }
-//doesnt work with the notify 
-/*function notifyConfirmation() {
+
+function notifyConfirmation(orderId) {
     if (!sockInit) {
-        return console.error("SOCKET NOT INITIALIZED - CANNOT NOTIFY CONFIRMATION");
+        return console.error("SOCKET NOT INITIALIZED - CANNOT NOTIFY CANCELLATION");
     }
-    sock.send("CONFIRM");
-}*/
+  
+    sock.send(`CANCEL:${orderId}`);
+    let row = document.querySelector(`[data-order-id="${orderId}"]`);
+
+    if (row) {
+        row.querySelector('td:nth-child(4)').textContent = 'Confirmed';
+        row.querySelector('td:nth-child(5) button').disabled = true;
+        row.querySelector('td:nth-child(6) button').disabled = true;
+
+        alert(`Order ${orderId} has been confirmed.`);
+    } else {
+        console.error(`Row with order ID ${orderId} not found.`);
+    }
+}
