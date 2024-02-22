@@ -164,9 +164,17 @@ function submitOrder() {
     })
     .then(() => {
         console.log('Order submitted successfully');
+        
 
         localStorage.removeItem('order'); // Clears the basket after a successful order
         updateOrderDetails();
         notifyNew(); // Notify backend about the new order
+        
     });
+    document.cookie="basket=";
+    removeAllOrders();
+    let orderList = document.getElementById("orderHeading");
+    let submissionNotification = document.createElement('div');
+    submissionNotification.innerHTML="<label class='orderPageItem'>Submitted order!</label>";
+    orderList.appendChild(submissionNotification);
 }

@@ -329,15 +329,6 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-function refreshCookies(){
-  // Only refresh cookies if loading menu page again.
-  // Should keep cookies when redirected to order page
-  if (document.title.indexOf("Menu") != -1){
-    document.cookie="basket=" // Reset basket on refresh or new session
-    console.log("Refreshed cookies!")
-  }
-}
-
 function filterItems(){
    let searchTerm = document.getElementById('searchTerm').value;
    let maxCalories = parseInt(document.getElementById('maxCalories').value) || 0;
