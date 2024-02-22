@@ -73,7 +73,7 @@ function createOrder(order) {
         <td>${itemsStr.substring(0, itemsStr.length - 2)}</td>
         <td>${order.status}</td>
         <td><button type="button" onclick="notifyCancellation(${order.orderId})">Cancel Order</button></td>
-        <td><button type="button"> onclick="notifyConfirmation(${order.orderId})">Confirm Order</button></td>
+        <td><button type="button" onclick="notifyConfirmation(${order.orderId})">Confirm Order</button></td>
     </tr>`;
 }
 
@@ -103,10 +103,13 @@ function notifyCancellation(orderId) {
 
 function notifyConfirmation(orderId) {
     if (!sockInit) {
-        return console.error("SOCKET NOT INITIALIZED - CANNOT NOTIFY CANCELLATION");
+        return console.error("SOCKET NOT INITIALIZED - CANNOT NOTIFY CONFIRMATION");
     }
   
-    sock.send(`CANCEL:${orderId}`);
+  
+    sock.send(`CONFIRM:${orderId}`);
+
+    
     let row = document.querySelector(`[data-order-id="${orderId}"]`);
 
     if (row) {
