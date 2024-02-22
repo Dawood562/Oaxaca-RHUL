@@ -369,4 +369,30 @@ func TestPayOrder(t *testing.T) {
 	paid, err = OrderPaid(4)
 	assert.Error(t, err, "Test that retrieving payment status for an invalid order creates an error")
 	assert.False(t, paid, "Test that an order that doesn't exist is not paid")
+
+	err = AddOrder(&models.Order{ID: 2, TableNumber: 5, Items: orderItems, Paid: true})
+	assert.NoError(t, err)
+
+	paid, err = OrderPaid(2)
+	assert.NoError(t, err)
+	assert.True(t, paid, "Check that paid order returns true from OrderPaid")
+
+	paid, err = OrderPaid(1)
+	assert.NoError(t, err)
+	assert.False(t, paid, "Test that first order is still unpaid")
+
+	err = PayOrder(1)
+	assert.NoError(t, err, "Test that paying for valid order creates no error")
+	err = PayOrder(2)
+	assert.Error(t, err, "Test that paying for a paid order creates an error")
+	err = PayOrder(3)
+	assert.Error(t, err, "Test that paying for an invalid order creates an error")
+
+	paid, err = OrderPaid(1)
+	assert.NoError(t, err)
+	assert.True(t, paid, "Test that payment status was updated")
+
+	paid, err = OrderPaid(2)
+	assert.NoError(t, err)
+	assert.True(t, paid, "Test that payment status was unchanged")
 }

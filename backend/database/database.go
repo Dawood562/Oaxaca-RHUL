@@ -195,3 +195,21 @@ func OrderPaid(id uint) (bool, error) {
 
 	return order.Paid, nil
 }
+
+// PayOrder updates the payment status of the given order, returns an error if that order cannot be found or is already paid for
+func PayOrder(id uint) error {
+	paid, err := OrderPaid(id)
+	if err != nil {
+		return err
+	}
+	if paid {
+		return errors.New("order already paid for")
+	}
+
+	// Set order as paid
+	order := &models.Order{ID: id}
+	db.Model(order).First(&order)
+	order.Paid = true
+	db.Save(&order)
+	return nil
+}
