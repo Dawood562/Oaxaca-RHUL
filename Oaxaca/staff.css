@@ -1,0 +1,69 @@
+body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+a {
+    text-decoration: none;
+    color: black;
+}
+
+span {
+    border-radius: 5px;
+    position:relative;
+    color: white;
+    padding: 5px 10px;
+    background-color: rgba(0, 0, 0, 1);
+}
+
+#loginbox {
+    border-radius: 5px;
+    margin: 50px 40% 0;
+    padding-top: 10px;
+    width: 20%;
+    height: 150px;
+    position: absolute;
+    background: #FBFBF0;
+    border: 1px solid #000000;
+    visibility: visible;
+    text-align: center;
+}
+
+.button-box {
+    border-radius: 5px;
+    padding: 15px;
+    width: 45%;
+    height: 45%;
+    margin: 20px;
+    text-align: center;
+    font-size: 50px;
+    border: 1px solid black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.button-box img, #kitchen-button img {
+    width: 95%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    object-fit: cover;
+    opacity: 0.5;
+}
+
+#kitchen-button img {
+    width: 45%;
+}
+
+.button-box:hover, #kitchen-button, #waiter-button {
+    cursor: pointer;
+    visibility: hidden;
+}
