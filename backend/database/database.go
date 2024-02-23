@@ -217,3 +217,16 @@ func PayOrder(id uint) error {
 	db.Save(&order)
 	return nil
 }
+
+func GetOrderStatus(id uint) (string, error) {
+	order := &models.Order{ID: id}
+	result := db.Model(order).First(&order)
+	if result.Error != nil {
+		return "", result.Error
+	}
+	if result.RowsAffected == 0 {
+		return "", errors.New("order not found")
+	}
+
+	return order.Status, nil
+}

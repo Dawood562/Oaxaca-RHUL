@@ -224,7 +224,7 @@ func TestRemovingMultipleData(t *testing.T) {
 
 	data, err = FetchOrders()
 	assert.Equal(t, 1, len(data), "Order table should contain no items!")
-	assert.Equal(t, "Preparing", data[0].Status, "Incorrect item deleted!")
+	assert.Equal(t, uint(2), data[0].ID, "Incorrect item deleted!")
 
 	RemoveOrder(2)
 	data, err = FetchOrders()
@@ -251,11 +251,11 @@ func TestFetchingItemsWithFilter(t *testing.T) {
 	assert.Equal(t, 2, len(testData[0].Items), "Test that the right number of items were returned with the order")
 	assert.Equal(t, "Item1", testData[0].Items[0].Notes, "Incorrect item returned from query")
 
-	testData, err = FetchOrders(models.Order{Status: "Preparing"})
+	testData, err = FetchOrders(models.Order{Status: "Awaiting Confirmation"})
 	assert.NoError(t, err, "Did not fetch correct number of items")
-	assert.Equal(t, 1, len(testData), "Did not fetch correct number of items")
-	assert.Equal(t, "Notes3", testData[0].Items[0].Notes, "Incorrect item returned from query")
-	assert.Equal(t, 1, len(testData[0].Items), "Test that the right number of items were returned with the order")
+	assert.Equal(t, 2, len(testData), "Did not fetch correct number of items")
+	assert.Equal(t, "Item1", testData[0].Items[0].Notes, "Incorrect item returned from query")
+	assert.Equal(t, 2, len(testData[0].Items), "Test that the right number of items were returned with the order")
 }
 
 func TestPayOrder(t *testing.T) {
@@ -289,4 +289,15 @@ func TestPayOrder(t *testing.T) {
 	paid, err = OrderPaid(2)
 	assert.NoError(t, err)
 	assert.True(t, paid, "Test that payment status was updated")
+}
+
+func TestConfirmOrder(t *testing.T) {
+	ResetTestOrders()
+
+	// Test that order status begins as expected
+	status, err := GetOrderStatus(1)
+	assert.NoError(t, err)
+	assert.Equal(t, "Awaiting Confirmation", status, "Test that orders begin with the correct status")
+	_, err = GetOrderStatus(3)
+	assert.Error(t, err, "Test that getting the status of an order that does not exist creates an error")
 }

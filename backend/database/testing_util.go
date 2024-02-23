@@ -93,8 +93,8 @@ func ResetTestOrders() {
 	testItemList1 := []models.OrderItem{{Item: items[0], Notes: "Item1"}, {Item: items[1], Notes: "Notes2"}}
 	testItemList2 := []models.OrderItem{{Item: items[2], Notes: "Notes3"}}
 
-	testOrder1 := models.Order{ID: 1, TableNumber: 16, Bill: 16.99, Status: "Ready", Items: testItemList1}
-	testOrder2 := models.Order{ID: 2, TableNumber: 17, Bill: 17.99, Status: "Preparing", Items: testItemList2}
+	testOrder1 := models.Order{ID: 1, TableNumber: 16, Bill: 16.99, Items: testItemList1}
+	testOrder2 := models.Order{ID: 2, TableNumber: 17, Bill: 17.99, Items: testItemList2}
 
 	AddOrder(&testOrder1)
 	AddOrder(&testOrder2)
