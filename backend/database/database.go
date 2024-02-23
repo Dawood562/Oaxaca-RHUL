@@ -14,6 +14,10 @@ import (
 
 var db *gorm.DB
 
+var (
+	ErrOrderAlreadyPaid error = errors.New("order already paid for")
+)
+
 func init() {
 	dbUsername, dbName, dbPassword := fetchDBAuth()
 	url := "postgres://" + dbUsername + ":" + dbPassword + "@db:5432/" + dbName
@@ -203,7 +207,7 @@ func PayOrder(id uint) error {
 		return err
 	}
 	if paid {
-		return errors.New("order already paid for")
+		return ErrOrderAlreadyPaid
 	}
 
 	// Set order as paid

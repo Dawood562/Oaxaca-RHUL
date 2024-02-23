@@ -314,8 +314,6 @@ func TestFetchingItemsWithFilter(t *testing.T) {
 
 	AddOrder(&testOrder)
 	AddOrder(&testOrder2)
-	var count int64
-	db.Model(&models.OrderItem{}).Where("1=1").Count(&count)
 
 	testData, err := FetchOrders(models.Order{TableNumber: 16})
 	assert.NoError(t, err, "Fetching order should not be throwing an error")

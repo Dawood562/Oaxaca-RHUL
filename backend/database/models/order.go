@@ -7,7 +7,7 @@ type Order struct {
 	Time        time.Time   `json:"orderTime" gorm:"default:CURRENT_TIMESTAMP"`
 	TableNumber uint        `json:"tableNumber"`
 	Bill        float64     `json:"bill"`
-	Status      string      `json:"status"`
+	Status      string      `json:"status" gorm:"default:Awaiting Confirmation"`
 	Paid        bool        `json:"paid" gorm:"default:false"`
 	Items       []OrderItem `json:"items" gorm:"constraint:OnDelete:CASCADE,OnUpdate:CASCADE"`
 }
