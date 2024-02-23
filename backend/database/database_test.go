@@ -160,17 +160,10 @@ func TestOrderRetrievalUnfiltered(t *testing.T) {
 }
 
 func TestOrderQueryUnfiltered(t *testing.T) {
-	ClearMenu()
-	menuItem1 := models.MenuItem{Name: "Tequila"}
-	menuItem2 := models.MenuItem{Name: "Vodka"}
-	menuItem3 := models.MenuItem{Name: "Rum"}
-	AddItem(&menuItem1)
-	AddItem(&menuItem2)
-	AddItem(&menuItem3)
+	items := ResetTestMenu()
 
-	var TestId1 uint = 1
-	testItemList := []models.OrderItem{{OrderID: TestId1, Item: menuItem1}, {Item: menuItem2}, {Item: menuItem3}}
-	testOrder := models.Order{ID: TestId1, Time: time.Now(), TableNumber: 16, Bill: 16.99, Status: "Ready", Items: testItemList}
+	testItemList := []models.OrderItem{{Item: items[0]}, {Item: items[1]}, {Item: items[2]}}
+	testOrder := models.Order{ID: 1, Time: time.Now(), TableNumber: 16, Bill: 16.99, Status: "Ready", Items: testItemList}
 
 	err := AddOrder(&testOrder)
 	if err != nil {
@@ -185,6 +178,7 @@ func TestOrderQueryUnfiltered(t *testing.T) {
 }
 
 func TestOrderRetrievalRejectDuplicate(t *testing.T) {
+	ClearOrders()
 	// Add test data
 	testData1 := models.Order{ID: 1, Time: time.Now(), TableNumber: 69, Bill: 42, Status: "Unknown"}
 	AddOrder(&testData1)
@@ -219,101 +213,37 @@ func TestRemoveItem(t *testing.T) {
 }
 
 func TestRemovingMultipleData(t *testing.T) {
-	ClearMenu()
-	ClearOrders()
-	menuItem1 := models.MenuItem{Name: "Tequila"}
-	menuItem2 := models.MenuItem{Name: "Vodka"}
-	menuItem3 := models.MenuItem{Name: "Rum"}
-	AddItem(&menuItem1)
-	AddItem(&menuItem2)
-	AddItem(&menuItem3)
+	ResetTestOrders()
 
-	var testItemID uint = 1
-	var testItemID2 uint = 2
-
-	testItemList1 := []models.OrderItem{{OrderID: testItemID, Item: menuItem1, Notes: "Item1"}, {OrderID: testItemID, Item: menuItem2, Notes: "Notes2"}}
-	testItemList2 := []models.OrderItem{{OrderID: testItemID2, Item: menuItem3, Notes: "Notes3"}}
-
-	testOrder := models.Order{ID: testItemID, Time: time.Now(), TableNumber: 16, Bill: 16.99, Status: "Ready", Items: testItemList1}
-	testOrder2 := models.Order{ID: testItemID2, Time: time.Now(), TableNumber: 17, Bill: 17.99, Status: "Preparing", Items: testItemList2}
-
-	err := AddOrder(&testOrder)
-	assert.NoError(t, err)
-	err = AddOrder(&testOrder2)
-	assert.NoError(t, err)
 	data, err := FetchOrders()
 
 	assert.Equal(t, 2, len(data), "Order table should contain only 1 item")
 
-	err = RemoveOrder(testItemID)
+	err = RemoveOrder(1)
 	assert.NoError(t, err, "Removing item returned an error")
 
 	data, err = FetchOrders()
 	assert.Equal(t, 1, len(data), "Order table should contain no items!")
 	assert.Equal(t, "Preparing", data[0].Status, "Incorrect item deleted!")
 
-	RemoveOrder(testItemID2)
+	RemoveOrder(2)
 	data, err = FetchOrders()
 	assert.Equal(t, 0, len(data), "Order table should contain no items!")
 }
 
 func TestFetchingOrdersCorrectlyBringsOrderItems(t *testing.T) {
-	ClearMenu()
-	menuItem1 := models.MenuItem{Name: "Tequila"}
-	menuItem2 := models.MenuItem{Name: "Vodka"}
-	menuItem3 := models.MenuItem{Name: "Rum"}
-	AddItem(&menuItem1)
-	AddItem(&menuItem2)
-	AddItem(&menuItem3)
-
-	var testItemID uint = 1
-	var testItemID2 uint = 2
-
-	testItemList1 := []models.OrderItem{{OrderID: testItemID, Item: menuItem1, Notes: "Item1"}, {OrderID: testItemID, Item: menuItem2, Notes: "Notes2"}}
-	testItemList2 := []models.OrderItem{{OrderID: testItemID2, Item: menuItem3, Notes: "Notes3"}}
-
-	testOrder := models.Order{ID: testItemID, Time: time.Now(), TableNumber: 16, Bill: 16.99, Status: "Ready", Items: testItemList1}
-	testOrder2 := models.Order{ID: testItemID2, Time: time.Now(), TableNumber: 17, Bill: 17.99, Status: "Preparing", Items: testItemList2}
-
-	AddOrder(&testOrder)
-	AddOrder(&testOrder2)
+	ResetTestOrders()
 
 	testData, err := FetchOrders()
 
 	assert.NoError(t, err, "Shouldnt throw an error here")
 	assert.Equal(t, 2, len(testData), "Incorrect amount of data fetched")
 	assert.Equal(t, "Item1", testData[0].Items[0].Notes, "Incorrect item retrieved from order fetch")
-
-	RemoveOrder(testItemID)
-	RemoveOrder(testItemID2)
 }
 
 func TestFetchingItemsWithFilter(t *testing.T) {
-	// Clear orders
-	db.Where("1=1").Delete(&models.Order{})
-	// Clear OrderItems
-	db.Where("1=1").Delete(&models.OrderItem{})
 	// Clear menu
-	ClearMenu()
-
-	menuItem1 := models.MenuItem{Name: "Tequila"}
-	menuItem2 := models.MenuItem{Name: "Vodka"}
-	menuItem3 := models.MenuItem{Name: "Rum"}
-	AddItem(&menuItem1)
-	AddItem(&menuItem2)
-	AddItem(&menuItem3)
-
-	var testItemID uint = 1
-	var testItemID2 uint = 2
-
-	testItemList1 := []models.OrderItem{{Item: menuItem1, Notes: "Item1"}, {Item: menuItem2, Notes: "Notes2"}}
-	testItemList2 := []models.OrderItem{{Item: menuItem3, Notes: "Notes3"}}
-
-	testOrder := models.Order{ID: testItemID, Time: time.Now(), TableNumber: 16, Bill: 16.99, Status: "Ready", Items: testItemList1}
-	testOrder2 := models.Order{ID: testItemID2, Time: time.Now(), TableNumber: 17, Bill: 17.99, Status: "Preparing", Items: testItemList2}
-
-	AddOrder(&testOrder)
-	AddOrder(&testOrder2)
+	ResetTestOrders()
 
 	testData, err := FetchOrders(models.Order{TableNumber: 16})
 	assert.NoError(t, err, "Fetching order should not be throwing an error")
@@ -326,39 +256,10 @@ func TestFetchingItemsWithFilter(t *testing.T) {
 	assert.Equal(t, 1, len(testData), "Did not fetch correct number of items")
 	assert.Equal(t, "Notes3", testData[0].Items[0].Notes, "Incorrect item returned from query")
 	assert.Equal(t, 1, len(testData[0].Items), "Test that the right number of items were returned with the order")
-
-	RemoveOrder(testItemID)
-	RemoveOrder(testItemID2)
 }
 
 func TestPayOrder(t *testing.T) {
-	ClearMenu()
-	ClearOrders()
-
-	menuItem1 := models.MenuItem{Name: "Tequila"}
-	menuItem2 := models.MenuItem{Name: "Vodka"}
-	menuItem3 := models.MenuItem{Name: "Rum"}
-	AddItem(&menuItem1)
-	AddItem(&menuItem2)
-	AddItem(&menuItem3)
-
-	orderItems := []models.OrderItem{
-		{
-			Item:  menuItem1,
-			Notes: "First Item",
-		},
-		{
-			Item:  menuItem2,
-			Notes: "Second Item",
-		},
-		{
-			Item:  menuItem3,
-			Notes: "Third Item",
-		},
-	}
-
-	err := AddOrder(&models.Order{ID: 1, TableNumber: 4, Items: orderItems})
-	assert.NoError(t, err)
+	ResetTestOrders()
 
 	paid, err := OrderPaid(1)
 	assert.NoError(t, err, "Test that retrieving payment status for a valid order does not create an error")
@@ -368,20 +269,9 @@ func TestPayOrder(t *testing.T) {
 	assert.Error(t, err, "Test that retrieving payment status for an invalid order creates an error")
 	assert.False(t, paid, "Test that an order that doesn't exist is not paid")
 
-	err = AddOrder(&models.Order{ID: 2, TableNumber: 5, Items: orderItems, Paid: true})
-	assert.NoError(t, err)
-
-	paid, err = OrderPaid(2)
-	assert.NoError(t, err)
-	assert.True(t, paid, "Check that paid order returns true from OrderPaid")
-
-	paid, err = OrderPaid(1)
-	assert.NoError(t, err)
-	assert.False(t, paid, "Test that first order is still unpaid")
-
 	err = PayOrder(1)
 	assert.NoError(t, err, "Test that paying for valid order creates no error")
-	err = PayOrder(2)
+	err = PayOrder(1)
 	assert.Error(t, err, "Test that paying for a paid order creates an error")
 	err = PayOrder(3)
 	assert.Error(t, err, "Test that paying for an invalid order creates an error")
@@ -392,5 +282,11 @@ func TestPayOrder(t *testing.T) {
 
 	paid, err = OrderPaid(2)
 	assert.NoError(t, err)
-	assert.True(t, paid, "Test that payment status was unchanged")
+	assert.False(t, paid, "Test that payment status was unchanged")
+
+	err = PayOrder(2)
+	assert.NoError(t, err, "Test that paying for a second valid order creates no errors")
+	paid, err = OrderPaid(2)
+	assert.NoError(t, err)
+	assert.True(t, paid, "Test that payment status was updated")
 }
