@@ -9,6 +9,7 @@ import (
 )
 
 func TestAddWaiter(t *testing.T) {
+	ClearWaiterList()
 	tableNumbers := []uint{1, 2, 3}
 	AddWaiter(Waiter{ID: 69, Username: "John", TableNumber: tableNumbers})
 	assert.Equal(t, 1, len(activeWaiters), "Adding a waiter should increase number of waiters in list by 1")
@@ -36,21 +37,17 @@ func TestGetWaitersWithFilter(t *testing.T) {
 	assert.Equal(t, 1, len(data), "Incorrect number of waiters returned from waiter list")
 }
 
-func addGenericTestData() {
-	removePreviousWaiterData()
-	tableNumbers := []uint{1, 2, 3}
-	waiter1 := Waiter{ID: 1, Username: "John", TableNumber: tableNumbers}
-	waiter2 := Waiter{ID: 2, Username: "James", TableNumber: tableNumbers}
-	AddWaiter(waiter1)
-	AddWaiter(waiter2)
-}
-
 func TestGetWaitersWithInvalidFilter(t *testing.T) {
 	addGenericTestData()
 	data := GetWaiter(Waiter{ID: 3})
 	assert.Nil(t, data, "Fetching data with invalid id should return nil")
 }
 
-func removePreviousWaiterData() {
-	activeWaiters = []Waiter{} // Replace old waiter list with empty one
+func addGenericTestData() {
+	ClearWaiterList()
+	tableNumbers := []uint{1, 2, 3}
+	waiter1 := Waiter{ID: 1, Username: "John", TableNumber: tableNumbers}
+	waiter2 := Waiter{ID: 2, Username: "James", TableNumber: tableNumbers}
+	AddWaiter(waiter1)
+	AddWaiter(waiter2)
 }

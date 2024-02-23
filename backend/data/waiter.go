@@ -38,3 +38,7 @@ func GetWaiter(waiter ...Waiter) *[]Waiter {
 		return &activeWaiters
 	}
 }
+
+func ClearWaiterList() {
+	activeWaiters = []Waiter{}
+}
