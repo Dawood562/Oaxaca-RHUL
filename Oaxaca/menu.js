@@ -264,8 +264,11 @@ function addToBasket(index, itemId, itemName, price, calories) {
   let quantity = document.getElementById("itemQuantityInput"+index).value
 
   // This will work for now as we only store 1 type of cookie
-  let previousCookieContent = document.cookie.split("basket=")[1]
-
+  let previousCookieContent = document.cookie.split("basket=")[1];
+  if(previousCookieContent == null){
+    document.cookie = "basket="
+    previousCookieContent = document.cookie.split("basket=")[1];
+  }
 
   let updated = false;
 
