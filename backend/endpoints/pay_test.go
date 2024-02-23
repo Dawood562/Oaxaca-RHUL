@@ -6,9 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"teamproject/database"
-	"teamproject/database/models"
 	"testing"
-	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/stretchr/testify/assert"
@@ -18,28 +16,7 @@ func TestPay(t *testing.T) {
 	app := fiber.New()
 	app.Patch("/pay/:id", Pay)
 
-	database.ClearMenu()
-	database.ClearOrders()
-
-	// Create test orders
-	menuItem1 := models.MenuItem{Name: "Tequila"}
-	menuItem2 := models.MenuItem{Name: "Vodka"}
-	menuItem3 := models.MenuItem{Name: "Rum"}
-	database.AddItem(&menuItem1)
-	database.AddItem(&menuItem2)
-	database.AddItem(&menuItem3)
-
-	var testItemID uint = 1
-	var testItemID2 uint = 2
-
-	testItemList1 := []models.OrderItem{{Item: menuItem1, Notes: "Item1"}, {Item: menuItem2, Notes: "Notes2"}}
-	testItemList2 := []models.OrderItem{{Item: menuItem3, Notes: "Notes3"}}
-
-	testOrder := models.Order{ID: testItemID, Time: time.Now(), TableNumber: 16, Bill: 16.99, Status: "Ready", Items: testItemList1}
-	testOrder2 := models.Order{ID: testItemID2, Time: time.Now(), TableNumber: 17, Bill: 17.99, Status: "Preparing", Items: testItemList2}
-
-	database.AddOrder(&testOrder)
-	database.AddOrder(&testOrder2)
+	database.ResetTestOrders()
 
 	testCases := []struct {
 		name string
