@@ -43,7 +43,19 @@ func TestAddWaiters(t *testing.T) {
 					"tableNumber": []
 				}
 			`),
-			expectedItem: data.Waiter{},
+			expectedItem: data.Waiter{Username: "IGNORE"},
+			code:         400,
+		},
+		{
+			name: "TestWaiterWithInvalidUsername",
+			json: []byte(`
+				{
+					"id": 1,
+					"waiterUsername": 69,
+					"tableNumber": []
+				}
+			`),
+			expectedItem: data.Waiter{Username: "IGNORE"},
 			code:         400,
 		},
 	}
