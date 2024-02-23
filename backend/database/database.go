@@ -15,7 +15,8 @@ import (
 var db *gorm.DB
 
 var (
-	ErrOrderAlreadyPaid error = errors.New("order already paid for")
+	ErrOrderAlreadyPaid      error = errors.New("order already paid for")
+	ErrOrderAlreadyConfirmed error = errors.New("order already confirmed")
 )
 
 func init() {
@@ -229,4 +230,21 @@ func GetOrderStatus(id uint) (string, error) {
 	}
 
 	return order.Status, nil
+}
+
+func ConfirmOrder(id uint) error {
+	status, err := GetOrderStatus(id)
+	if err != nil {
+		return err
+	}
+	if status != "Awaiting Confirmation" {
+		return ErrOrderAlreadyConfirmed
+	}
+
+	// Set order as paid
+	order := &models.Order{ID: id}
+	db.Model(order).First(&order)
+	order.Status = "Preparing"
+	db.Save(&order)
+	return nil
 }
