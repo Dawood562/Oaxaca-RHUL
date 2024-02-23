@@ -14,6 +14,10 @@ import (
 
 var db *gorm.DB
 
+var (
+	ErrOrderAlreadyPaid error = errors.New("order already paid for")
+)
+
 func init() {
 	dbUsername, dbName, dbPassword := fetchDBAuth()
 	url := "postgres://" + dbUsername + ":" + dbPassword + "@db:5432/" + dbName
@@ -180,4 +184,36 @@ func FetchOrders(filter ...models.Order) ([]*models.Order, error) {
 	dbLocal.Model(&models.Order{}).Preload("Items").Preload("Items.Item").Find(&orderData)
 
 	return orderData, nil
+}
+
+// OrderPaid returns true if the order with the given ID has been paid for, returns error if that order does not exist
+func OrderPaid(id uint) (bool, error) {
+	order := &models.Order{ID: id}
+	result := db.Model(order).First(&order)
+	if result.Error != nil {
+		return false, result.Error
+	}
+	if result.RowsAffected == 0 {
+		return false, errors.New("order not found")
+	}
+
+	return order.Paid, nil
+}
+
+// PayOrder updates the payment status of the given order, returns an error if that order cannot be found or is already paid for
+func PayOrder(id uint) error {
+	paid, err := OrderPaid(id)
+	if err != nil {
+		return err
+	}
+	if paid {
+		return ErrOrderAlreadyPaid
+	}
+
+	// Set order as paid
+	order := &models.Order{ID: id}
+	db.Model(order).First(&order)
+	order.Paid = true
+	db.Save(&order)
+	return nil
 }
