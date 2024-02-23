@@ -10,7 +10,10 @@ import (
 func RegisterWaiter(c *fiber.Ctx) error {
 	c.Accepts("application/json")
 	waiter := data.Waiter{}
-	c.BodyParser(&waiter)
+	err := c.BodyParser(&waiter)
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, "Could not process provided JSON")
+	}
 	data.AddWaiter(waiter)
 	return nil
 }

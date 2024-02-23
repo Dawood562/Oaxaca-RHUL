@@ -34,6 +34,18 @@ func TestAddWaiters(t *testing.T) {
 			expectedItem: data.Waiter{ID: 1, Username: "John"},
 			code:         200,
 		},
+		{
+			name: "TestWaiterWithInvalidID",
+			json: []byte(`
+				{
+					"id": "1",
+					"waiterUsername": "John",
+					"tableNumber": []
+				}
+			`),
+			expectedItem: data.Waiter{},
+			code:         400,
+		},
 	}
 
 	for _, test := range testCases {
@@ -53,8 +65,11 @@ func TestAddWaiters(t *testing.T) {
 
 			// Check waiter list is updated correctly
 			waiterData := *data.GetWaiter()
-			assert.Equal(t, 1, len(waiterData), "Incorrect number of waiters in waiter list")
-			assert.Equal(t, "John", waiterData[0].Username, "Data not inserted correctly")
+			if test.code <= 299 {
+				assert.Equal(t, 1, len(waiterData), "Incorrect number of waiters in waiter list")
+				assert.Equal(t, "John", waiterData[0].Username, "Data not inserted correctly")
+			}
+
 		})
 	}
 }
