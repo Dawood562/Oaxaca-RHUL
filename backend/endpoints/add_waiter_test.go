@@ -23,11 +23,12 @@ func TestAddWaiters(t *testing.T) {
 		code         int         // expected return
 	}{
 		{
-			name: "TestNothing",
+			name: "TestWaiterWithValidValues",
 			json: []byte(`
 				{
 					"id": 1,
 					"waiterUsername": "John",
+					"tableNumber": []
 				}
 			`),
 			expectedItem: data.Waiter{ID: 1, Username: "John"},
@@ -36,6 +37,7 @@ func TestAddWaiters(t *testing.T) {
 	}
 
 	for _, test := range testCases {
+		data.ClearWaiterList() // Clear waiter list on each test
 		t.Run(test.name, func(t *testing.T) {
 			// Create a new HTTP request
 			req, _ := http.NewRequest("PUT", "/add_waiter", bytes.NewBuffer(test.json))
@@ -50,6 +52,9 @@ func TestAddWaiters(t *testing.T) {
 			assert.Equal(t, test.code, res.StatusCode, "Check that request returned expected status code")
 
 			// Check waiter list is updated correctly
+			waiterData := *data.GetWaiter()
+			assert.Equal(t, 1, len(waiterData), "Incorrect number of waiters in waiter list")
+			assert.Equal(t, "John", waiterData[0].Username, "Data not inserted correctly")
 		})
 	}
 }
