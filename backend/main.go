@@ -33,6 +33,7 @@ func main() {
 	app.Delete("/remove_order", endpoints.RemoveOrder)
 	app.Get("/orders", endpoints.GetOrders)
 	app.Patch("/pay/:id", endpoints.Pay)
+	app.Put("/add_waiter", endpoints.RegisterWaiter)
 	app.Patch("/confirm/:id", endpoints.Confirm)
 
 	// Register websocket endpoint

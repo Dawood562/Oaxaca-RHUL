@@ -2,9 +2,25 @@ var sock
 var sockInit = false
 
 document.addEventListener('DOMContentLoaded', e=>{
+    registerWaiter();
     initSock();
     refreshOrders();
 })
+
+var waiterUsername = "";
+function getUserNameFromCookies() {
+    let cookieData = document.cookie;
+    cookieData.split(";").forEach(cookie => {
+        indexOfParam = cookie.indexOf("=");
+        if(cookie.substring(0, indexOfParam).indexOf("username") != -1){
+            waiterUsername = cookie.substring(indexOfParam+1, cookie.length);
+        }
+    })
+}
+
+function registerWaiter(){
+    getUserNameFromCookies();
+}
 
 function initSock(){
     sock = new WebSocket("ws://localhost:4444/notifications")
