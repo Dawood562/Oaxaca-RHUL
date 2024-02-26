@@ -21,13 +21,11 @@ var (
 	ErrOrderAlreadyCancelled error = errors.New("order already cancelled")
 )
 
-type OrderStatus string
-
 const (
-	StatusAwaitingConfirmation OrderStatus = "Awaiting Confirmation"
-	StatusPreparing            OrderStatus = "Preparing"
-	StatusDelivered            OrderStatus = "Delivered"
-	StatusCancelled            OrderStatus = "Cancelled"
+	StatusAwaitingConfirmation string = "Awaiting Confirmation"
+	StatusPreparing            string = "Preparing"
+	StatusDelivered            string = "Delivered"
+	StatusCancelled            string = "Cancelled"
 )
 
 func init() {
@@ -238,7 +236,7 @@ func GetOrderStatus(id uint) (string, error) {
 		return "", result.Error
 	}
 	if result.RowsAffected == 0 {
-		return "", errors.New("order not found")
+		return "", ErrOrderNotFound
 	}
 
 	return order.Status, nil
@@ -250,14 +248,14 @@ func ConfirmOrder(id uint) error {
 	if err != nil {
 		return err
 	}
-	if status != string(StatusAwaitingConfirmation) {
+	if status != StatusAwaitingConfirmation {
 		return ErrOrderAlreadyConfirmed
 	}
 
 	// Set order as paid
 	order := &models.Order{ID: id}
 	db.Model(order).First(&order)
-	order.Status = string(StatusPreparing)
+	order.Status = StatusPreparing
 	db.Save(&order)
 	return nil
 }
@@ -268,13 +266,13 @@ func CancelOrder(id uint) error {
 	if err != nil {
 		return ErrOrderNotFound
 	}
-	if status == string(StatusCancelled) {
+	if status == StatusCancelled {
 		return ErrOrderAlreadyCancelled
 	}
 
 	order := &models.Order{ID: id}
 	db.Model(order).First(&order)
-	order.Status = string(StatusCancelled)
+	order.Status = StatusCancelled
 	db.Save(&order)
 
 	return nil

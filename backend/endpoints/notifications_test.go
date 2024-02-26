@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/gofiber/contrib/websocket"
 	"github.com/gofiber/fiber/v2"
@@ -458,6 +459,7 @@ func createTestWebsocket(t *testing.T) *gwebsocket.Conn {
 	for retries > 0 && err != nil {
 		ws, _, err = gwebsocket.DefaultDialer.Dial("ws://127.0.0.1:4444/notifications", nil)
 		retries -= 1
+		time.Sleep(time.Second)
 	}
 	assert.NoError(t, err, "Test that creating a websocket connection does not create an error")
 	return ws

@@ -319,3 +319,29 @@ func TestConfirmOrder(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, "Preparing", status)
 }
+
+func TestCancelOrder(t *testing.T) {
+	ResetTestOrders()
+
+	status, err := GetOrderStatus(1)
+	assert.NoError(t, err)
+	assert.Equal(t, StatusAwaitingConfirmation, status, "Check that order begins with correct status")
+
+	err = CancelOrder(1)
+	assert.NoError(t, err, "Check that cancelling a valid order creates no error")
+	err = CancelOrder(1)
+	assert.Error(t, err, "Check that cancelling an order twice creates an error")
+	err = CancelOrder(3)
+	assert.Error(t, err, "Check that cancelling an invalid order creates an error")
+	status, err = GetOrderStatus(1)
+	assert.NoError(t, err)
+	assert.Equal(t, StatusCancelled, status, "Test that order status was correctly updated")
+	status, err = GetOrderStatus(2)
+	assert.NoError(t, err)
+	assert.Equal(t, StatusAwaitingConfirmation, status)
+	err = CancelOrder(2)
+	assert.NoError(t, err, "Test that cancelling a second vaid order creates no errors")
+	status, err = GetOrderStatus(2)
+	assert.NoError(t, err)
+	assert.Equal(t, StatusCancelled, status, "Test that the second order status was correctly updated")
+}
