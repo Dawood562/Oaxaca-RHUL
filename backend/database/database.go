@@ -15,8 +15,19 @@ import (
 var db *gorm.DB
 
 var (
+	ErrOrderNotFound         error = errors.New("order not found")
 	ErrOrderAlreadyPaid      error = errors.New("order already paid for")
 	ErrOrderAlreadyConfirmed error = errors.New("order already confirmed")
+	ErrOrderAlreadyCancelled error = errors.New("order already cancelled")
+)
+
+type OrderStatus string
+
+const (
+	StatusAwaitingConfirmation OrderStatus = "Awaiting Confirmation"
+	StatusPreparing            OrderStatus = "Preparing"
+	StatusDelivered            OrderStatus = "Delivered"
+	StatusCancelled            OrderStatus = "Cancelled"
 )
 
 func init() {
@@ -195,7 +206,7 @@ func OrderPaid(id uint) (bool, error) {
 		return false, result.Error
 	}
 	if result.RowsAffected == 0 {
-		return false, errors.New("order not found")
+		return false, ErrOrderNotFound
 	}
 
 	return order.Paid, nil
@@ -219,6 +230,7 @@ func PayOrder(id uint) error {
 	return nil
 }
 
+// GetOrderStatus returns the Status field of the given order. Returns an error if the order does not exist.
 func GetOrderStatus(id uint) (string, error) {
 	order := &models.Order{ID: id}
 	result := db.Model(order).First(&order)
@@ -232,19 +244,38 @@ func GetOrderStatus(id uint) (string, error) {
 	return order.Status, nil
 }
 
+// ConfirmOrder confirms the given order. Returns an error if the order does not exist or is already confirmed.
 func ConfirmOrder(id uint) error {
 	status, err := GetOrderStatus(id)
 	if err != nil {
 		return err
 	}
-	if status != "Awaiting Confirmation" {
+	if status != string(StatusAwaitingConfirmation) {
 		return ErrOrderAlreadyConfirmed
 	}
 
 	// Set order as paid
 	order := &models.Order{ID: id}
 	db.Model(order).First(&order)
-	order.Status = "Preparing"
+	order.Status = string(StatusPreparing)
 	db.Save(&order)
+	return nil
+}
+
+// CancelOrder cancels the given order. Returns an error if the order does not exist or is already cancelled.
+func CancelOrder(id uint) error {
+	status, err := GetOrderStatus(id)
+	if err != nil {
+		return ErrOrderNotFound
+	}
+	if status == string(StatusCancelled) {
+		return ErrOrderAlreadyCancelled
+	}
+
+	order := &models.Order{ID: id}
+	db.Model(order).First(&order)
+	order.Status = string(StatusCancelled)
+	db.Save(&order)
+
 	return nil
 }
