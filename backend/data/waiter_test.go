@@ -43,6 +43,17 @@ func TestGetWaitersWithInvalidFilter(t *testing.T) {
 	assert.Nil(t, data, "Fetching data with invalid id should return nil")
 }
 
+func TestDuplicatesArentAdded(t *testing.T) {
+	// Add test data
+	ClearWaiterList()
+	tableNumbers := []uint{1, 2, 3}
+	waiter1 := Waiter{ID: 1, Username: "John", TableNumber: tableNumbers}
+	waiter2 := Waiter{ID: 1, Username: "James", TableNumber: tableNumbers}
+	// Test waiter throws errors when duplicate added
+	assert.NoError(t, AddWaiter(waiter1), "First waiter should be added successfully")
+	assert.Error(t, AddWaiter(waiter2), "Second waiter with duplicate id should fail")
+}
+
 func addGenericTestData() {
 	ClearWaiterList()
 	tableNumbers := []uint{1, 2, 3}

@@ -1,5 +1,10 @@
 package data
 
+import (
+	"errors"
+	"strconv"
+)
+
 var activeWaiters []Waiter
 
 type Waiter struct {
@@ -9,8 +14,20 @@ type Waiter struct {
 }
 
 // Add waiter to current waiter list
-func AddWaiter(waiter Waiter) {
-	activeWaiters = append(activeWaiters, waiter)
+// Returns true if waiter is successfully added to list
+func AddWaiter(waiter Waiter) error {
+	// Check that waiter with same id doesnt exist
+	alreadyExists := false
+	for _, existing := range activeWaiters {
+		if existing.ID == waiter.ID {
+			alreadyExists = true
+		}
+	}
+	if !alreadyExists {
+		activeWaiters = append(activeWaiters, waiter)
+		return nil
+	}
+	return errors.New("Waiter cannot be added with duplicate id: " + strconv.Itoa(int(waiter.ID)))
 }
 
 // Remove waiter according to id provided in filter waiter
