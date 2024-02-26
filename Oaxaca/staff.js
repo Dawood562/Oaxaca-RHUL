@@ -13,3 +13,10 @@ window.onload = function() {
         document.getElementById('waiter-button').style.visibility = "visible";
     })
 }
+
+function storeAccDetails(){
+    document.cookie = "username="; // Clear username entry
+    let enteredUsername = document.getElementById("UN").value;
+    document.cookie = "username="+enteredUsername;
+    console.log("Cookies: "+document.cookie);
+}
