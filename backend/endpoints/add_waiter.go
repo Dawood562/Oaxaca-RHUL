@@ -14,6 +14,9 @@ func RegisterWaiter(c *fiber.Ctx) error {
 	if err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, "Could not process provided JSON")
 	}
-	data.AddWaiter(waiter)
+	err = data.AddWaiter(waiter)
+	if err != nil {
+		return fiber.NewError(fiber.StatusConflict, "Cannot add waiter with same id as existing waiter")
+	}
 	return nil
 }

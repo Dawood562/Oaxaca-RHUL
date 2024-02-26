@@ -42,6 +42,17 @@ async function registerWaiter(){
     console.log(response);
 }
 
+// On leaving waiter page
+document.addEventListener("beforeunload", (e) =>{
+
+    // Unregister waiter
+    removeWaiter();
+})
+
+function removeWaiter(){
+
+}
+
 function initSock(){
     sock = new WebSocket("ws://localhost:4444/notifications")
     sock.onerror = function(event){
