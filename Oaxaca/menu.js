@@ -365,3 +365,23 @@ function initializeMenu() {
     filterItems();
   }
 }
+
+// Initialises basket quantity on page load to number of items in basket cookies
+function initBasketQuantity(){
+  let cookieList = document.cookie.split(";");
+  let basketCookie = "";
+  cookieList.forEach(cookie => {
+    if(cookie.length >= 5){
+      if(cookie.substring(0, 6).indexOf("basket")!=-1){
+        // we found basket cookie
+        let splitCookie = cookie.split("#")
+        let basketCount = splitCookie.length
+        if(splitCookie[splitCookie.length-1].length <= 0){
+          basketCount--;
+        }
+        console.log(basketCount);
+        document.getElementById("basketIcon").innerHTML="🛒 "+basketCount;
+      }
+    }
+  })
+}
