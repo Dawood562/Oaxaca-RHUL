@@ -40,6 +40,10 @@ func AddOrder(c *fiber.Ctx) error {
 	if err != nil {
 		return fiber.NewError(fiber.StatusConflict, err.Error())
 	}
+
+	// Broadcast notification to waiters
+	BroadcastToWaiters("NEW")
+
 	return nil
 }
 
