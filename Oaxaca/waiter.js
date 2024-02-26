@@ -3,7 +3,7 @@ var sockInit = false
 
 document.addEventListener('DOMContentLoaded', e=>{
     registerWaiter();
-    initSock();
+    initSock(); // This should be called within register waiter after registering waiter
     refreshOrders();
 })
 
@@ -18,8 +18,28 @@ function getUserNameFromCookies() {
     })
 }
 
-function registerWaiter(){
+async function registerWaiter(){
     getUserNameFromCookies();
+    let randId = Math.floor(Math.random()*Number.MAX_SAFE_INTEGER);
+    console.log(randId);
+
+    if(waiterUsername.length <= 0){
+        console.log("WAITER NOT REGISTERED! INVALID USERNAME: {"+waiterUsername+"}");
+        return;
+    }
+
+    const response = await fetch("http://localhost:4444/add_waiter", {
+        method:"PUT",
+        headers:{
+            "Content-Type": "application/json"
+        },
+        body:JSON.stringify({
+            "id": randId,
+            "waiterUsername": waiterUsername,
+            "tableNumber": []
+        })
+    })
+    console.log(response);
 }
 
 function initSock(){
