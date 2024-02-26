@@ -29,5 +29,7 @@ func Cancel(c *fiber.Ctx) error {
 		return fiber.ErrNotFound
 	}
 
+	BroadcastToKitchen("CANCEL")
+
 	return nil
 }

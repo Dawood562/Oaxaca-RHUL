@@ -142,6 +142,7 @@ func TestPrepareArgsNotEmpty(t *testing.T) {
 
 func TestOrderRetrievalUnfiltered(t *testing.T) {
 	// Check no data is returned to when no orders are in table
+	ClearOrders()
 	data, err := FetchOrders()
 	assert.Equal(t, 0, len(data), "Length of orders received should be 0 when no orders placed. Instead, received: "+strconv.Itoa(len(data)))
 
@@ -160,6 +161,7 @@ func TestOrderRetrievalUnfiltered(t *testing.T) {
 }
 
 func TestOrderQueryUnfiltered(t *testing.T) {
+	ClearOrders()
 	items := ResetTestMenu()
 
 	testItemList := []models.OrderItem{{Item: items[0]}, {Item: items[1]}, {Item: items[2]}}
