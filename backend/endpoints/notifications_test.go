@@ -430,34 +430,69 @@ func TestWaiterCancelOrder(t *testing.T) {
 	customers.users = []User{}
 	waiters.users = []User{}
 
+	database.ResetTestOrders()
+	database.ResetTestMenu()
+
 	app := createTestServer()
 	defer app.Shutdown()
 
-	_ = []BroadcastTestCase{
+	testCases := []struct {
+		name  string
+		id    string
+		code  int
+		krecv string
+	}{
 		{
-			name:  "ValidCancelOrder",
-			sid:   0,
-			smsg:  "CANCEL",
-			resp:  "OK",
-			rrecv: "CANCEL",
+			name:  "WithValidOrderID",
+			id:    "1",
+			code:  fiber.StatusOK,
+			krecv: "CANCEL",
 		},
 		{
-			name:  "ValidCancelOrderSecond",
-			sid:   1,
-			smsg:  "CANCEL",
-			resp:  "OK",
-			rrecv: "CANCEL",
+			name:  "WithSecondValidOrderID",
+			id:    "2",
+			code:  fiber.StatusOK,
+			krecv: "CANCEL",
 		},
 		{
-			name:  "InvalidMessage",
-			sid:   0,
-			smsg:  "TEST",
-			resp:  "ERROR",
-			rrecv: "",
+			name: "WithDuplicateOrderID",
+			id:   "2",
+			code: fiber.StatusConflict,
+		},
+		{
+			name: "WithInvalidOrderID",
+			id:   "3",
+			code: fiber.StatusNotFound,
+		},
+		{
+			name: "WithNoOrderID",
+			code: fiber.StatusNotFound,
 		},
 	}
 
-	//testWebsocketBroadcast(t, createWaiterSockets(t, 2), createKitchenSockets(t, 2), testCases)
+	// Register test websockets
+	kitchens := createKitchenSockets(t, 3)
+
+	for _, test := range testCases {
+		t.Run(test.name, func(t *testing.T) {
+			// Create a new HTTP request
+			req, _ := http.NewRequest("PATCH", fmt.Sprintf("/cancel/%s", test.id), nil)
+			// Send test HTTP request
+			res, err := app.Test(req)
+			assert.NoError(t, err)
+			defer res.Body.Close()
+			assert.Equal(t, test.code, res.StatusCode, "Test that the expected response code was returned")
+
+			// Test that all waiters received the expected message
+			for _, k := range kitchens {
+				if len(test.krecv) > 0 {
+					k.SetReadDeadline(time.Now().Add(time.Second))
+					_, msg, _ := k.ReadMessage()
+					assert.Equal(t, test.krecv, string(msg), "Test that the expected message was received")
+				}
+			}
+		})
+	}
 }
 
 type BroadcastTestCase struct {
