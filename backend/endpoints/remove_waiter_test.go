@@ -28,6 +28,15 @@ func TestRemoveWaiters(t *testing.T) {
 			`),
 			code: 200,
 		},
+		{
+			name: "TestRemoveWaiterWithIncorrectData",
+			json: []byte(`
+			{
+				"id": "1"
+			}
+			`),
+			code: 400,
+		},
 	}
 
 	for _, test := range testCases {

@@ -13,7 +13,10 @@ type RemoveWaiterData struct {
 func RemoveWaiter(c *fiber.Ctx) error {
 	c.Accepts("application/json")
 	waiterToRemove := RemoveWaiterData{}
-	c.BodyParser(&waiterToRemove)
+	err := c.BodyParser(&waiterToRemove)
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, "Invalid body data")
+	}
 	data.RemoveWaiter(data.Waiter{ID: waiterToRemove.ID})
 	return nil
 }
