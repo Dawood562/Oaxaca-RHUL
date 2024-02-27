@@ -29,5 +29,7 @@ func Confirm(c *fiber.Ctx) error {
 		return fiber.ErrNotFound
 	}
 
+	BroadcastToKitchen("CONFIRM")
+
 	return nil
 }
