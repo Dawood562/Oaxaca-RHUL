@@ -31,13 +31,15 @@ func AddWaiter(waiter Waiter) error {
 }
 
 // Remove waiter according to id provided in filter waiter
-func RemoveWaiter(waiter Waiter) {
+func RemoveWaiter(waiter Waiter) error {
 	for index, w := range activeWaiters {
 		// If requested waiter is in active waiter list then remove it
 		if waiter.ID == w.ID {
 			activeWaiters = append(activeWaiters[:index], activeWaiters[index+1:]...)
+			return nil
 		}
 	}
+	return errors.New("Did not find waiter with provided id to remove!")
 }
 
 // Gets waiter by provided id or if no waiter provided then gets all waiters

@@ -18,7 +18,7 @@ func TestAddWaiter(t *testing.T) {
 func TestRemoveWaiter(t *testing.T) {
 	addGenericTestData()
 	assert.Equal(t, 2, len(activeWaiters), "Adding two waiters should return active waiter list of 2")
-	RemoveWaiter(Waiter{ID: 1})
+	assert.NoError(t, RemoveWaiter(Waiter{ID: 1}), "Removing waiter should not throw an error")
 	assert.Equal(t, 1, len(activeWaiters), "Removing a waiter should return a active waiter list of 1")
 	assert.Equal(t, 2, int(activeWaiters[0].ID), "Remaining waiter does not match expected waiter. Incorrect waiter removed!")
 }
@@ -52,6 +52,11 @@ func TestDuplicatesArentAdded(t *testing.T) {
 	// Test waiter throws errors when duplicate added
 	assert.NoError(t, AddWaiter(waiter1), "First waiter should be added successfully")
 	assert.Error(t, AddWaiter(waiter2), "Second waiter with duplicate id should fail")
+}
+
+func TestRemoveInvalidWaiter(t *testing.T) {
+	addGenericTestData()
+	assert.Error(t, RemoveWaiter(Waiter{ID: 69}), "Removing an invalid waiter should return an error")
 }
 
 func addGenericTestData() {
