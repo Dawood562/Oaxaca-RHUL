@@ -9,7 +9,6 @@ function initMenuAll() {
 
   let data = requestMenu(0, 0, 0); // Zero value = none specified
   data.then(r => {
-    console.log(r)
     currentMenu = r
     let index = 0;
     document.getElementById("MenuItemGridLayout").innerHTML = ""
@@ -258,28 +257,53 @@ async function requestMenu(userSearchTerm, userMaxPrice, userMaxCalories) {
       }])
   }
 }
-//function to add menu item to basket
+// function to add menu item to basket
+// Stores menu items in basket using cookies
+// Cookie structure is CSV in form: id,itemName,price,calories,quantity
 function addToBasket(index, itemId, itemName, price, calories) {
- let order = JSON.parse(localStorage.getItem('order')) || [];
- let existingItemIndex = order.findIndex(item => item.index === index);
- let quantity = parseInt(document.getElementById('itemQuantityInput' + index).value);
- if (existingItemIndex >= 0) {
-   order[existingItemIndex].quantity += quantity;
- } else {
-   let item = {
-     index: index,
-     itemId: itemId,
-     itemName: itemName,
-     price: price,
-     calories: calories,
-     quantity: quantity
-   };
-   order.push(item);
- }
- localStorage.setItem('order', JSON.stringify(order));
- updateBasketIcon();
- updateOrderDetails();
+  let quantity = document.getElementById("itemQuantityInput"+index).value
+
+  // This will work for now as we only store 1 type of cookie
+  let previousCookieContent = document.cookie.split("basket=")[1];
+  if(previousCookieContent == null){
+    document.cookie = "basket="
+    previousCookieContent = document.cookie.split("basket=")[1];
+  }
+
+  let updated = false;
+
+
+  // Check that item is not already in basket
+  previousCookieContent.split("#").forEach(element => {
+    let splitCookie = element.split(",")
+    // Item found in basket
+    if(splitCookie[0] == itemId){
+      // Then update quantity instead
+      let newQuantity = Number(splitCookie[4])+Number(quantity);
+      
+      let indexOfItem = previousCookieContent.indexOf(element)
+      let indexOfEndOfItem = previousCookieContent.indexOf("#", indexOfItem)
+      let updatedCookieSegment = previousCookieContent.substring(indexOfItem, indexOfEndOfItem-1)+newQuantity
+      let updatedCookie = previousCookieContent.substring(0,indexOfItem)+updatedCookieSegment+previousCookieContent.substring(indexOfEndOfItem, previousCookieContent.length);
+      document.cookie = "basket="+updatedCookie;
+
+      updated = true;
+    }
+  });
+
+  if(!updated){
+    document.cookie="basket="+itemId+","+itemName+","+price+","+calories+","+quantity+"#"+previousCookieContent;
+
+    let previousBasket = document.getElementById("basketIcon").innerHTML;
+    let previousBasketQuantity = previousBasket.substring(previousBasket.length-1,previousBasket.length);
+    let newQuantity = Number(previousBasketQuantity)+1;
+    document.getElementById("basketIcon").innerHTML = "🛒 "+newQuantity;
+  }
+
+  console.log("Current basket:"+document.cookie);
+  
 }
+
 //function to update basket icon with the item quantity in order
 function updateBasketIcon() {
  let order = JSON.parse(localStorage.getItem('order')) || [];
@@ -287,38 +311,7 @@ function updateBasketIcon() {
  let totalQuantity = order.reduce((total, item) => total + item.quantity, 0);
  basketIcon.textContent = `🛒 ${totalQuantity}`;
 }
-//function to update order details with items in the order
-function updateOrderDetails() {
- let order = JSON.parse(localStorage.getItem('order'));
- let orderDetailsDiv = document.getElementById('orderDetails');
- let totalDiv = document.getElementById('orderTotal');
- orderDetailsDiv.innerHTML = '';
- let orderTotal = 0;
- if (order && order.length > 0) {
-   order.forEach(item => {
-     orderTotal += item.price * item.quantity;
-     let li = document.createElement('li');
-     li.innerHTML = `
-              <h3>${item.itemName}</h3>
-              <p> quantity: ${item.quantity}</p>
-              <p>Calories: ${item.calories * item.quantity} kcal</p>
-              <p>Price: £${(item.price * item.quantity).toFixed(2)}</p>
-              <button class="removeButton"><i class = "fa fa-trash"></i></button>
-          `;
-     orderDetailsDiv.appendChild(li);
-   });
-   totalDiv.textContent = `Total: £${orderTotal.toFixed(2)}`;
-   let removeButtons = document.querySelectorAll('.removeButton');
-   removeButtons.forEach(button => {
-     button.addEventListener('click', () => {
-       removeFromOrder(button.parentElement.querySelector('h3').textContent);
-     });
-   });
- } else {
-   orderDetailsDiv.innerHTML = `basket empty`;
-   totalDiv.textContent = '';
- }
-}
+
 //function ro remove menu item from the order
 function removeFromOrder(itemName) {
  let order = JSON.parse(localStorage.getItem('order')) || [];
@@ -331,9 +324,14 @@ function removeFromOrder(itemName) {
 }
 //updates order details and basket icon when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
- updateOrderDetails();
- updateBasketIcon();
+  if(document.title.indexOf("Menu") != -1){
+    initializeMenu();
+    initializeCategoryFilter();
+    updateOrderDetails();
+    updateBasketIcon();
+  }
 });
+
 function filterItems(){
    let searchTerm = document.getElementById('searchTerm').value;
    let maxCalories = parseInt(document.getElementById('maxCalories').value) || 0;
@@ -352,4 +350,18 @@ function filterItems(){
    })
 }
 
-
+function initializeMenu() {
+  const activeButton = document.querySelector('#menuFilter button.active');
+  if (activeButton) {
+    const category = activeButton.getAttribute('data-category');
+    const filter = {
+      searchTerm: '',
+      maxCalories: 0,
+      maxPrice: 0,
+      category: category
+    };
+    filterMenu(filter, activeButton);
+  } else {
+    filterItems();
+  }
+}
