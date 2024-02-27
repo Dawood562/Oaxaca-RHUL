@@ -24,6 +24,9 @@ func RemoveWaiter(c *fiber.Ctx) error {
 	if err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, "Invalid body data")
 	}
-	data.RemoveWaiter(data.Waiter{ID: waiterToRemove.ID})
+	err = data.RemoveWaiter(data.Waiter{ID: waiterToRemove.ID})
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, "Provided id did not match any active waiters")
+	}
 	return nil
 }
