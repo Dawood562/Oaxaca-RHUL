@@ -70,9 +70,10 @@ body {
 
 /* navigation links*/
 #navbar li a {
-  color: #EFA00B;
+  color: beige;
   font-weight: 800;
   text-decoration: none;
+  font-family: Georgia, 'Times New Roman', Times, serif;
 }
 
 #navbar li a:hover {
@@ -85,9 +86,11 @@ body {
 }
 
 aside {
-  background-color: #D65108;
+  background-color:  #996633;
   width: 450px;
   padding: 20px;
+  font-weight: bold;
+  font-family: Georgia, 'Times New Roman', Times, serif;
   border-right: 1px dashed white;
    border-right: 1px dashed white;
  border-left:1px dashed white;
@@ -118,9 +121,11 @@ footer {
   text-align: center;
   font-size: 12px;
   border-top: 1px dashed white;
-  position:absolute;
+  /*position:absolute;
   bottom:0;
   height: 2.5rem;
+  */
+  margin-top: 20px;
 }
 
 h1,
@@ -348,4 +353,40 @@ strong {
 }
 .orderPageItemData{
   padding-left: 5%;
+}
+/*CSS for styling table for order on waiter page*/
+#order_table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 15px;
+ border: 1.5px solid #996633;
+
+  
+}
+
+#order_table th {
+  padding: 8px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+  font-family:Georgia, 'Times New Roman', Times, serif;
+  color: solid #591F0A;
+  background-color:beige;
+  font-weight:bold;
+  font-size:15px;
+}
+
+
+.table-caption {
+  font-weight: bold;
+  font-size: 35px;
+  padding-bottom: 20px;
+  padding-top:20px;
+  font-family: Mexican Tequila;
+  text-align: left; 
+  text-align: center;
+}
+#order_table_body{
+  font-family:Georgia, 'Times New Roman', Times, serif;
+  color: black;
+
 }
