@@ -59,6 +59,33 @@ func TestRemoveInvalidWaiter(t *testing.T) {
 	assert.Error(t, RemoveWaiter(Waiter{ID: 69}), "Removing an invalid waiter should return an error")
 }
 
+func TestAddTableNumber(t *testing.T) {
+	ClearWaiterList()
+	waiter1 := Waiter{ID: 1, Username: "John"}
+	waiter2 := Waiter{ID: 2, Username: "James"}
+	AddWaiter(waiter1)
+	AddWaiter(waiter2)
+
+	waiterData := *GetWaiter()
+	assert.Equal(t, 0, len(waiterData[0].TableNumber), "Empty waiter should not have any assigned table numbers")
+	assert.Equal(t, 0, len(waiterData[1].TableNumber), "Empty waiter should not have any assigned table numbers")
+	AddTableNumber(1, 36)
+	AddTableNumber(2, 72)
+	AddTableNumber(2, 128)
+	assert.Equal(t, 1, len(waiterData[0].TableNumber), "Waiter with 1 assigned table should have one table in waiter list")
+	assert.Equal(t, 2, len(waiterData[1].TableNumber), "Waiter with 1 assigned table should have one table in waiter list")
+	assert.Equal(t, 36, int(waiterData[0].TableNumber[0]), "Incorrect table number retrieved from waiter")
+	assert.Equal(t, 72, int(waiterData[1].TableNumber[0]), "Incorrect table number retrieved from waiter")
+	assert.Equal(t, 128, int(waiterData[1].TableNumber[1]), "Incorrect table number retrieved from waiter")
+}
+
+func TestAddTableNumberInvalid(t *testing.T) {
+	ClearWaiterList()
+	assert.Error(t, AddTableNumber(1, 72), "Adding a table number to a non existant waiter should return an error")
+	AddWaiter(Waiter{ID: 1, Username: "John"})
+	assert.NoError(t, AddTableNumber(1, 72), "Adding a table number to an existing waiter should not return an error")
+}
+
 func addGenericTestData() {
 	ClearWaiterList()
 	tableNumbers := []uint{1, 2, 3}

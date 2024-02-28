@@ -58,6 +58,16 @@ func GetWaiter(waiter ...Waiter) *[]Waiter {
 	}
 }
 
+func AddTableNumber(id uint, tableNumber uint) {
+	for index, waiter := range activeWaiters {
+		if id == waiter.ID {
+			activeWaiters[index].TableNumber = append(activeWaiters[index].TableNumber, tableNumber)
+
+		}
+	}
+
+}
+
 func ClearWaiterList() {
 	activeWaiters = []Waiter{}
 }
