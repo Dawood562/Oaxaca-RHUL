@@ -35,9 +35,24 @@ function handleMessages(e) {
         alert("Table " + tableNumber + " needs help!");
     } else if (e.data == "NEW") {
         refreshOrders();
-    } else if (e.data == "CANCEL_CONFIRMATION") {
-        // Notification for order cancellation
-        alert("Order has been cancelled!");
+    }else if (e.data.startsWith("CANCEL_SUCCESS:")) {
+        // Handle successful cancellation
+        let orderId = e.data.split(":")[1];
+        alert(`Order ${orderId} has been successfully cancelled.`);
+
+        // Find the row with the corresponding order ID
+        let row = document.querySelector(`[data-order-id="${orderId}"]`);
+
+        if (row) {
+            // Update the order status to "Cancelled" directly on the client side
+            row.querySelector('td:nth-child(4)').textContent = 'Cancelled';
+
+            // Disable the cancel and complete buttons
+            row.querySelector('td:nth-child(5) button').disabled = true;
+            row.querySelector('td:nth-child(6) button').disabled = true;
+        } else {
+            console.error(`Row with order ID ${orderId} not found.`);
+        }
     } else {
         console.log(e); // Display entire message if something went wrong for debugging
     }
@@ -82,23 +97,9 @@ function notifyCancellation(orderId) {
     if (!sockInit) {
         return console.error("SOCKET NOT INITIALIZED - CANNOT NOTIFY CANCELLATION");
     }
-    // Send a cancellation request with the order ID to the server
+
+    console.log(`Sending cancellation request for order ${orderId} to the server.`);
     sock.send(`CANCEL:${orderId}`);
-
-    // Find the row with the corresponding order ID
-    let row = document.querySelector(`[data-order-id="${orderId}"]`);
-
-    if (row) {
-        // Update the order status to "Cancelled" directly on the client side
-        row.querySelector('td:nth-child(4)').textContent = 'Cancelled';
-
-        row.querySelector('td:nth-child(5) button').disabled = true;
-        row.querySelector('td:nth-child(6) button').disabled = true;
-
-        alert(`Order ${orderId} has been cancelled.`);
-    } else {
-        console.error(`Row with order ID ${orderId} not found.`);
-    }
 }
 
 function notifyConfirmation(orderId) {

@@ -14,6 +14,20 @@ import (
 
 var db *gorm.DB
 
+var (
+	ErrOrderNotFound         error = errors.New("order not found")
+	ErrOrderAlreadyPaid      error = errors.New("order already paid for")
+	ErrOrderAlreadyConfirmed error = errors.New("order already confirmed")
+	ErrOrderAlreadyCancelled error = errors.New("order already cancelled")
+)
+
+const (
+	StatusAwaitingConfirmation string = "Awaiting Confirmation"
+	StatusPreparing            string = "Preparing"
+	StatusDelivered            string = "Delivered"
+	StatusCancelled            string = "Cancelled"
+)
+
 func init() {
 	dbUsername, dbName, dbPassword := fetchDBAuth()
 	url := "postgres://" + dbUsername + ":" + dbPassword + "@db:5432/" + dbName
@@ -180,4 +194,86 @@ func FetchOrders(filter ...models.Order) ([]*models.Order, error) {
 	dbLocal.Model(&models.Order{}).Preload("Items").Preload("Items.Item").Find(&orderData)
 
 	return orderData, nil
+}
+
+// OrderPaid returns true if the order with the given ID has been paid for, returns error if that order does not exist
+func OrderPaid(id uint) (bool, error) {
+	order := &models.Order{ID: id}
+	result := db.Model(order).First(&order)
+	if result.Error != nil {
+		return false, result.Error
+	}
+	if result.RowsAffected == 0 {
+		return false, ErrOrderNotFound
+	}
+
+	return order.Paid, nil
+}
+
+// PayOrder updates the payment status of the given order, returns an error if that order cannot be found or is already paid for
+func PayOrder(id uint) error {
+	paid, err := OrderPaid(id)
+	if err != nil {
+		return err
+	}
+	if paid {
+		return ErrOrderAlreadyPaid
+	}
+
+	// Set order as paid
+	order := &models.Order{ID: id}
+	db.Model(order).First(&order)
+	order.Paid = true
+	db.Save(&order)
+	return nil
+}
+
+// GetOrderStatus returns the Status field of the given order. Returns an error if the order does not exist.
+func GetOrderStatus(id uint) (string, error) {
+	order := &models.Order{ID: id}
+	result := db.Model(order).First(&order)
+	if result.Error != nil {
+		return "", result.Error
+	}
+	if result.RowsAffected == 0 {
+		return "", ErrOrderNotFound
+	}
+
+	return order.Status, nil
+}
+
+// ConfirmOrder confirms the given order. Returns an error if the order does not exist or is already confirmed.
+func ConfirmOrder(id uint) error {
+	status, err := GetOrderStatus(id)
+	if err != nil {
+		return err
+	}
+	if status != StatusAwaitingConfirmation {
+		return ErrOrderAlreadyConfirmed
+	}
+
+	// Set order as paid
+	order := &models.Order{ID: id}
+	db.Model(order).First(&order)
+	order.Status = StatusPreparing
+	db.Save(&order)
+	return nil
+}
+
+// CancelOrder cancels the given order. Returns an error if the order does not exist or is already cancelled.
+func CancelOrder(id uint) error {
+	status, err := GetOrderStatus(id)
+	if err != nil {
+		return ErrOrderNotFound
+	}
+	if status == StatusCancelled {
+		return ErrOrderAlreadyCancelled
+	}
+
+	order := &models.Order{ID: id}
+	db.Model(order).First(&order)
+	order.Status = StatusCancelled
+	db.Save(&order)
+
+	return nil
 }
