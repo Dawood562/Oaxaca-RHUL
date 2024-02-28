@@ -90,4 +90,6 @@ function submitOrder() {
 
 function sendPayment(){
     notifyNew("Payment successful");
+    alert("Your payment has been taken")
+    
 }
