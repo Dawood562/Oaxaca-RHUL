@@ -20,43 +20,38 @@ function initSock() {
     sockInit = true;
 }
 
+
+
 function handleMessages(e) {
-    console.log(e);
+    console.log("Received WebSocket message:", e.data);
+
     if (e.data == "WELCOME") {
         console.log("Connected to backend websocket");
     } else if (e.data == "OK") {
         console.log("Notification successfully received");
     } else if (e.data == "SERVICE") {
-        // NOTIFICATION SENT BY KITCHEN STAFF TO WAITERS - DO STUFF HERE
-        alert("Kitchen has called service!");
+        console.log("Notification: Kitchen has called service");
+        // ... (existing code)
     } else if (e.data.includes("HELP")) {
-        // NOTIFICATION SENT BY CUSTOMER TO WAITERS - CUSTOMER IS AT TABLE 'tableNumber' - DO STUFF BELOW
-        let tableNumber = e.data.split(":")[1];
-        alert("Table " + tableNumber + " needs help!");
+        console.log("Notification: Customer needs help");
+        // ... (existing code)
     } else if (e.data == "NEW") {
+        console.log("Notification: New order received");
         refreshOrders();
-    }else if (e.data.startsWith("CANCEL_SUCCESS:")) {
-        // Handle successful cancellation
+    } else if (e.data.startsWith("CANCELLED")) {
         let orderId = e.data.split(":")[1];
-        alert(`Order ${orderId} has been successfully cancelled.`);
-
-        // Find the row with the corresponding order ID
-        let row = document.querySelector(`[data-order-id="${orderId}"]`);
-
-        if (row) {
-            // Update the order status to "Cancelled" directly on the client side
-            row.querySelector('td:nth-child(4)').textContent = 'Cancelled';
-
-            // Disable the cancel and complete buttons
-            row.querySelector('td:nth-child(5) button').disabled = true;
-            row.querySelector('td:nth-child(6) button').disabled = true;
-        } else {
-            console.error(`Row with order ID ${orderId} not found.`);
-        }
+        console.log(`Notification: Order ${orderId} has been cancelled!`);
+        alert(`Order ${orderId} has been cancelled!`);
+        // Additional debugging or handling can be added here
+    } else if (e.data == "CANCEL_CONFIRMATION") {
+        console.log("Notification: Order cancellation confirmed");
+        // ... (existing code)
     } else {
-        console.log(e); // Display entire message if something went wrong for debugging
+        console.log("Unknown message received:", e.data);
+        // Display entire message if something unexpected is received
     }
 }
+
 
 async function refreshOrders() {
     let table = document.getElementById("order_table");
@@ -91,15 +86,45 @@ function createOrder(order) {
         <td><button type="button" onclick="notifyConfirmation(${order.orderId})">Confirm Order</button></td>
     </tr>`;
 }
-
-
-function notifyCancellation(orderId) {
+async function notifyCancellation(orderId) {
     if (!sockInit) {
         return console.error("SOCKET NOT INITIALIZED - CANNOT NOTIFY CANCELLATION");
     }
 
-    console.log(`Sending cancellation request for order ${orderId} to the server.`);
-    sock.send(`CANCEL:${orderId}`);
+    console.log(`Sending cancellation request for order ${orderId}`);
+
+    try {
+        let response = await fetch(`http://localhost:4444/cancel/${orderId}`, {
+            method: 'PATCH',
+        });
+
+        if (response.ok) {
+            console.log(`Cancellation request for order ${orderId} successful`);
+
+            // Update the order status to "Cancelled" directly on the client side
+            let row = document.querySelector(`[data-order-id="${orderId}"]`);
+            if (row) {
+                row.querySelector('td:nth-child(4)').textContent = 'Cancelled';
+                row.querySelector('td:nth-child(5) button').disabled = true;
+                row.querySelector('td:nth-child(6) button').disabled = true;
+                alert(`Order ${orderId} has been cancelled.`);
+            } else {
+                console.error(`Row with order ID ${orderId} not found.`);
+            }
+        } else if (response.status === 404) {
+            console.log(`Order ${orderId} not found.`);
+            alert(`Order ${orderId} not found.`);
+        } else if (response.status === 409) {
+            console.log(`Order ${orderId} has already been cancelled.`);
+            alert(`Order ${orderId} has already been cancelled.`);
+        } else {
+            console.error(`Failed to cancel order ${orderId}. Status: ${response.status}`);
+            alert(`Failed to cancel order ${orderId}. Please check console for details.`);
+        }
+    } catch (error) {
+        console.error(`Error while cancelling order ${orderId}: ${error}`);
+        alert(`Error while cancelling order ${orderId}. Please check console for details.`);
+    }
 }
 
 function notifyConfirmation(orderId) {
@@ -107,10 +132,8 @@ function notifyConfirmation(orderId) {
         return console.error("SOCKET NOT INITIALIZED - CANNOT NOTIFY CONFIRMATION");
     }
   
-  
     sock.send(`CONFIRM:${orderId}`);
 
-    
     let row = document.querySelector(`[data-order-id="${orderId}"]`);
 
     if (row) {

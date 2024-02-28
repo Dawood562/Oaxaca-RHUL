@@ -34,6 +34,7 @@ func main() {
 	app.Get("/orders", endpoints.GetOrders)
 	app.Patch("/pay/:id", endpoints.Pay)
 	app.Patch("/confirm/:id", endpoints.Confirm)
+	app.Patch("/cancel/:id", endpoints.Cancel)
 
 	// Register websocket endpoint
 	app.Get("/notifications", websocket.New(func(c *websocket.Conn) {
