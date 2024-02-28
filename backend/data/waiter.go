@@ -58,14 +58,14 @@ func GetWaiter(waiter ...Waiter) *[]Waiter {
 	}
 }
 
-func AddTableNumber(id uint, tableNumber uint) {
+func AddTableNumber(id uint, tableNumber uint) error {
 	for index, waiter := range activeWaiters {
 		if id == waiter.ID {
 			activeWaiters[index].TableNumber = append(activeWaiters[index].TableNumber, tableNumber)
-
+			return nil
 		}
 	}
-
+	return errors.New("Waiter not found. Could not add waiter to table")
 }
 
 func ClearWaiterList() {
