@@ -60,7 +60,7 @@ function handleMessages(e) {
 
 async function refreshOrders() {
     let table = document.getElementById("order_table");
-    table.innerHTML = `<caption>Customer Orders</caption>
+    table.innerHTML = `<caption class="table-caption">Customer Orders</caption>
                         <tr>
                             <th>Table</th>
                             <th>Time</th>
