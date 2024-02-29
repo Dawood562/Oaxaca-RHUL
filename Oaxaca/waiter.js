@@ -66,10 +66,14 @@ async function refreshOrders() {
                         </tr>`;
     let response = await fetch("http://localhost:4444/orders");
     let data = await response.json();
+    
     for (var order of data) {
-        table.innerHTML += createOrder(order);
+        if (order.status !== 'Cancelled') {
+            table.innerHTML += createOrder(order);
+        }
     }
 }
+
 
 function createOrder(order) {
     let items = order.items.map((x) => x.itemId.itemName);
