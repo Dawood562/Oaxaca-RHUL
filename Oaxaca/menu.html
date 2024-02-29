@@ -10,7 +10,7 @@
 
 </head>
 
-<body>
+<body onload="initBasketQuantity()">
   <div id="container">
     <div id="headerArea">
       <div id="header"></div>
@@ -19,10 +19,10 @@
         <ul>
           <li><a href="index.html">Home</a></li>
           <li><a href="menu.html">Menu</a></li>
-          <li><a href="#">Link</a></li>
-          <li><a href="#">Link</a></li>
-          <li><a href="#">Link</a></li>
-        </ul>
+          <li><a href="order.html">Order</a></li>
+          <li><a href="https://www.youtube.com/watch?v=xvFZjo5PgG0">Link</a></li>
+          <li><a href="staff.html">Staff</a></li>
+          </ul>
       </nav>
     </div>
 
@@ -30,7 +30,7 @@
 
       <aside id="leftSidebar">
     
-        <h2 id="menuTitle">Menu Filters</h2>
+        <h2 id="menuTitle" align="center">Menu Filters</h2>
         
         <div class="box">
 
@@ -62,13 +62,13 @@
         </div>
 
         <div>
-        <p>
-        <button onclick="editMenu()">Edit Menu</button>
-        </p>
+          <p>
+            <button onclick="editMenu()">Edit Menu</button>
+          </p>
         </div>
-        
+
       </aside> <!--Above section is in sidebar for cleaner presentation-->
-      
+
       <main id="menuPage"> <!--Main section of page-->
         <div class="menuSection">
           <section class="appetizersSection" data-calories="200" data-price="10.00">
@@ -77,12 +77,15 @@
 
             </div>
             <div id="MenuEditSection">
-              
+
             </div>
           </section>
+          <div id="basketIcon" onclick="goToOrderPage()">🛒 0</div>
+
+
         </div>
       </main>
-    
+
     </div>
 
     <footer id="footer">
@@ -94,11 +97,10 @@
   </div>
 
   <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      initializeMenu();
-      initializeCategoryFilter();
-      //initMenuAll()
-    });
+
+    function goToOrderPage() {
+      window.location.href = "order.html";
+    }
 
     function initializeMenu() {
       const activeButton = document.querySelector('#menuFilter button.active');
@@ -117,7 +119,9 @@
       }
     }
 
-    function applyFilter() {
+
+
+    function filterItems() {
       const searchTerm = document.getElementById('searchTerm').value.toLowerCase();
       const maxCalories = parseInt(document.getElementById('maxCalories').value) || 0;
       const maxPrice = parseFloat(document.getElementById('maxPrice').value) || 0;

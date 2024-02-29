@@ -1,7 +1,9 @@
 package models
 
 type OrderItem struct {
-	OrderID uint     `json:"orderId" gorm:"column:order_id;primarykey"`
-	Item    MenuItem `json:"item" gorm:"foreignkey:item_id;primarykey"`
-	Notes   string   `json:"notes"`
+	ID        uint `gorm:"primarykey"`
+	OrderID   uint `json:"orderId"`
+	ItemRefer uint
+	Item      MenuItem `json:"itemId" gorm:"foreignkey:ItemRefer;constraint:OnDelete:CASCADE,OnUpdate:CASCADE"`
+	Notes     string   `json:"notes"`
 }
