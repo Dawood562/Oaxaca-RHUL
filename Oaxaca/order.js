@@ -157,13 +157,20 @@ function submitOrder() {
             items: itemObjects
         })
     })
-    .then(() => {
+    .then((res) => {
+        if(res.ok) {
+            return res.text();
+        }
+        throw new Error("Could not place order");
+    })
+    .then((data) => {
         console.log('Order submitted successfully');
-        
 
         localStorage.removeItem('order'); // Clears the basket after a successful order
-        updateOrderDetails();
-        
+        localStorage.setItem("orderID", data);
+    })
+    .catch((err) => {
+        alert(err);
     });
     document.cookie="basket=";
     removeAllOrders();

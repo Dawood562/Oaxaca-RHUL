@@ -319,7 +319,6 @@ function removeFromOrder(itemName) {
  if (itemIndex >= 0) {
    order.splice(itemIndex, 1);
    localStorage.setItem('order', JSON.stringify(order));
-   updateOrderDetails();
  }
 }
 //updates order details and basket icon when DOM is loaded
@@ -327,7 +326,6 @@ document.addEventListener('DOMContentLoaded', function() {
   if(document.title.indexOf("Menu") != -1){
     initializeMenu();
     initializeCategoryFilter();
-    updateOrderDetails();
     updateBasketIcon();
   }
 });
