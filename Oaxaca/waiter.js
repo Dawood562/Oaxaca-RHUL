@@ -124,9 +124,23 @@ function createOrder(order) {
 }
 
 function confirmOrder(id) {
-    console.log("confirmOrder() : " + id);
+    fetch("http://localhost:4444/confirm/" + id, {
+        method: "PATCH"
+    })
+    .then((res) => {
+        if(!res.ok) {
+            alert("Failed to confirm order!");
+        }
+    })
 }
 
 function cancelOrder(id) {
-    console.log("cancelOrder() : " + id);
+    fetch("http://localhost:4444/cancel/" + id, {
+        method: "PATCH"
+    })
+    .then((res) => {
+        if(!res.ok) {
+            alert("Failed to cancel order!");
+        }
+    })
 }
