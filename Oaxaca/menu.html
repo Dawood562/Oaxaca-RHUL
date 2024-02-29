@@ -50,7 +50,7 @@
               <input type="number" id="maxPrice" placeholder="Enter max price">
             </div>
 
-            <button onclick="filterItems()" class="filterButton">Apply Filter</button>
+            <button onclick="applyFilter()" class="filterButton">Apply Filter</button>
             <button onclick="resetFilter()" class="filterButton">Reset Filter</button>
 
             <div class="filterOption" id="categoryFilter">
@@ -88,12 +88,6 @@
 
     </div>
 
-    <footer id="footer">
-      <a href="#">Work with us</a>&emsp;
-      <a href="#">Get in touch</a>&emsp;
-      <a href="#">Privacy policy</a>
-    </footer>
-
   </div>
 
   <script>
@@ -115,7 +109,7 @@
         };
         filterMenu(filter, activeButton);
       } else {
-        filterItems();
+        applyFilter();
       }
     }
 
@@ -142,7 +136,7 @@
       document.getElementById('maxCalories').value = '';
       document.getElementById('maxPrice').value = '';
 
-      filterItems();
+      applyFilter();
     }
 
     function filterMenu(filter, button) {

@@ -3,28 +3,24 @@ package endpoints
 import (
 	"strconv"
 	"teamproject/database"
-	"teamproject/database/models"
 
 	"github.com/gofiber/fiber/v2"
 )
 
 func GetOrders(c *fiber.Ctx) error {
-	tableNumRaw := c.Query("tableNumber")
-	status := c.Query("Status")
+	onlyConfirmed := c.Query("confirmed")
 
-	tableNum := uint(0)
+	confirmed := false
 
-	if len(tableNumRaw) > 0 {
-		temp, err := strconv.ParseUint(tableNumRaw, 10, 32)
+	if len(onlyConfirmed) > 0 {
+		temp, err := strconv.ParseBool(onlyConfirmed)
 		if err != nil {
 			c.SendString(err.Error())
 		}
-		tableNum = uint(temp)
+		confirmed = temp
 	}
 
-	filter := models.Order{TableNumber: tableNum, Status: status}
-
-	data, err := database.FetchOrders(filter)
+	data, err := database.FetchOrders(confirmed)
 	if err != nil {
 		return c.SendString(err.Error())
 	}

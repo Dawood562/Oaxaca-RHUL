@@ -58,11 +58,6 @@ function sendHelp(){
     sock.send("HELP")
 }
 
-// Notifies backend a customer has ordered something
-function notifyNew(){
-    sock.send("NEW")
-}
-
    function showConfirmationSection() {
   document.getElementById('confirmationSection').style.display = 'block';
 }
@@ -162,14 +157,20 @@ function submitOrder() {
             items: itemObjects
         })
     })
-    .then(() => {
+    .then((res) => {
+        if(res.ok) {
+            return res.text();
+        }
+        throw new Error("Could not place order");
+    })
+    .then((data) => {
         console.log('Order submitted successfully');
-        
 
         localStorage.removeItem('order'); // Clears the basket after a successful order
-        updateOrderDetails();
-        notifyNew(); // Notify backend about the new order
-        
+        localStorage.setItem("orderID", data);
+    })
+    .catch((err) => {
+        alert(err);
     });
     document.cookie="basket=";
     removeAllOrders();
@@ -180,7 +181,15 @@ function submitOrder() {
 }
 
 function sendPayment(){
-    notifyNew("Payment successful");
-    alert("Your payment has been taken")
-    
+    let id = localStorage.getItem("orderID");
+    fetch("http://localhost:4444/pay/" + id, {
+        method: "PATCH"
+    })
+    .then((res) => {
+        if(res.ok) {
+            alert("Payment received. Thank you for dining with us :)");
+        } else {
+            alert("There was a problem with payment. Please try again later.");
+        }
+    })
 }

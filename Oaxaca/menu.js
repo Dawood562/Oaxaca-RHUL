@@ -28,7 +28,6 @@ function createMenuItem(index, id, itemName, price, calories) {
   return comp;
 }
 
-
 // Toggle edit mode
 function editMenu() {
 
@@ -135,35 +134,16 @@ async function submitMenuEdit(index) {
 }
 
 // Functions to add and delete menu items
-async function addMenuItem(){
+function addMenuItem(){
     let nameValue = document.getElementById("newItemNameField").value;
     let priceValue = parseFloat(document.getElementById("newItemPriceField").value);
     let caloriesValue = parseInt(document.getElementById("newItemCaloriesField").value);
-    let result = await addItemToDB(nameValue, priceValue, caloriesValue);
-
-    if(result >= 0){
-        document.getElementById("MenuItemGridLayout").innerHTML+= createMenuItem(currentMenu.length, nameValue, priceValue, caloriesValue);
-    }
-    
+    addItemToDB(nameValue, priceValue, caloriesValue);
 }
 
 function deleteMenuItem(){
     let nameValue = document.getElementById("deleteItemNameField").value;
-    removeItem(nameValue).then(r => {
-        if (r >= 0){
-            // First childNodes holds each item on menu
-            // Second childNodes holds the details of the first childnodes menu item
-            // Third childNodes holds the actual details. index 0 is name
-            for (let i = 0; i < document.getElementById("MenuItemGridLayout").childNodes.length; i++){
-                if (document.getElementById("MenuItemGridLayout").childNodes[i].childNodes[4].childNodes[0].innerHTML == nameValue){
-                    let gridLayout = document.getElementById("MenuItemGridLayout");
-                    let itemToRemove = document.getElementById("MenuItemGridLayout").childNodes[0];
-                    gridLayout.removeChild(itemToRemove);
-                }
-            }
-        }
-    })
-    
+    removeItem(nameValue);
 }
 
 // Add menu item
@@ -319,7 +299,6 @@ function removeFromOrder(itemName) {
  if (itemIndex >= 0) {
    order.splice(itemIndex, 1);
    localStorage.setItem('order', JSON.stringify(order));
-   updateOrderDetails();
  }
 }
 //updates order details and basket icon when DOM is loaded
@@ -327,7 +306,6 @@ document.addEventListener('DOMContentLoaded', function() {
   if(document.title.indexOf("Menu") != -1){
     initializeMenu();
     initializeCategoryFilter();
-    updateOrderDetails();
     updateBasketIcon();
   }
 });

@@ -4,7 +4,7 @@ run:
 
 stop:
 	docker compose down
-
+	
 test:
 	docker compose -f docker-compose.test.yml build
 	-docker compose -f docker-compose.test.yml up --abort-on-container-exit --no-attach db

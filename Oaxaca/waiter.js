@@ -80,9 +80,11 @@ function handleMessages(e){
         // NOTIFICATION SENT BY CUSTOMER TO WAITERS - CUSTOMER IS AT TABLE 'tableNumber' - DO STUFF BELOW
         let tableNumber = e.data.split(":")[1]
         alert("Table " + tableNumber + " needs help!")
-    }else if(e.data == "NEW"){
+    } else if(e.data == "NEW"){
         refreshOrders();
-    }else{
+    } else if(e.data == "REFRESH") {
+        refreshOrders();
+    } else{
         console.log(e); // Display entire message if something went wrong for debugging
     }
 }
@@ -95,6 +97,7 @@ async function refreshOrders(){
                             <th>Time</th>
                             <th>Items</th>
                             <th>Status</th>
+                            <th>Payment Status</th>
                             <th></th>
                             <th></th>
                         </tr>`;
@@ -116,21 +119,30 @@ function createOrder(order) {
         <td>${new Date(order.orderTime).toLocaleTimeString()}</td>
         <td>${itemsStr.substring(0, itemsStr.length - 2)}</td>
         <td>${order.status}</td>
-        <td><button type="submit">Cancel Order</button></td>
-        <td><button type="submit">Complete</button></td>
+        <td>${order.paid ? "Paid" : "Unpaid"}</td>
+        <td><button onclick="cancelOrder(${order.orderId})">Cancel Order</button></td>
+        <td><button onclick="confirmOrder(${order.orderId})">Confirm</button></td>
     </tr>`;
 }
 
-function notifyConfirmation(){
-    if(!sockInit){
-        return console.error("SOCKET NOT INITIALISED - CANNOT NOTIFY CONFIRMATION")
-    }
-    sock.send("CONFIRM");
+function confirmOrder(id) {
+    fetch("http://localhost:4444/confirm/" + id, {
+        method: "PATCH"
+    })
+    .then((res) => {
+        if(!res.ok) {
+            alert("Failed to confirm order!");
+        }
+    })
 }
 
-function notifyCancellation(){
-    if(!sockInit){
-        return console.error("SOCKET NOT INITIALISED - CANNOT NOTIFY CANCELLATION")
-    }
-    sock.send("CANCEL");
+function cancelOrder(id) {
+    fetch("http://localhost:4444/cancel/" + id, {
+        method: "PATCH"
+    })
+    .then((res) => {
+        if(!res.ok) {
+            alert("Failed to cancel order!");
+        }
+    })
 }

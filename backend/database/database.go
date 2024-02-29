@@ -177,19 +177,13 @@ func RemoveOrder(id uint) error {
 	return nil
 }
 
-func FetchOrders(filter ...models.Order) ([]*models.Order, error) {
+func FetchOrders(confirmed bool) ([]*models.Order, error) {
 	dbCopy := *db
 	dbLocal := &dbCopy
 	var orderData []*models.Order
 
-	if len(filter) > 0 {
-
-		if filter[0].TableNumber > 0 {
-			dbLocal = dbLocal.Where("Table_Number = ?", filter[0].TableNumber)
-		}
-		if len(filter[0].Status) > 0 {
-			dbLocal = dbLocal.Where("Status = ?", filter[0].Status)
-		}
+	if confirmed {
+		dbLocal = dbLocal.Where("Status != ?", StatusAwaitingConfirmation)
 	}
 	dbLocal.Model(&models.Order{}).Preload("Items").Preload("Items.Item").Find(&orderData)
 
