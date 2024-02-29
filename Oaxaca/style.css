@@ -407,6 +407,7 @@ strong {
   background-color: burlywood; 
   color: white;
   border: none; 
+  border-radius: 5px;
 }
 .cancelButton {
   background-color: burlywood;

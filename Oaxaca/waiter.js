@@ -87,7 +87,7 @@ function createOrder(order) {
         <td>${itemsStr.substring(0, itemsStr.length - 2)}</td>
         <td>${order.status}</td>
         <td><button id="cancelButton" type="button" onclick="notifyCancellation(${order.orderId})">Cancel Order</button></td>
-        <td><buttonid="confirmButton" type="button" onclick="notifyConfirmation(${order.orderId})">Confirm Order</button></td>
+        <td><button id="confirmButton" type="button" onclick="notifyConfirmation(${order.orderId})">Confirm Order</button></td>
     </tr>`;
 }
 async function notifyCancellation(orderId) {
