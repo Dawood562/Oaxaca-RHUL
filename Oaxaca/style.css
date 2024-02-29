@@ -342,6 +342,23 @@ strong {
  cursor: pointer;
  border-radius: 5px;
 }
+
+#payButton{
+  color: whitesmoke;
+  background-color: green;
+  display: block;
+  width: 30%;
+  border: 1px;
+  padding: 14px 28px;
+  font-size: 16px;
+  cursor: pointer;
+  text-align: center;
+}
+
+#payButton:hover { 
+  color: black;
+  background-color: gainsboro;
+}
 .orderPageItem{
   font-family: 'Crete Round', sans-serif;
   font-size:26px;

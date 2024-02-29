@@ -178,3 +178,9 @@ function submitOrder() {
     submissionNotification.innerHTML="<label class='orderPageItem'>Submitted order!</label>";
     orderList.appendChild(submissionNotification);
 }
+
+function sendPayment(){
+    notifyNew("Payment successful");
+    alert("Your payment has been taken")
+    
+}
