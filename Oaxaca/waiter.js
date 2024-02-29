@@ -80,9 +80,11 @@ function handleMessages(e){
         // NOTIFICATION SENT BY CUSTOMER TO WAITERS - CUSTOMER IS AT TABLE 'tableNumber' - DO STUFF BELOW
         let tableNumber = e.data.split(":")[1]
         alert("Table " + tableNumber + " needs help!")
-    }else if(e.data == "NEW"){
+    } else if(e.data == "NEW"){
         refreshOrders();
-    }else{
+    } else if(e.data == "REFRESH") {
+        refreshOrders();
+    } else{
         console.log(e); // Display entire message if something went wrong for debugging
     }
 }

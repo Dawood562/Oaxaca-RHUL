@@ -29,5 +29,7 @@ func Pay(c *fiber.Ctx) error {
 		return fiber.ErrNotFound
 	}
 
+	BroadcastToWaiters("REFRESH")
+
 	return nil
 }

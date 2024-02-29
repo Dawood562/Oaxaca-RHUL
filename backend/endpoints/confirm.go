@@ -30,6 +30,7 @@ func Confirm(c *fiber.Ctx) error {
 	}
 
 	BroadcastToKitchen("CONFIRM")
+	BroadcastToWaiters("REFRESH")
 
 	return nil
 }
