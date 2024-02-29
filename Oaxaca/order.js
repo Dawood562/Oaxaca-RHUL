@@ -58,11 +58,6 @@ function sendHelp(){
     sock.send("HELP")
 }
 
-// Notifies backend a customer has ordered something
-function notifyNew(){
-    sock.send("NEW")
-}
-
    function showConfirmationSection() {
   document.getElementById('confirmationSection').style.display = 'block';
 }
@@ -168,7 +163,6 @@ function submitOrder() {
 
         localStorage.removeItem('order'); // Clears the basket after a successful order
         updateOrderDetails();
-        notifyNew(); // Notify backend about the new order
         
     });
     document.cookie="basket=";
@@ -180,7 +174,5 @@ function submitOrder() {
 }
 
 function sendPayment(){
-    notifyNew("Payment successful");
-    alert("Your payment has been taken")
     
 }
