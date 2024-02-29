@@ -95,6 +95,7 @@ async function refreshOrders(){
                             <th>Time</th>
                             <th>Items</th>
                             <th>Status</th>
+                            <th>Payment Status</th>
                             <th></th>
                             <th></th>
                         </tr>`;
@@ -116,21 +117,16 @@ function createOrder(order) {
         <td>${new Date(order.orderTime).toLocaleTimeString()}</td>
         <td>${itemsStr.substring(0, itemsStr.length - 2)}</td>
         <td>${order.status}</td>
-        <td><button type="submit">Cancel Order</button></td>
-        <td><button type="submit">Complete</button></td>
+        <td>${order.paid ? "Paid" : "Unpaid"}</td>
+        <td><button onclick="cancelOrder(${order.orderId})">Cancel Order</button></td>
+        <td><button onclick="confirmOrder(${order.orderId})">Confirm</button></td>
     </tr>`;
 }
 
-function notifyConfirmation(){
-    if(!sockInit){
-        return console.error("SOCKET NOT INITIALISED - CANNOT NOTIFY CONFIRMATION")
-    }
-    sock.send("CONFIRM");
+function confirmOrder(id) {
+    console.log("confirmOrder() : " + id);
 }
 
-function notifyCancellation(){
-    if(!sockInit){
-        return console.error("SOCKET NOT INITIALISED - CANNOT NOTIFY CANCELLATION")
-    }
-    sock.send("CANCEL");
+function cancelOrder(id) {
+    console.log("cancelOrder() : " + id);
 }
