@@ -127,22 +127,44 @@ async function notifyCancellation(orderId) {
     }
 }
 
-function notifyConfirmation(orderId) {
+async function notifyConfirmation(orderId) {
     if (!sockInit) {
         return console.error("SOCKET NOT INITIALIZED - CANNOT NOTIFY CONFIRMATION");
     }
   
-    sock.send(`CONFIRM:${orderId}`);
+    console.log(`Sending confirmation request for order ${orderId}`);
 
-    let row = document.querySelector(`[data-order-id="${orderId}"]`);
+    try {
+        let response = await fetch(`http://localhost:4444/confirm/${orderId}`, {
+            method: 'PATCH', 
+        });
 
-    if (row) {
-        row.querySelector('td:nth-child(4)').textContent = 'Confirmed';
-        row.querySelector('td:nth-child(5) button').disabled = true;
-        row.querySelector('td:nth-child(6) button').disabled = true;
+        if (response.ok) {
+            console.log(`Confirmation request for order ${orderId} successful`);
 
-        alert(`Order ${orderId} has been confirmed.`);
-    } else {
-        console.error(`Row with order ID ${orderId} not found.`);
+            // Update the order status to "Confirmed" directly on the client side
+            let row = document.querySelector(`[data-order-id="${orderId}"]`);
+            if (row) {
+                row.querySelector('td:nth-child(4)').textContent = 'Confirmed';
+                row.querySelector('td:nth-child(5) button').disabled = true;
+                row.querySelector('td:nth-child(6) button').disabled = true;
+                alert(`Order ${orderId} has been confirmed.`);
+            } else {
+                console.error(`Row with order ID ${orderId} not found.`);
+            }
+        } else if (response.status === 404) {
+            console.log(`Order ${orderId} not found.`);
+            alert(`Order ${orderId} not found.`);
+        } else if (response.status === 409) {
+            console.log(`Order ${orderId} has already been confirmed.`);
+            alert(`Order ${orderId} has already been confirmed.`);
+        } else {
+            console.error(`Failed to confirm order ${orderId}. Status: ${response.status}`);
+            alert(`Failed to confirm order ${orderId}. Please check console for details.`);
+        }
+    } catch (error) {
+        console.error(`Error while confirming order ${orderId}: ${error}`);
+        alert(`Error while confirming order ${orderId}. Please check console for details.`);
     }
 }
+
