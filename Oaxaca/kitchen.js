@@ -20,6 +20,10 @@ function initSock(){
     sockInit = true;
 }
 
+function notifyService() {
+    sock.send("SERVICE");
+}
+
 function handleMessages(e){
     console.log(e)
     if (e.data == "WELCOME"){
