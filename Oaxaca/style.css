@@ -51,8 +51,8 @@ body {
   height: 40px;
   background-color: #591F0A;
   width: 100%;
-  border-top: 1px dashed white;
-  border-bottom: 1px dashed white;
+  border-top: 1px solid white;
+  border-bottom: 1px solid white;
 
 }
 
@@ -70,9 +70,10 @@ body {
 
 /* navigation links*/
 #navbar li a {
-  color: #EFA00B;
+  color: beige;
   font-weight: 800;
   text-decoration: none;
+  font-family: Georgia, 'Times New Roman', Times, serif;
 }
 
 #navbar li a:hover {
@@ -85,9 +86,11 @@ body {
 }
 
 aside {
-  background-color: #D65108;
+  background-color:  #996633;
   width: 450px;
   padding: 20px;
+  font-weight: bold;
+  font-family: Georgia, 'Times New Roman', Times, serif;
   border-right: 1px dashed white;
    border-right: 1px dashed white;
  border-left:1px dashed white;
@@ -118,9 +121,11 @@ footer {
   text-align: center;
   font-size: 12px;
   border-top: 1px dashed white;
-  position:absolute;
+  /*position:absolute;
   bottom:0;
   height: 2.5rem;
+  */
+  margin-top: 20px;
 }
 
 h1,
@@ -144,6 +149,7 @@ td {
     box-sizing: border-box;
     display: table-cell;
     vertical-align: inherit;
+  
     }
 
 
@@ -365,4 +371,66 @@ strong {
 }
 .orderPageItemData{
   padding-left: 5%;
+
 }
+/*CSS for styling table for order on waiter page*/
+#order_table {
+  width: 100%;
+  border: 1.4px solid #591F0A;
+  background-color: beige;
+  border-radius:5px;
+  
+ 
+
+  
+}
+
+#order_table th {
+  text-align: center;
+  font-family:Georgia, 'Times New Roman', Times, serif;
+  color: solid #591F0A;
+  background-color:beige;
+  font-weight:bold;
+  font-size:19px;
+  padding:12px;
+
+}
+
+
+.table-caption {
+  font-weight: bold;
+  font-size: 35px;
+  padding-bottom: 20px;
+  padding-top:20px;
+  font-family: Mexican Tequila;
+  text-align: left; 
+  text-align: center;
+  padding:12px;
+
+}
+#order_table_body{
+  font-family:Georgia, 'Times New Roman', Times, serif;
+  color: black;
+  background-color: beige;
+  border:none;
+  padding:12px;
+  font-size:15px;
+
+
+}
+#order_table_body tr {
+  border: 1px solid #591F0A ;
+}
+.confirmButton {
+  background-color: burlywood; 
+  color: white;
+  border: none; 
+  border-radius: 5px;
+}
+.cancelButton {
+  background-color: burlywood;
+  color: white; 
+  border: none; 
+  border-radius: 5px; 
+}
+
