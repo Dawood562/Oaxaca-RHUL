@@ -51,8 +51,8 @@ body {
   height: 40px;
   background-color: #591F0A;
   width: 100%;
-  border-top: 1px dashed white;
-  border-bottom: 1px dashed white;
+  border-top: 1px solid white;
+  border-bottom: 1px solid white;
 
 }
 
@@ -149,6 +149,7 @@ td {
     box-sizing: border-box;
     display: table-cell;
     vertical-align: inherit;
+  
     }
 
 
@@ -357,22 +358,24 @@ strong {
 /*CSS for styling table for order on waiter page*/
 #order_table {
   width: 100%;
-  border-collapse: collapse;
-  border-radius: 15px;
- border: 1.5px solid #996633;
+  border: 1.4px solid #591F0A;
+  background-color: beige;
+  border-radius:5px;
+  
+ 
 
   
 }
 
 #order_table th {
-  padding: 8px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
+  text-align: center;
   font-family:Georgia, 'Times New Roman', Times, serif;
   color: solid #591F0A;
   background-color:beige;
   font-weight:bold;
-  font-size:15px;
+  font-size:19px;
+  padding:12px;
+
 }
 
 
@@ -384,9 +387,31 @@ strong {
   font-family: Mexican Tequila;
   text-align: left; 
   text-align: center;
+  padding:12px;
+
 }
 #order_table_body{
   font-family:Georgia, 'Times New Roman', Times, serif;
   color: black;
+  background-color: beige;
+  border:none;
+  padding:12px;
+  font-size:15px;
+
 
 }
+#order_table_body tr {
+  border: 1px solid #591F0A ;
+}
+.confirmButton {
+  background-color: burlywood; 
+  color: white;
+  border: none; 
+}
+.cancelButton {
+  background-color: burlywood;
+  color: white; 
+  border: none; 
+  border-radius: 5px; 
+}
+

@@ -82,8 +82,8 @@ function createOrder(order) {
         <td>${new Date(order.orderTime).toLocaleTimeString()}</td>
         <td>${itemsStr.substring(0, itemsStr.length - 2)}</td>
         <td>${order.status}</td>
-        <td><button type="button" onclick="notifyCancellation(${order.orderId})">Cancel Order</button></td>
-        <td><button type="button" onclick="notifyConfirmation(${order.orderId})">Confirm Order</button></td>
+        <td><button id="cancelButton" type="button" onclick="notifyCancellation(${order.orderId})">Cancel Order</button></td>
+        <td><buttonid="confirmButton" type="button" onclick="notifyConfirmation(${order.orderId})">Confirm Order</button></td>
     </tr>`;
 }
 async function notifyCancellation(orderId) {
