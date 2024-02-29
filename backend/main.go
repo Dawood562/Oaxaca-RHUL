@@ -32,6 +32,10 @@ func main() {
 	app.Post("/add_order", endpoints.AddOrder)
 	app.Delete("/remove_order", endpoints.RemoveOrder)
 	app.Get("/orders", endpoints.GetOrders)
+	app.Patch("/pay/:id", endpoints.Pay)
+	app.Put("/add_waiter", endpoints.RegisterWaiter)
+	app.Post("/remove_waiter", endpoints.RemoveWaiter)
+	app.Patch("/confirm/:id", endpoints.Confirm)
 
 	// Register websocket endpoint
 	app.Get("/notifications", websocket.New(func(c *websocket.Conn) {

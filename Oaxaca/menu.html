@@ -10,7 +10,7 @@
 
 </head>
 
-<body>
+<body onload="initBasketQuantity()">
   <div id="container">
     <div id="headerArea">
       <div id="header"></div>
@@ -20,8 +20,8 @@
           <li><a href="index.html">Home</a></li>
           <li><a href="menu.html">Menu</a></li>
           <li><a href="order.html">Order</a></li>
-          <li><a href="#">Link</a></li>
-          <li><a href="waiter.html">Staff</a></li>
+          <li><a href="https://www.youtube.com/watch?v=xvFZjo5PgG0">Link</a></li>
+          <li><a href="staff.html">Staff</a></li>
           </ul>
       </nav>
     </div>
@@ -101,13 +101,6 @@
     function goToOrderPage() {
       window.location.href = "order.html";
     }
-
-    document.addEventListener("DOMContentLoaded", function () {
-      initializeMenu();
-      initializeCategoryFilter();
-      //initMenuAll()
-    });
-
 
     function initializeMenu() {
       const activeButton = document.querySelector('#menuFilter button.active');

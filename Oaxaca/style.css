@@ -18,7 +18,7 @@
 body {
   font-family: 'Crete Round', sans-serif;
   margin: 0;
-  background-color: white;
+  background-color:burlywood;
   color: #591F0A;
 }
 
@@ -118,6 +118,9 @@ footer {
   text-align: center;
   font-size: 12px;
   border-top: 1px dashed white;
+  position:absolute;
+  bottom:0;
+  height: 2.5rem;
 }
 
 h1,
@@ -261,7 +264,7 @@ strong {
 
 #MenuItemGridLayout {
   display: grid;
-  grid-template-columns: auto auto auto;
+  grid-template-columns: 0.33fr 0.33fr 0.33fr;
   padding-left: 10%;
 }
 
@@ -356,4 +359,10 @@ strong {
   color: black;
   background-color: gainsboro;
 }
-
+.orderPageItem{
+  font-family: 'Crete Round', sans-serif;
+  font-size:26px;
+}
+.orderPageItemData{
+  padding-left: 5%;
+}
