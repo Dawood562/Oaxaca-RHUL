@@ -181,5 +181,15 @@ function submitOrder() {
 }
 
 function sendPayment(){
-    
+    let id = localStorage.getItem("orderID");
+    fetch("http://localhost:4444/pay/" + id, {
+        method: "PATCH"
+    })
+    .then((res) => {
+        if(res.ok) {
+            alert("Payment received. Thank you for dining with us :)");
+        } else {
+            alert("There was a problem with payment. Please try again later.");
+        }
+    })
 }
