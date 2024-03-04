@@ -24,19 +24,19 @@ func TestDatabaseQueries(t *testing.T) {
 			name:            "EmptyFilter",
 			filter:          &MenuFilter{},
 			expectedLen:     4,
-			expectedElement: models.MenuItem{ID: 1, Name: "TESTFOOD", Description: "Description for TESTFOOD", Price: 5.00, Calories: 400},
+			expectedElement: models.MenuItem{ID: 1, Name: "TESTFOOD", Description: "Description for TESTFOOD", Price: 5.00, Calories: 400, Allergens: []models.Allergen{}},
 		},
 		{
 			name:            "WithSearchTermFilter",
 			filter:          &MenuFilter{SearchTerm: "TESTFOOD2"},
 			expectedLen:     1,
-			expectedElement: models.MenuItem{ID: 2, Name: "TESTFOOD2", Description: "Description for TESTFOOD2", Price: 6.00, Calories: 500},
+			expectedElement: models.MenuItem{ID: 2, Name: "TESTFOOD2", Description: "Description for TESTFOOD2", Price: 6.00, Calories: 500, Allergens: []models.Allergen{}},
 		},
 		{
 			name:            "WithMultipleFilters",
 			filter:          &MenuFilter{MaxPrice: 6.00, MaxCalories: 600},
 			expectedLen:     2,
-			expectedElement: models.MenuItem{ID: 1, Name: "TESTFOOD", Description: "Description for TESTFOOD", Price: 5.00, Calories: 400},
+			expectedElement: models.MenuItem{ID: 1, Name: "TESTFOOD", Description: "Description for TESTFOOD", Price: 5.00, Calories: 400, Allergens: []models.Allergen{}},
 		},
 	}
 
@@ -97,7 +97,7 @@ func TestDatabaseEdit(t *testing.T) {
 	ResetTestMenu()
 
 	// Check that a valid record can be edited
-	newItem := models.MenuItem{ID: 1, Name: "TESTFOOD5", Price: 6.00, Calories: 500}
+	newItem := models.MenuItem{ID: 1, Name: "TESTFOOD5", Price: 6.00, Calories: 500, Allergens: []models.Allergen{}}
 	err := EditItem(&newItem)
 	assert.NoError(t, err, "Test that editing a valid record does not create an error")
 	// Check that the fields were modified
@@ -335,14 +335,20 @@ func TestAddAndRetrieveAllergens(t *testing.T) {
 	ClearMenu()
 	ClearOrders()
 
-	err := AddItem(&models.MenuItem{ID: 1, Name: "Test 1"})
+	err := AddItem(&models.MenuItem{ID: 1, Name: "Test 1", Allergens: []models.Allergen{{Name: "Gluten"}, {Name: "Nuts"}}})
 	assert.NoError(t, err, "Test that adding allergens to menu does not create errors")
-	// Check allergen length
+	// Test allergen length
+	var count int64
+	db.Model(&models.Allergen{}).Where("1=1").Count(&count)
+	assert.Equal(t, int64(2), count, "Test that the correct number of allergens are present in the database")
 
 	err = AddItem(&models.MenuItem{ID: 2, Name: "Test 2"})
 	assert.NoError(t, err, "Test that adding an order without allergens does not create errors")
-	// Check allergen length again
+	db.Model(&models.Allergen{}).Where("1=1").Count(&count)
+	assert.Equal(t, int64(2), count, "Test that the correct number of allergens are present in the database")
 
 	orders := QueryMenu(&MenuFilter{})
-	assert.Equal(t, 2, len(orders), "Test that the correct number of orders are returned")
+	assert.Equal(t, 2, len(orders), "Test that the correct number of menu items are returned")
+	assert.Equal(t, 2, len(orders[0].Allergens), "Test that the order items contain the correct number of allergens")
+	assert.Equal(t, 0, len(orders[1].Allergens), "Test that the order items contain the correct number of allergens")
 }

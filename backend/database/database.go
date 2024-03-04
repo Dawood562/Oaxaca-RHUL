@@ -52,6 +52,10 @@ func init() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	err = db.AutoMigrate(&models.Allergen{})
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 // AddItem adds the given item to the database.
@@ -93,14 +97,14 @@ func QueryMenu(filter *MenuFilter) []models.MenuItem {
 	preparedFilter := prepareArgs(filter)
 
 	var data []models.MenuItem
-	db.Model(&models.MenuItem{}).Where("name LIKE ?", preparedFilter.SearchTerm).Where("calories <= ?", preparedFilter.MaxCalories).Where("price <= ?", preparedFilter.MaxPrice).Find(&data)
+	db.Model(&models.MenuItem{}).Preload("Allergens").Where("name LIKE ?", preparedFilter.SearchTerm).Where("calories <= ?", preparedFilter.MaxCalories).Where("price <= ?", preparedFilter.MaxPrice).Find(&data)
 	return data
 }
 
 // FetchItem retrieves the given item from the database
 func FetchItem(id int) (models.MenuItem, error) {
 	ret := models.MenuItem{}
-	res := db.Model(&models.MenuItem{}).Where("ID = ?", id).First(&ret)
+	res := db.Model(&models.MenuItem{}).Preload("Allergens").Where("ID = ?", id).First(&ret)
 	if res.Error != nil {
 		return models.MenuItem{}, res.Error
 	}
@@ -185,7 +189,7 @@ func FetchOrders(confirmed bool) ([]*models.Order, error) {
 	if confirmed {
 		dbLocal = dbLocal.Where("Status != ?", StatusAwaitingConfirmation)
 	}
-	dbLocal.Model(&models.Order{}).Preload("Items").Preload("Items.Item").Find(&orderData)
+	dbLocal.Model(&models.Order{}).Preload("Items").Preload("Items.Item").Preload("Items.Item.Allergens").Find(&orderData)
 
 	return orderData, nil
 }
