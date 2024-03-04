@@ -41,6 +41,15 @@ func TestAddWaiters(t *testing.T) {
 			expectedItem: WaiterAPI{Username: "IGNORE"},
 			code:         400,
 		},
+		{
+			name: "TestWaiterWithNoUsername",
+			json: []byte(`
+				{
+				}
+			`),
+			expectedItem: WaiterAPI{Username: "IGNORE"},
+			code:         400,
+		},
 	}
 
 	for _, test := range testCases {

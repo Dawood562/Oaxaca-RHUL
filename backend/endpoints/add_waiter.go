@@ -19,6 +19,11 @@ func RegisterWaiter(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, "Could not process provided JSON")
 	}
 
+	// Check that username is provided
+	if len(waiter.Username) <= 0 {
+		return fiber.NewError(fiber.StatusBadRequest, "No username provided")
+	}
+
 	// Generate random id
 	randWaiterId := uint(rand.Intn(100000000))
 	waiterData := WaiterData{ID: randWaiterId, Username: waiter.Username}
