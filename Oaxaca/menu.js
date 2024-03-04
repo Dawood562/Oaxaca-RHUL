@@ -346,11 +346,15 @@ function initializeMenu() {
 
 // Initialises basket quantity on page load to number of items in basket cookies
 function initBasketQuantity(){
+  if(document.cookie.length <= 0){
+    document.cookie="basket="
+  }
   let cookieList = document.cookie.split(";");
   let basketCookie = "";
   cookieList.forEach(cookie => {
     if(cookie.indexOf("basket=")!=-1){
-        
+      cookie = cookie.substring(cookie.indexOf("basket=")+"basket=".length, cookie.length)
+      console.log(cookie)
       // we found basket cookie
       let splitCookie = cookie.split("#")
       let basketCount = splitCookie.length
