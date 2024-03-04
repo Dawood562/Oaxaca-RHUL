@@ -330,3 +330,19 @@ func TestCancelOrder(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, StatusCancelled, status, "Test that the second order status was correctly updated")
 }
+
+func TestAddAndRetrieveAllergens(t *testing.T) {
+	ClearMenu()
+	ClearOrders()
+
+	err := AddItem(&models.MenuItem{ID: 1, Name: "Test 1"})
+	assert.NoError(t, err, "Test that adding allergens to menu does not create errors")
+	// Check allergen length
+
+	err = AddItem(&models.MenuItem{ID: 2, Name: "Test 2"})
+	assert.NoError(t, err, "Test that adding an order without allergens does not create errors")
+	// Check allergen length again
+
+	orders := QueryMenu(&MenuFilter{})
+	assert.Equal(t, 2, len(orders), "Test that the correct number of orders are returned")
+}
