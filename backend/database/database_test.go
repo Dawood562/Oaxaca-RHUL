@@ -351,4 +351,9 @@ func TestAddAndRetrieveAllergens(t *testing.T) {
 	assert.Equal(t, 2, len(orders), "Test that the correct number of menu items are returned")
 	assert.Equal(t, 2, len(orders[0].Allergens), "Test that the order items contain the correct number of allergens")
 	assert.Equal(t, 0, len(orders[1].Allergens), "Test that the order items contain the correct number of allergens")
+
+	err = RemoveItem(1)
+	assert.NoError(t, err, "Test that removing a menu item with allergens does not create an error")
+	db.Model(&models.Allergen{}).Where("1=1").Count(&count)
+	assert.Equal(t, int64(0), count, "Test that the correct number of allergens are present in the database")
 }
