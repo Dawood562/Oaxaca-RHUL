@@ -5,7 +5,6 @@ package endpoints
 import (
 	"bytes"
 	"net/http"
-	"teamproject/data"
 	"testing"
 
 	"github.com/gofiber/fiber/v2"
@@ -17,10 +16,10 @@ func TestAddWaiters(t *testing.T) {
 	app.Put("/add_waiter", RegisterWaiter)
 
 	testCases := []struct {
-		name         string      //test name
-		json         []byte      //body to test with
-		expectedItem data.Waiter //expected received waiter
-		code         int         // expected return
+		name         string     //test name
+		json         []byte     //body to test with
+		expectedItem WaiterData //expected received waiter
+		code         int        // expected return
 	}{
 		{
 			name: "TestWaiterWithValidValues",
@@ -31,7 +30,7 @@ func TestAddWaiters(t *testing.T) {
 					"tableNumber": []
 				}
 			`),
-			expectedItem: data.Waiter{ID: 1, Username: "John"},
+			expectedItem: WaiterData{ID: 1, Username: "John"},
 			code:         200,
 		},
 		{
@@ -43,7 +42,7 @@ func TestAddWaiters(t *testing.T) {
 					"tableNumber": []
 				}
 			`),
-			expectedItem: data.Waiter{Username: "IGNORE"},
+			expectedItem: WaiterData{Username: "IGNORE"},
 			code:         400,
 		},
 		{
@@ -55,13 +54,13 @@ func TestAddWaiters(t *testing.T) {
 					"tableNumber": []
 				}
 			`),
-			expectedItem: data.Waiter{Username: "IGNORE"},
+			expectedItem: WaiterData{Username: "IGNORE"},
 			code:         400,
 		},
 	}
 
 	for _, test := range testCases {
-		data.ClearWaiterList() // Clear waiter list on each test
+		ClearWaiterList() // Clear waiter list on each test
 		t.Run(test.name, func(t *testing.T) {
 			// Create a new HTTP request
 			req, _ := http.NewRequest("PUT", "/add_waiter", bytes.NewBuffer(test.json))
@@ -76,7 +75,7 @@ func TestAddWaiters(t *testing.T) {
 			assert.Equal(t, test.code, res.StatusCode, "Check that request returned expected status code")
 
 			// Check waiter list is updated correctly
-			waiterData := *data.GetWaiter()
+			waiterData := *GetWaiter()
 			if test.code <= 299 {
 				assert.Equal(t, 1, len(waiterData), "Incorrect number of waiters in waiter list")
 				assert.Equal(t, "John", waiterData[0].Username, "Data not inserted correctly")

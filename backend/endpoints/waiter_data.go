@@ -1,13 +1,13 @@
-package data
+package endpoints
 
 import (
 	"errors"
 	"strconv"
 )
 
-var activeWaiters []Waiter
+var activeWaiters []WaiterData
 
-type Waiter struct {
+type WaiterData struct {
 	ID          uint   `json:"id"`
 	Username    string `json:"waiterUsername"`
 	TableNumber []uint `json:"tableNumber"` // Array of table numbers that the waiter is attending
@@ -15,7 +15,7 @@ type Waiter struct {
 
 // Add waiter to current waiter list
 // Returns true if waiter is successfully added to list
-func AddWaiter(waiter Waiter) error {
+func AddWaiterData(waiter WaiterData) error {
 	// Check that waiter with same id doesnt exist
 	alreadyExists := false
 	for _, existing := range activeWaiters {
@@ -31,7 +31,7 @@ func AddWaiter(waiter Waiter) error {
 }
 
 // Remove waiter according to id provided in filter waiter
-func RemoveWaiter(waiter Waiter) error {
+func RemoveWaiterData(waiter WaiterData) error {
 	for index, w := range activeWaiters {
 		// If requested waiter is in active waiter list then remove it
 		if waiter.ID == w.ID {
@@ -45,11 +45,11 @@ func RemoveWaiter(waiter Waiter) error {
 // Gets waiter by provided id or if no waiter provided then gets all waiters
 // Returns nil if waiter id provided and none
 // Returns list of waiters
-func GetWaiter(waiter ...Waiter) *[]Waiter {
+func GetWaiter(waiter ...WaiterData) *[]WaiterData {
 	if len(waiter) > 0 {
 		for _, w := range activeWaiters {
 			if waiter[0].ID == w.ID {
-				return &[]Waiter{w}
+				return &[]WaiterData{w}
 			}
 		}
 		return nil
@@ -69,5 +69,5 @@ func AddTableNumber(id uint, tableNumber uint) error {
 }
 
 func ClearWaiterList() {
-	activeWaiters = []Waiter{}
+	activeWaiters = []WaiterData{}
 }
