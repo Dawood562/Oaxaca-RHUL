@@ -143,14 +143,14 @@ func TestPrepareArgsNotEmpty(t *testing.T) {
 func TestOrderRetrievalUnfiltered(t *testing.T) {
 	// Check no data is returned to when no orders are in table
 	ClearOrders()
-	data, err := FetchOrders(false)
+	data, err := FetchOrders(false, -1)
 	assert.Equal(t, 0, len(data), "Length of orders received should be 0 when no orders placed. Instead, received: "+strconv.Itoa(len(data)))
 
 	// Check example data is inserted into table and returned correctly
 	testData1 := models.Order{ID: 1, Time: time.Now(), TableNumber: 69, Bill: 42, Status: "Unknown"}
 	err = AddOrder(&testData1)
 	assert.NoError(t, err, "No error should be returned when adding empty order to Order table")
-	data, err = FetchOrders(false)
+	data, err = FetchOrders(false, -1)
 	assert.Equal(t, 1, len(data), "Size of data is actually: "+strconv.Itoa(len(data)))
 	assert.Equal(t, 1, int(data[0].ID), "Returned id does not match expected id")
 	assert.Equal(t, 69, int(data[0].TableNumber), "Returned table number doesnt match expected")
@@ -172,7 +172,7 @@ func TestOrderQueryUnfiltered(t *testing.T) {
 		t.Fail()
 	}
 
-	returnedData, err := FetchOrders(false)
+	returnedData, err := FetchOrders(false, -1)
 	assert.Equal(t, 1, len(returnedData), "Incorrect number of data returned")
 
 	err = RemoveOrder(testOrder.ID)
@@ -199,7 +199,7 @@ func TestRemoveItem(t *testing.T) {
 	err := AddOrder(&testData1)
 	assert.Error(t, err, "Error should be thrown when duplicate item is added to order table")
 
-	data, err := FetchOrders(false)
+	data, err := FetchOrders(false, -1)
 	assert.Equal(t, 1, len(data), "Test item was not successfully added correctly")
 
 	// Attempt to remove test item normally
@@ -210,33 +210,33 @@ func TestRemoveItem(t *testing.T) {
 	assert.Error(t, err, "Attempting to remove an item that doesnt exist should throw an error")
 
 	// Check if item was really removed
-	data, err = FetchOrders(false)
+	data, err = FetchOrders(false, -1)
 	assert.Equal(t, 0, len(data), "Numbers of orders remaining should be 0 after removing only test order")
 }
 
 func TestRemovingMultipleData(t *testing.T) {
 	ResetTestOrders()
 
-	data, err := FetchOrders(false)
+	data, err := FetchOrders(false, -1)
 
 	assert.Equal(t, 2, len(data), "Order table should contain only 1 item")
 
 	err = RemoveOrder(1)
 	assert.NoError(t, err, "Removing item returned an error")
 
-	data, err = FetchOrders(false)
+	data, err = FetchOrders(false, -1)
 	assert.Equal(t, 1, len(data), "Order table should contain no items!")
 	assert.Equal(t, uint(2), data[0].ID, "Incorrect item deleted!")
 
 	RemoveOrder(2)
-	data, err = FetchOrders(false)
+	data, err = FetchOrders(false, -1)
 	assert.Equal(t, 0, len(data), "Order table should contain no items!")
 }
 
 func TestFetchingOrdersCorrectlyBringsOrderItems(t *testing.T) {
 	ResetTestOrders()
 
-	testData, err := FetchOrders(false)
+	testData, err := FetchOrders(false, -1)
 
 	assert.NoError(t, err, "Shouldnt throw an error here")
 	assert.Equal(t, 2, len(testData), "Incorrect amount of data fetched")

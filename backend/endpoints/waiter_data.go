@@ -39,7 +39,7 @@ func RemoveWaiterData(waiter WaiterData) error {
 			return nil
 		}
 	}
-	return errors.New("Did not find waiter with provided id to remove!")
+	return errors.New("DID NOT FIND WAITER WITH PROVIDED ID TO REMOVE")
 }
 
 // Gets waiter by provided id or if no waiter provided then gets all waiters
