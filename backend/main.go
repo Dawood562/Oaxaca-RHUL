@@ -35,9 +35,11 @@ func main() {
 	app.Patch("/pay/:id", endpoints.Pay)
 	app.Put("/add_waiter", endpoints.RegisterWaiter)
 	app.Post("/remove_waiter", endpoints.RemoveWaiter)
+
 	app.Patch("/confirm/:id", endpoints.Confirm)
 	app.Patch("/cancel/:id", endpoints.Cancel)
 	app.Patch("/pay/:id", endpoints.Pay)
+	app.Patch("/delivered/:id", endpoints.Delivered)
 
 	// Register websocket endpoint
 	app.Get("/notifications", websocket.New(func(c *websocket.Conn) {
