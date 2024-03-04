@@ -16,45 +16,29 @@ func TestAddWaiters(t *testing.T) {
 	app.Put("/add_waiter", RegisterWaiter)
 
 	testCases := []struct {
-		name         string     //test name
-		json         []byte     //body to test with
-		expectedItem WaiterData //expected received waiter
-		code         int        // expected return
+		name         string    //test name
+		json         []byte    //body to test with
+		expectedItem WaiterAPI //expected received waiter
+		code         int       // expected return
 	}{
 		{
 			name: "TestWaiterWithValidValues",
 			json: []byte(`
 				{
-					"id": 1,
-					"waiterUsername": "John",
-					"tableNumber": []
+					"username":"John"
 				}
 			`),
-			expectedItem: WaiterData{ID: 1, Username: "John"},
+			expectedItem: WaiterAPI{Username: "John"},
 			code:         200,
-		},
-		{
-			name: "TestWaiterWithInvalidID",
-			json: []byte(`
-				{
-					"id": "1",
-					"waiterUsername": "John",
-					"tableNumber": []
-				}
-			`),
-			expectedItem: WaiterData{Username: "IGNORE"},
-			code:         400,
 		},
 		{
 			name: "TestWaiterWithInvalidUsername",
 			json: []byte(`
 				{
-					"id": 1,
-					"waiterUsername": 69,
-					"tableNumber": []
+					"username": 69,
 				}
 			`),
-			expectedItem: WaiterData{Username: "IGNORE"},
+			expectedItem: WaiterAPI{Username: "IGNORE"},
 			code:         400,
 		},
 	}
