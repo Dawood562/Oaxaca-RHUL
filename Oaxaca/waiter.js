@@ -49,8 +49,16 @@ document.addEventListener("beforeunload", (e) =>{
     removeWaiter();
 })
 
-function removeWaiter(){
-
+async function removeWaiter(){
+    const response = await fetch("http://localhost:4444/remove_waiter",{
+        method:"POST",
+        headers:{
+            "Content-Type": "application/json"
+        },
+        body:JSON.stringify({
+            "id": waiterID,
+        })
+    })
 }
 
 function initSock() {
