@@ -357,3 +357,29 @@ func TestAddAndRetrieveAllergens(t *testing.T) {
 	db.Model(&models.Allergen{}).Where("1=1").Count(&count)
 	assert.Equal(t, int64(0), count, "Test that the correct number of allergens are present in the database")
 }
+
+func TestDeliverOrder(t *testing.T) {
+	ResetTestOrders()
+
+	status, err := GetOrderStatus(1)
+	assert.NoError(t, err)
+	assert.Equal(t, StatusAwaitingConfirmation, status, "Check that order begins with correct status")
+
+	err = DeliverOrder(1)
+	assert.NoError(t, err, "Check that delivering a valid order creates no error")
+	err = DeliverOrder(1)
+	assert.Error(t, err, "Check that delivering an order twice creates an error")
+	err = DeliverOrder(3)
+	assert.Error(t, err, "Check that delivering an invalid order creates an error")
+	status, err = GetOrderStatus(1)
+	assert.NoError(t, err)
+	assert.Equal(t, StatusDelivered, status, "Test that order status was correctly updated")
+	status, err = GetOrderStatus(2)
+	assert.NoError(t, err)
+	assert.Equal(t, StatusAwaitingConfirmation, status)
+	err = DeliverOrder(2)
+	assert.NoError(t, err, "Test that delivering a second vaid order creates no errors")
+	status, err = GetOrderStatus(2)
+	assert.NoError(t, err)
+	assert.Equal(t, StatusDelivered, status, "Test that the second order status was correctly updated")
+}

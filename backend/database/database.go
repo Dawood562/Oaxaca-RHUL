@@ -19,6 +19,7 @@ var (
 	ErrOrderAlreadyPaid      error = errors.New("order already paid for")
 	ErrOrderAlreadyConfirmed error = errors.New("order already confirmed")
 	ErrOrderAlreadyCancelled error = errors.New("order already cancelled")
+	ErrOrderAlreadyDelivered error = errors.New("order already delivered")
 )
 
 const (
@@ -271,6 +272,27 @@ func CancelOrder(id uint) error {
 	order := &models.Order{ID: id}
 	db.Model(order).First(&order)
 	order.Status = StatusCancelled
+	db.Save(&order)
+
+	return nil
+}
+
+// DeliverOrder marks the given order as deliered. Returns an error if the order does not exist or is already delivered or cancelled.
+func DeliverOrder(id uint) error {
+	status, err := GetOrderStatus(id)
+	if err != nil {
+		return ErrOrderNotFound
+	}
+	if status == StatusCancelled {
+		return ErrOrderAlreadyCancelled
+	}
+	if status == StatusDelivered {
+		return ErrOrderAlreadyDelivered
+	}
+
+	order := &models.Order{ID: id}
+	db.Model(order).First(&order)
+	order.Status = StatusDelivered
 	db.Save(&order)
 
 	return nil
