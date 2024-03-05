@@ -23,6 +23,13 @@ func TestStatus(t *testing.T) {
 	assertResult(t, "2", app, database.StatusAwaitingConfirmation, fiber.StatusOK)
 	assertResult(t, "3", app, "", fiber.StatusNotFound)
 	assertResult(t, "A", app, "", fiber.StatusUnprocessableEntity)
+	// Modify statuses and test again
+	database.CancelOrder(1)
+	assertResult(t, "1", app, database.StatusCancelled, fiber.StatusOK)
+	database.ConfirmOrder(2)
+	assertResult(t, "2", app, database.StatusPreparing, fiber.StatusOK)
+	database.DeliverOrder(2)
+	assertResult(t, "2", app, database.StatusDelivered, fiber.StatusOK)
 }
 
 // assertResult calls the /status endpoint with the given params and asserts the resulting string response and status code
