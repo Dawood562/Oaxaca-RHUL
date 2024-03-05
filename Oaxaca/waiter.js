@@ -1,5 +1,7 @@
 var sock;
 var sockInit = false;
+var waiterID = -1
+var waiterUsername = "";
 
 document.addEventListener('DOMContentLoaded', e=>{
     registerWaiter();
@@ -7,7 +9,7 @@ document.addEventListener('DOMContentLoaded', e=>{
     refreshOrders();
 
 });
-var waiterUsername = "";
+
 function getUserNameFromCookies() {
     let cookieData = document.cookie;
     cookieData.split(";").forEach(cookie => {
@@ -20,8 +22,6 @@ function getUserNameFromCookies() {
 
 async function registerWaiter(){
     getUserNameFromCookies();
-    let randId = Math.floor(Math.random()*Number.MAX_SAFE_INTEGER);
-    console.log(randId);
 
     if(waiterUsername.length <= 0){
         console.log("WAITER NOT REGISTERED! INVALID USERNAME: {"+waiterUsername+"}");
@@ -34,12 +34,12 @@ async function registerWaiter(){
             "Content-Type": "application/json"
         },
         body:JSON.stringify({
-            "id": randId,
-            "waiterUsername": waiterUsername,
-            "tableNumber": []
+            "username": waiterUsername,
         })
+    }).then(resp => resp.json()).then(data => {
+        console.log(data)
+        waiterID = Number(data.id);
     })
-    console.log(response);
 }
 
 // On leaving waiter page
