@@ -30,7 +30,7 @@ func Delivered(c *fiber.Ctx) error {
 	}
 
 	BroadcastToWaiters("REFRESH")
-	// TODO: send to the customer
+	SendToTable(uint(id), "REFRESH")
 
 	return nil
 }
