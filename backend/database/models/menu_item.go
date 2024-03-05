@@ -6,5 +6,5 @@ type MenuItem struct {
 	Description string     `json:"itemDescription"`
 	Price       float64    `json:"price"`
 	Calories    float64    `json:"calories"`
-	Allergens   []Allergen `json:"items" gorm:"foreignKey:ItemID;constraint:OnDelete:CASCADE,OnUpdate:CASCADE"`
+	Allergens   []Allergen `json:"allergens" gorm:"foreignKey:ItemID;constraint:OnDelete:CASCADE,OnUpdate:CASCADE"`
 }
