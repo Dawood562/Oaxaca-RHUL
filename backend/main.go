@@ -30,7 +30,6 @@ func main() {
 	app.Put("/edit_item", endpoints.EditItem)
 
 	app.Post("/add_order", endpoints.AddOrder)
-	app.Delete("/remove_order", endpoints.RemoveOrder)
 	app.Get("/orders", endpoints.GetOrders)
 	app.Patch("/pay/:id", endpoints.Pay)
 	app.Put("/add_waiter", endpoints.RegisterWaiter)
@@ -40,6 +39,8 @@ func main() {
 	app.Patch("/cancel/:id", endpoints.Cancel)
 	app.Patch("/pay/:id", endpoints.Pay)
 	app.Patch("/delivered/:id", endpoints.Delivered)
+	app.Get("/status/:id", endpoints.Status)
+	app.Get("/ready/:id", endpoints.Ready)
 
 	// Register websocket endpoint
 	app.Get("/notifications", websocket.New(func(c *websocket.Conn) {

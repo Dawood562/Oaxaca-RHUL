@@ -1,7 +1,6 @@
 package endpoints
 
 import (
-	"strconv"
 	"teamproject/database"
 
 	"github.com/gofiber/fiber/v2"
@@ -9,14 +8,9 @@ import (
 
 func Cancel(c *fiber.Ctx) error {
 	// Retrieve required ID arg
-	idStr := c.Params("id")
-	if len(idStr) == 0 {
-		return fiber.ErrNotFound
-	}
-
-	id, err := strconv.ParseInt(idStr, 10, 32)
+	id, err := GetID(c)
 	if err != nil {
-		return fiber.ErrUnprocessableEntity
+		return err
 	}
 
 	// Attempt to pay for order
