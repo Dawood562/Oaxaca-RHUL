@@ -2,6 +2,8 @@ package endpoints
 
 import (
 	"fmt"
+	"io"
+	"net/http"
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
@@ -14,11 +16,27 @@ func Upload(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, "Missing required 'file' field")
 	}
 
-	// TODO: validation
+	// Check file type
+	data, err := file.Open()
+	if err != nil {
+		return fiber.NewError(fiber.StatusUnprocessableEntity, "Cannot process given file")
+	}
+	content, err := io.ReadAll(data)
+	if err != nil {
+		return fiber.NewError(fiber.StatusUnprocessableEntity, "Could not read image")
+	}
+	t := http.DetectContentType(content)
+	if t != "image/png" && t != "image/jpeg" {
+		return fiber.NewError(fiber.StatusBadRequest, "Invalid file type")
+	}
 
 	// Generate a filename in the format [RANDOM STRING].[EXTENSION]
 	s := strings.Split(file.Filename, ".")
-	extension := s[len(s)-1]
+	extension := strings.ToLower(s[len(s)-1])
+	// Check file extension
+	if extension != "png" && extension != "jpg" && extension != "jpeg" {
+		return fiber.NewError(fiber.StatusBadRequest, "Invalid file extension")
+	}
 	body := uuid.New()
 	filename := fmt.Sprintf("%s.%s", body.String(), extension)
 
