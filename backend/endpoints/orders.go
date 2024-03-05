@@ -54,22 +54,5 @@ func GetOrders(c *fiber.Ctx) error {
 		return c.JSON(filteredData)
 	}
 
-	if len(onlyTableNumber) > 0 {
-		temp, err := strconv.ParseInt(onlyTableNumber, 10, 32)
-		if err != nil {
-			c.SendString(err.Error())
-		}
-		tableNumber = int(temp)
-
-		filteredData := []models.Order{}
-		// Find data for given table number
-		for _, dataItem := range data {
-			if dataItem.TableNumber == uint(tableNumber) {
-				filteredData = append(filteredData, *dataItem)
-			}
-		}
-		return c.JSON(filteredData)
-	}
-
 	return c.JSON(data)
 }
