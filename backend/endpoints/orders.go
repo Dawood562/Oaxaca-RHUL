@@ -23,7 +23,7 @@ func GetOrders(c *fiber.Ctx) error {
 		confirmed = temp
 	}
 
-	data, err := database.FetchOrders(confirmed, -1)
+	data, err := database.FetchOrders(confirmed)
 	if err != nil {
 		return c.SendString(err.Error())
 	}
