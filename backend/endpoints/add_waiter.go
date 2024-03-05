@@ -33,7 +33,7 @@ func RegisterWaiter(c *fiber.Ctx) error {
 	waiterData := WaiterData{ID: randWaiterId, Username: waiter.Username}
 	err = AddWaiterData(waiterData)
 	if err != nil {
-		return fiber.NewError(fiber.StatusConflict, "Cannot add waiter with same id as existing waiter")
+		return fiber.NewError(fiber.StatusConflict, err.Error())
 	}
 	return c.JSON(WaiterResponse{ID: randWaiterId})
 }

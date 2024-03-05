@@ -10,11 +10,9 @@ import (
 
 func GetOrders(c *fiber.Ctx) error {
 	onlyConfirmed := c.Query("confirmed")
-	onlyTableNumber := c.Query("tableNumber")
 	providedId := c.Query("waiterId")
 
 	confirmed := false
-	tableNumber := -1
 
 	if len(onlyConfirmed) > 0 {
 		temp, err := strconv.ParseBool(onlyConfirmed)
