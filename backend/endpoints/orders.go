@@ -11,6 +11,7 @@ import (
 func GetOrders(c *fiber.Ctx) error {
 	onlyConfirmed := c.Query("confirmed")
 	onlyTableNumber := c.Query("tableNumber")
+	providedId := c.Query("waiterId")
 
 	confirmed := false
 	tableNumber := -1
@@ -26,6 +27,31 @@ func GetOrders(c *fiber.Ctx) error {
 	data, err := database.FetchOrders(confirmed)
 	if err != nil {
 		return c.SendString(err.Error())
+	}
+
+	if len(providedId) > 0 {
+		waiterID, err := strconv.ParseInt(providedId, 10, 32)
+		if err != nil {
+			return c.SendString(err.Error())
+		}
+		// Find waiters with same id
+		waiterList := GetWaiter(WaiterData{ID: uint(waiterID)})
+		if len(*waiterList) <= 0 {
+			return c.SendString("Error finding waiter from provided id")
+		}
+
+		waiter := (*waiterList)[0]
+		filteredData := []models.Order{}
+		// Find data for given table number
+		for _, dataItem := range data {
+			for _, waiterTableNum := range waiter.TableNumber {
+				// If table allocated to waiter found add it to return list
+				if dataItem.TableNumber == waiterTableNum {
+					filteredData = append(filteredData, *dataItem)
+				}
+			}
+		}
+		return c.JSON(filteredData)
 	}
 
 	if len(onlyTableNumber) > 0 {
