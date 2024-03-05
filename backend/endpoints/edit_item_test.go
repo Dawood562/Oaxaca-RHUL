@@ -47,6 +47,46 @@ func TestEditItem(t *testing.T) {
 			code: 200,
 		},
 		{
+			name: "WithChangingAllergens",
+			json: []byte(`
+				{
+					"itemId": 2,
+					"itemName": "TESTFOODALLERGENS",
+					"itemDescription": "New description",
+					"price": 6.0,
+					"calories": 600,
+					"allergens": [
+						{
+							"name": "Gluten"
+						},
+						{
+							"name": "Lactose"
+						}
+					]
+				}
+			`),
+			expectedItem: models.MenuItem{
+				ID:          2,
+				Name:        "TESTFOODALLERGENS",
+				Description: "New description",
+				Price:       6.0,
+				Calories:    600,
+				Allergens: []models.Allergen{
+					{
+						ID:     3,
+						ItemID: 2,
+						Name:   "Gluten",
+					},
+					{
+						ID:     4,
+						ItemID: 2,
+						Name:   "Lactose",
+					},
+				},
+			},
+			code: 200,
+		},
+		{
 			name: "WithMissingID",
 			json: []byte(`
 				{
