@@ -19,12 +19,14 @@ var (
 	ErrOrderAlreadyPaid      error = errors.New("order already paid for")
 	ErrOrderAlreadyConfirmed error = errors.New("order already confirmed")
 	ErrOrderAlreadyCancelled error = errors.New("order already cancelled")
+	ErrOrderAlreadyReady     error = errors.New("order already ready")
 	ErrOrderAlreadyDelivered error = errors.New("order already delivered")
 )
 
 const (
 	StatusAwaitingConfirmation string = "Awaiting Confirmation"
 	StatusPreparing            string = "Preparing"
+	StatusReady                string = "Ready"
 	StatusDelivered            string = "Delivered"
 	StatusCancelled            string = "Cancelled"
 )
@@ -223,7 +225,7 @@ func PayOrder(id uint) error {
 	order := &models.Order{ID: id}
 	db.Model(order).First(&order)
 	order.Paid = true
-	db.Save(&order)
+	db.Save(order)
 	return nil
 }
 
@@ -255,7 +257,7 @@ func ConfirmOrder(id uint) error {
 	order := &models.Order{ID: id}
 	db.Model(order).First(&order)
 	order.Status = StatusPreparing
-	db.Save(&order)
+	db.Save(order)
 	return nil
 }
 
@@ -272,7 +274,31 @@ func CancelOrder(id uint) error {
 	order := &models.Order{ID: id}
 	db.Model(order).First(&order)
 	order.Status = StatusCancelled
-	db.Save(&order)
+	db.Save(order)
+
+	return nil
+}
+
+// ReadyOrder marks the given order as ready for delivery. Returns an error if the order is cancelled, already ready or already delivered.
+func ReadyOrder(id uint) error {
+	status, err := GetOrderStatus(id)
+	if err != nil {
+		return ErrOrderNotFound
+	}
+	if status == StatusCancelled {
+		return ErrOrderAlreadyCancelled
+	}
+	if status == StatusDelivered {
+		return ErrOrderAlreadyDelivered
+	}
+	if status == StatusReady {
+		return ErrOrderAlreadyReady
+	}
+
+	order := &models.Order{ID: id}
+	db.Model(order).First(&order)
+	order.Status = StatusReady
+	db.Save(order)
 
 	return nil
 }
@@ -293,7 +319,7 @@ func DeliverOrder(id uint) error {
 	order := &models.Order{ID: id}
 	db.Model(order).First(&order)
 	order.Status = StatusDelivered
-	db.Save(&order)
+	db.Save(order)
 
 	return nil
 }
