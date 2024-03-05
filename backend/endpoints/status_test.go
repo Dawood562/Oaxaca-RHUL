@@ -19,13 +19,18 @@ func TestStatus(t *testing.T) {
 	app := fiber.New()
 	app.Get("/status/:id", Status)
 
-	assertResult(t, "1", app, database.StatusAwaitingConfirmation, 200)
+	assertResult(t, "1", app, database.StatusAwaitingConfirmation, fiber.StatusOK)
+	assertResult(t, "2", app, database.StatusAwaitingConfirmation, fiber.StatusOK)
+	assertResult(t, "3", app, "", fiber.StatusNotFound)
+	assertResult(t, "A", app, "", fiber.StatusUnprocessableEntity)
 }
 
 // assertResult calls the /status endpoint with the given params and asserts the resulting string response and status code
 func assertResult(t *testing.T, id string, app *fiber.App, status string, code int) {
 	res, c := callEndpoint(t, id, app)
-	assert.Equal(t, status, res, "Test that query returned the expected result")
+	if code == fiber.StatusOK {
+		assert.Equal(t, status, res, "Test that query returned the expected result")
+	}
 	assert.Equal(t, code, c, "Test that query returned the expected status code")
 }
 
