@@ -358,6 +358,30 @@ func TestAddAndRetrieveAllergens(t *testing.T) {
 	assert.Equal(t, int64(0), count, "Test that the correct number of allergens are present in the database")
 }
 
+func TestReadyOrder(t *testing.T) {
+	ResetTestOrders()
+
+	status, err := GetOrderStatus(1)
+	assert.NoError(t, err)
+	assert.Equal(t, StatusAwaitingConfirmation, status, "Check that order begins with correct status")
+
+	err = ReadyOrder(1)
+	assert.NoError(t, err, "Test that marking a valid order as Ready creates no errors")
+	err = ReadyOrder(1)
+	assert.Error(t, err, "Test that marking an order as Ready twice creates an error")
+	err = ReadyOrder(3)
+	assert.Error(t, err, "Test that marking an invalid order as Ready creates an error")
+	status, _ = GetOrderStatus(1)
+	assert.Equal(t, StatusReady, status, "Test that order status was updated correctly")
+	// Test with conflicting statuses
+	DeliverOrder(2)
+	err = ReadyOrder(2)
+	assert.Error(t, err, "Test that a delivered order cannot be marked as ready")
+	CancelOrder(2)
+	err = ReadyOrder(2)
+	assert.Error(t, err, "Test that a cancelled order cannot be marked as ready")
+}
+
 func TestDeliverOrder(t *testing.T) {
 	ResetTestOrders()
 
