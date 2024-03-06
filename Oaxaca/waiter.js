@@ -43,11 +43,7 @@ async function registerWaiter(){
 }
 
 // On leaving waiter page
-document.addEventListener("beforeunload", (e) =>{
-
-    // Unregister waiter
-    removeWaiter();
-})
+window.onbeforeunload = removeWaiter;
 
 async function removeWaiter(){
     const response = await fetch("http://localhost:4444/remove_waiter",{
