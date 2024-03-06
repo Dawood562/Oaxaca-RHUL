@@ -50,23 +50,28 @@ func AddOrder(c *fiber.Ctx) error {
 
 	// Find waiter with least number of orders
 	waiterList := GetWaiter()
-	smallestQuantity := 100000000 // Unrealistic number of orders
-	smallestWaiter := WaiterData{}
-	foundSmallest := false
-	for _, waiter := range *waiterList {
-		if len(waiter.TableNumber) < smallestQuantity {
-			smallestQuantity = len(waiter.TableNumber)
-			smallestWaiter = waiter
-			foundSmallest = true
+	if len(*waiterList) > 0 {
+		smallestQuantity := 100000000 // Unrealistic number of orders
+		smallestWaiter := WaiterData{}
+		foundSmallest := false
+		for _, waiter := range *waiterList {
+			if len(waiter.TableNumber) < smallestQuantity {
+				smallestQuantity = len(waiter.TableNumber)
+				smallestWaiter = waiter
+				foundSmallest = true
+			}
 		}
-	}
-	if !foundSmallest {
-		return c.SendString("Did not find waiter with smallest number of orders")
-	}
-	// Add order to waiter with least number of orders
-	err = AddTableNumber(smallestWaiter.ID, o.TableNumber)
-	if err != nil {
-		return c.SendString(err.Error())
+		if !foundSmallest {
+			return c.SendString("Did not find waiter with smallest number of orders")
+		}
+		// Add order to waiter with least number of orders
+		err = AddTableNumber(smallestWaiter.ID, o.TableNumber)
+		if err != nil {
+			return c.SendString(err.Error())
+		}
+	} else {
+		// If there is no waiters, add to waiter order queue
+
 	}
 
 	return nil
