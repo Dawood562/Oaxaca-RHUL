@@ -14,6 +14,23 @@ import (
 
 var db *gorm.DB
 
+var (
+	ErrOrderNotFound         error = errors.New("order not found")
+	ErrOrderAlreadyPaid      error = errors.New("order already paid for")
+	ErrOrderAlreadyConfirmed error = errors.New("order already confirmed")
+	ErrOrderAlreadyCancelled error = errors.New("order already cancelled")
+	ErrOrderAlreadyReady     error = errors.New("order already ready")
+	ErrOrderAlreadyDelivered error = errors.New("order already delivered")
+)
+
+const (
+	StatusAwaitingConfirmation string = "Awaiting Confirmation"
+	StatusPreparing            string = "Preparing"
+	StatusReady                string = "Ready"
+	StatusDelivered            string = "Delivered"
+	StatusCancelled            string = "Cancelled"
+)
+
 func init() {
 	dbUsername, dbName, dbPassword := fetchDBAuth()
 	url := "postgres://" + dbUsername + ":" + dbPassword + "@db:5432/" + dbName
@@ -35,6 +52,10 @@ func init() {
 		log.Fatal(err)
 	}
 	err = db.AutoMigrate(&models.OrderItem{})
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = db.AutoMigrate(&models.Allergen{})
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -79,14 +100,14 @@ func QueryMenu(filter *MenuFilter) []models.MenuItem {
 	preparedFilter := prepareArgs(filter)
 
 	var data []models.MenuItem
-	db.Model(&models.MenuItem{}).Where("name LIKE ?", preparedFilter.SearchTerm).Where("calories <= ?", preparedFilter.MaxCalories).Where("price <= ?", preparedFilter.MaxPrice).Find(&data)
+	db.Model(&models.MenuItem{}).Preload("Allergens").Where("name LIKE ?", preparedFilter.SearchTerm).Where("calories <= ?", preparedFilter.MaxCalories).Where("price <= ?", preparedFilter.MaxPrice).Find(&data)
 	return data
 }
 
 // FetchItem retrieves the given item from the database
 func FetchItem(id int) (models.MenuItem, error) {
 	ret := models.MenuItem{}
-	res := db.Model(&models.MenuItem{}).Where("ID = ?", id).First(&ret)
+	res := db.Model(&models.MenuItem{}).Preload("Allergens").Where("ID = ?", id).First(&ret)
 	if res.Error != nil {
 		return models.MenuItem{}, res.Error
 	}
@@ -163,21 +184,142 @@ func RemoveOrder(id uint) error {
 	return nil
 }
 
-func FetchOrders(filter ...models.Order) ([]*models.Order, error) {
+func FetchOrders(confirmed bool) ([]*models.Order, error) {
 	dbCopy := *db
 	dbLocal := &dbCopy
 	var orderData []*models.Order
 
-	if len(filter) > 0 {
-
-		if filter[0].TableNumber > 0 {
-			dbLocal = dbLocal.Where("Table_Number = ?", filter[0].TableNumber)
-		}
-		if len(filter[0].Status) > 0 {
-			dbLocal = dbLocal.Where("Status = ?", filter[0].Status)
-		}
+	if confirmed {
+		dbLocal = dbLocal.Where("Status != ?", StatusAwaitingConfirmation)
 	}
-	dbLocal.Model(&models.Order{}).Preload("Items").Preload("Items.Item").Find(&orderData)
+	dbLocal.Model(&models.Order{}).Preload("Items").Preload("Items.Item").Preload("Items.Item.Allergens").Find(&orderData)
 
 	return orderData, nil
+}
+
+// OrderPaid returns true if the order with the given ID has been paid for, returns error if that order does not exist
+func OrderPaid(id uint) (bool, error) {
+	order := &models.Order{ID: id}
+	result := db.Model(order).First(&order)
+	if result.Error != nil {
+		return false, result.Error
+	}
+	if result.RowsAffected == 0 {
+		return false, ErrOrderNotFound
+	}
+
+	return order.Paid, nil
+}
+
+// PayOrder updates the payment status of the given order, returns an error if that order cannot be found or is already paid for
+func PayOrder(id uint) error {
+	paid, err := OrderPaid(id)
+	if err != nil {
+		return err
+	}
+	if paid {
+		return ErrOrderAlreadyPaid
+	}
+
+	// Set order as paid
+	order := &models.Order{ID: id}
+	db.Model(order).First(&order)
+	order.Paid = true
+	db.Save(order)
+	return nil
+}
+
+// GetOrderStatus returns the Status field of the given order. Returns an error if the order does not exist.
+func GetOrderStatus(id uint) (string, error) {
+	order := &models.Order{ID: id}
+	result := db.Model(order).First(&order)
+	if result.Error != nil {
+		return "", result.Error
+	}
+	if result.RowsAffected == 0 {
+		return "", ErrOrderNotFound
+	}
+
+	return order.Status, nil
+}
+
+// ConfirmOrder confirms the given order. Returns an error if the order does not exist or is already confirmed.
+func ConfirmOrder(id uint) error {
+	status, err := GetOrderStatus(id)
+	if err != nil {
+		return err
+	}
+	if status != StatusAwaitingConfirmation {
+		return ErrOrderAlreadyConfirmed
+	}
+
+	// Set order as paid
+	order := &models.Order{ID: id}
+	db.Model(order).First(&order)
+	order.Status = StatusPreparing
+	db.Save(order)
+	return nil
+}
+
+// CancelOrder cancels the given order. Returns an error if the order does not exist or is already cancelled.
+func CancelOrder(id uint) error {
+	status, err := GetOrderStatus(id)
+	if err != nil {
+		return ErrOrderNotFound
+	}
+	if status == StatusCancelled {
+		return ErrOrderAlreadyCancelled
+	}
+
+	order := &models.Order{ID: id}
+	db.Model(order).First(&order)
+	order.Status = StatusCancelled
+	db.Save(order)
+
+	return nil
+}
+
+// ReadyOrder marks the given order as ready for delivery. Returns an error if the order is cancelled, already ready or already delivered.
+func ReadyOrder(id uint) error {
+	status, err := GetOrderStatus(id)
+	if err != nil {
+		return ErrOrderNotFound
+	}
+	if status == StatusCancelled {
+		return ErrOrderAlreadyCancelled
+	}
+	if status == StatusDelivered {
+		return ErrOrderAlreadyDelivered
+	}
+	if status == StatusReady {
+		return ErrOrderAlreadyReady
+	}
+
+	order := &models.Order{ID: id}
+	db.Model(order).First(&order)
+	order.Status = StatusReady
+	db.Save(order)
+
+	return nil
+}
+
+// DeliverOrder marks the given order as deliered. Returns an error if the order does not exist or is already delivered or cancelled.
+func DeliverOrder(id uint) error {
+	status, err := GetOrderStatus(id)
+	if err != nil {
+		return ErrOrderNotFound
+	}
+	if status == StatusCancelled {
+		return ErrOrderAlreadyCancelled
+	}
+	if status == StatusDelivered {
+		return ErrOrderAlreadyDelivered
+	}
+
+	order := &models.Order{ID: id}
+	db.Model(order).First(&order)
+	order.Status = StatusDelivered
+	db.Save(order)
+
+	return nil
 }

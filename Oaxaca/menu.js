@@ -9,7 +9,6 @@ function initMenuAll() {
 
   let data = requestMenu(0, 0, 0); // Zero value = none specified
   data.then(r => {
-    console.log(r)
     currentMenu = r
     let index = 0;
     document.getElementById("MenuItemGridLayout").innerHTML = ""
@@ -28,7 +27,6 @@ function createMenuItem(index, id, itemName, price, calories) {
 
   return comp;
 }
-
 
 // Toggle edit mode
 function editMenu() {
@@ -136,35 +134,16 @@ async function submitMenuEdit(index) {
 }
 
 // Functions to add and delete menu items
-async function addMenuItem(){
+function addMenuItem(){
     let nameValue = document.getElementById("newItemNameField").value;
     let priceValue = parseFloat(document.getElementById("newItemPriceField").value);
     let caloriesValue = parseInt(document.getElementById("newItemCaloriesField").value);
-    let result = await addItemToDB(nameValue, priceValue, caloriesValue);
-
-    if(result >= 0){
-        document.getElementById("MenuItemGridLayout").innerHTML+= createMenuItem(currentMenu.length, nameValue, priceValue, caloriesValue);
-    }
-    
+    addItemToDB(nameValue, priceValue, caloriesValue);
 }
 
 function deleteMenuItem(){
     let nameValue = document.getElementById("deleteItemNameField").value;
-    removeItem(nameValue).then(r => {
-        if (r >= 0){
-            // First childNodes holds each item on menu
-            // Second childNodes holds the details of the first childnodes menu item
-            // Third childNodes holds the actual details. index 0 is name
-            for (let i = 0; i < document.getElementById("MenuItemGridLayout").childNodes.length; i++){
-                if (document.getElementById("MenuItemGridLayout").childNodes[i].childNodes[4].childNodes[0].innerHTML == nameValue){
-                    let gridLayout = document.getElementById("MenuItemGridLayout");
-                    let itemToRemove = document.getElementById("MenuItemGridLayout").childNodes[0];
-                    gridLayout.removeChild(itemToRemove);
-                }
-            }
-        }
-    })
-    
+    removeItem(nameValue);
 }
 
 // Add menu item
@@ -258,28 +237,53 @@ async function requestMenu(userSearchTerm, userMaxPrice, userMaxCalories) {
       }])
   }
 }
-//function to add menu item to basket
+// function to add menu item to basket
+// Stores menu items in basket using cookies
+// Cookie structure is CSV in form: id,itemName,price,calories,quantity
 function addToBasket(index, itemId, itemName, price, calories) {
- let order = JSON.parse(localStorage.getItem('order')) || [];
- let existingItemIndex = order.findIndex(item => item.index === index);
- let quantity = parseInt(document.getElementById('itemQuantityInput' + index).value);
- if (existingItemIndex >= 0) {
-   order[existingItemIndex].quantity += quantity;
- } else {
-   let item = {
-     index: index,
-     itemId: itemId,
-     itemName: itemName,
-     price: price,
-     calories: calories,
-     quantity: quantity
-   };
-   order.push(item);
- }
- localStorage.setItem('order', JSON.stringify(order));
- updateBasketIcon();
- updateOrderDetails();
+  let quantity = document.getElementById("itemQuantityInput"+index).value
+
+  // This will work for now as we only store 1 type of cookie
+  let previousCookieContent = document.cookie.split("basket=")[1];
+  if(previousCookieContent == null){
+    document.cookie = "basket="
+    previousCookieContent = document.cookie.split("basket=")[1];
+  }
+
+  let updated = false;
+
+
+  // Check that item is not already in basket
+  previousCookieContent.split("#").forEach(element => {
+    let splitCookie = element.split(",")
+    // Item found in basket
+    if(splitCookie[0] == itemId){
+      // Then update quantity instead
+      let newQuantity = Number(splitCookie[4])+Number(quantity);
+      
+      let indexOfItem = previousCookieContent.indexOf(element)
+      let indexOfEndOfItem = previousCookieContent.indexOf("#", indexOfItem)
+      let updatedCookieSegment = previousCookieContent.substring(indexOfItem, indexOfEndOfItem-1)+newQuantity
+      let updatedCookie = previousCookieContent.substring(0,indexOfItem)+updatedCookieSegment+previousCookieContent.substring(indexOfEndOfItem, previousCookieContent.length);
+      document.cookie = "basket="+updatedCookie;
+
+      updated = true;
+    }
+  });
+
+  if(!updated){
+    document.cookie="basket="+itemId+","+itemName+","+price+","+calories+","+quantity+"#"+previousCookieContent;
+
+    let previousBasket = document.getElementById("basketIcon").innerHTML;
+    let previousBasketQuantity = previousBasket.substring(previousBasket.length-1,previousBasket.length);
+    let newQuantity = Number(previousBasketQuantity)+1;
+    document.getElementById("basketIcon").innerHTML = "🛒 "+newQuantity;
+  }
+
+  console.log("Current basket:"+document.cookie);
+  
 }
+
 //function to update basket icon with the item quantity in order
 function updateBasketIcon() {
  let order = JSON.parse(localStorage.getItem('order')) || [];
@@ -287,38 +291,7 @@ function updateBasketIcon() {
  let totalQuantity = order.reduce((total, item) => total + item.quantity, 0);
  basketIcon.textContent = `🛒 ${totalQuantity}`;
 }
-//function to update order details with items in the order
-function updateOrderDetails() {
- let order = JSON.parse(localStorage.getItem('order'));
- let orderDetailsDiv = document.getElementById('orderDetails');
- let totalDiv = document.getElementById('orderTotal');
- orderDetailsDiv.innerHTML = '';
- let orderTotal = 0;
- if (order && order.length > 0) {
-   order.forEach(item => {
-     orderTotal += item.price * item.quantity;
-     let li = document.createElement('li');
-     li.innerHTML = `
-              <h3>${item.itemName}</h3>
-              <p> quantity: ${item.quantity}</p>
-              <p>Calories: ${item.calories * item.quantity} kcal</p>
-              <p>Price: £${(item.price * item.quantity).toFixed(2)}</p>
-              <button class="removeButton"><i class = "fa fa-trash"></i></button>
-          `;
-     orderDetailsDiv.appendChild(li);
-   });
-   totalDiv.textContent = `Total: £${orderTotal.toFixed(2)}`;
-   let removeButtons = document.querySelectorAll('.removeButton');
-   removeButtons.forEach(button => {
-     button.addEventListener('click', () => {
-       removeFromOrder(button.parentElement.querySelector('h3').textContent);
-     });
-   });
- } else {
-   orderDetailsDiv.innerHTML = `basket empty`;
-   totalDiv.textContent = '';
- }
-}
+
 //function ro remove menu item from the order
 function removeFromOrder(itemName) {
  let order = JSON.parse(localStorage.getItem('order')) || [];
@@ -326,14 +299,17 @@ function removeFromOrder(itemName) {
  if (itemIndex >= 0) {
    order.splice(itemIndex, 1);
    localStorage.setItem('order', JSON.stringify(order));
-   updateOrderDetails();
  }
 }
 //updates order details and basket icon when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
- updateOrderDetails();
- updateBasketIcon();
+  if(document.title.indexOf("Menu") != -1){
+    initializeMenu();
+    initializeCategoryFilter();
+    updateBasketIcon();
+  }
 });
+
 function filterItems(){
    let searchTerm = document.getElementById('searchTerm').value;
    let maxCalories = parseInt(document.getElementById('maxCalories').value) || 0;
@@ -352,4 +328,41 @@ function filterItems(){
    })
 }
 
+function initializeMenu() {
+  const activeButton = document.querySelector('#menuFilter button.active');
+  if (activeButton) {
+    const category = activeButton.getAttribute('data-category');
+    const filter = {
+      searchTerm: '',
+      maxCalories: 0,
+      maxPrice: 0,
+      category: category
+    };
+    filterMenu(filter, activeButton);
+  } else {
+    filterItems();
+  }
+}
 
+// Initialises basket quantity on page load to number of items in basket cookies
+function initBasketQuantity(){
+  if(document.cookie.length <= 0){
+    document.cookie="basket="
+  }
+  let cookieList = document.cookie.split(";");
+  let basketCookie = "";
+  cookieList.forEach(cookie => {
+    if(cookie.indexOf("basket=")!=-1){
+      cookie = cookie.substring(cookie.indexOf("basket=")+"basket=".length, cookie.length)
+      console.log(cookie)
+      // we found basket cookie
+      let splitCookie = cookie.split("#")
+      let basketCount = splitCookie.length
+      if(splitCookie[splitCookie.length-1].length <= 0){
+        basketCount--;
+      }
+      console.log(basketCount);
+      document.getElementById("basketIcon").innerHTML="🛒 "+basketCount;
+    }
+  })
+}

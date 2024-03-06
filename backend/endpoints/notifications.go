@@ -91,31 +91,19 @@ func HandleMessage(m string, u User) error {
 			r := fmt.Sprintf("HELP:%d", c.table)
 			BroadcastToWaiters(r)
 			return c.ws.WriteMessage(websocket.TextMessage, []byte("OK"))
-		} else if m == "NEW" {
-			BroadcastToWaiters("NEW")
-			return c.ws.WriteMessage(websocket.TextMessage, []byte("OK"))
 		}
 	} else {
-		w, ok := u.(Waiter)
+		k, ok := u.(Kitchen)
 		if ok {
-			// Connection is a waiter
-			if m == "CONFIRM" {
-				BroadcastToKitchen("CONFIRM")
-				return w.ws.WriteMessage(websocket.TextMessage, []byte("OK"))
-			} else if m == "CANCEL" {
-				BroadcastToKitchen("CANCEL")
-				return w.ws.WriteMessage(websocket.TextMessage, []byte("OK"))
-			}
-		} else {
 			// Connection is kitchen staff
 			if m == "SERVICE" {
 				BroadcastToWaiters("SERVICE")
-				return u.(Kitchen).ws.WriteMessage(websocket.TextMessage, []byte("OK"))
+				return k.ws.WriteMessage(websocket.TextMessage, []byte("OK"))
 			}
 		}
 	}
 
-	return errors.New("Invalid command")
+	return errors.New("invalid command")
 }
 
 // BroadcastToWaiters sends m to all connected waiters
@@ -126,6 +114,18 @@ func BroadcastToWaiters(m string) {
 		w := w.(Waiter)
 		if w.ws != nil {
 			w.ws.WriteMessage(websocket.TextMessage, []byte(m))
+		}
+	}
+}
+
+// SendToTable sends a message to any customer websocket with the given table number
+func SendToTable(id uint, m string) {
+	customers.Lock()
+	defer customers.Unlock()
+	for _, u := range customers.users {
+		c, _ := u.(Customer)
+		if c.table == id {
+			c.ws.WriteMessage(websocket.TextMessage, []byte(m))
 		}
 	}
 }
@@ -168,7 +168,7 @@ func registerConnection(m string, ws *websocket.Conn) (User, error) {
 		}
 	}
 	if len(segments) != 2 {
-		return nil, errors.New("Invalid payload format")
+		return nil, errors.New("invalid payload format")
 	}
 
 	switch segments[0] {
@@ -177,7 +177,7 @@ func registerConnection(m string, ws *websocket.Conn) (User, error) {
 	case "WAITER":
 		return createWaiter(segments[1], ws)
 	default:
-		return Customer{}, errors.New("Invalid identifier given")
+		return Customer{}, errors.New("invalid identifier given")
 	}
 }
 
@@ -186,14 +186,14 @@ func registerConnection(m string, ws *websocket.Conn) (User, error) {
 func createCustomer(arg string, ws *websocket.Conn) (User, error) {
 	n, err := strconv.ParseInt(arg, 10, 32)
 	if err != nil {
-		return Customer{}, errors.New("Table number must be a number")
+		return Customer{}, errors.New("table number must be a number")
 	}
 	customers.Lock()
 	defer customers.Unlock()
 	for _, c := range customers.users {
 		c := c.(Customer)
 		if int(c.table) == int(n) {
-			return Customer{}, fmt.Errorf("Table number %d is already connected", n)
+			return Customer{}, fmt.Errorf("table number %d is already connected", n)
 		}
 	}
 	return Customer{ws: ws, table: uint(n)}, nil

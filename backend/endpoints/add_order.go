@@ -1,6 +1,7 @@
 package endpoints
 
 import (
+	"fmt"
 	"teamproject/database"
 	"teamproject/database/models"
 
@@ -40,6 +41,13 @@ func AddOrder(c *fiber.Ctx) error {
 	if err != nil {
 		return fiber.NewError(fiber.StatusConflict, err.Error())
 	}
+
+	// Broadcast notification to waiters
+	BroadcastToWaiters("NEW")
+
+	// Send the client their order ID
+	c.SendString(fmt.Sprintf("%d", o.ID))
+
 	return nil
 }
 

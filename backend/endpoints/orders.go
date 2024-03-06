@@ -9,24 +9,40 @@ import (
 )
 
 func GetOrders(c *fiber.Ctx) error {
-	tableNumRaw := c.Query("tableNumber")
-	status := c.Query("Status")
+	onlyConfirmed := c.Query("confirmed")
+	onlyTableNumber := c.Query("tableNumber")
 
-	tableNum := uint(0)
+	confirmed := false
+	tableNumber := -1
 
-	if len(tableNumRaw) > 0 {
-		temp, err := strconv.ParseUint(tableNumRaw, 10, 32)
+	if len(onlyConfirmed) > 0 {
+		temp, err := strconv.ParseBool(onlyConfirmed)
 		if err != nil {
 			c.SendString(err.Error())
 		}
-		tableNum = uint(temp)
+		confirmed = temp
 	}
 
-	filter := models.Order{TableNumber: tableNum, Status: status}
-
-	data, err := database.FetchOrders(filter)
+	data, err := database.FetchOrders(confirmed)
 	if err != nil {
 		return c.SendString(err.Error())
+	}
+
+	if len(onlyTableNumber) > 0 {
+		temp, err := strconv.ParseInt(onlyTableNumber, 10, 32)
+		if err != nil {
+			c.SendString(err.Error())
+		}
+		tableNumber = int(temp)
+
+		filteredData := []models.Order{}
+		// Find data for given table number
+		for _, dataItem := range data {
+			if dataItem.TableNumber == uint(tableNumber) {
+				filteredData = append(filteredData, *dataItem)
+			}
+		}
+		return c.JSON(filteredData)
 	}
 
 	return c.JSON(data)
