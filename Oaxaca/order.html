@@ -17,41 +17,40 @@
       <div id="header"></div>
     </div>
 
-      <nav id="navbar">
-        <ul>
-          <li><a href="index.html">Home</a></li>
-          <li><a href="menu.html">Menu</a></li>
-          <li><a href="order.html">Order</a></li>
-          <li><a href="#">Link</a></li>
-          <li><a href="staff.html">Staff</a></li>
-          </ul>
-      </nav>
-    </div>
-    <div id="flex">
-      <main>
-        <h2 id="orderHeading">
+    <nav id="navbar">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="menu.html">Menu</a></li>
+        <li><a href="order.html">Order</a></li>
+        <li><a href="staff.html">Staff</a></li>
+      </ul>
+    </nav>
+  </div>
+  <div id="flex">
+    <main>
+      <h2 id="orderHeading">
         Order Summary
-        </h2>
-        <div id="orderDetails"></div>
-        
-        </main>
-        
-           <aside id="orderSidebar">
-        
-         <div id="orderTotal"></div>
-          <button id="confirmOrderButton" onclick="showConfirmationSection()">Confirm Order</button>
-          <button id="callHelpButton" onclick="sendHelp()">Call Waiter</button>
-        <div id="confirmationSection" style="display: none;">
-          <br>
-          <label for="tableNumber">Enter Table Number:</label>
-          <input type="text" id="tableNumber" placeholder="Table Number">
-          <br>
-          <button onclick="submitOrder()">Submit Order</button>
-          <br>
-          <br>
-          <button id="payButton" onclick="sendPayment()"> PAY </button>
-        </div>
-        </aside>
+      </h2>
+      <div id="orderDetails"></div>
+
+    </main>
+
+    <aside id="orderSidebar">
+
+      <div id="orderTotal"></div>
+      <button id="confirmOrderButton" onclick="showConfirmationSection()">Confirm Order</button>
+      <button id="callHelpButton" onclick="sendHelp()">Call Waiter</button>
+      <div id="confirmationSection" style="display: none;">
+        <br>
+        <label for="tableNumber">Enter Table Number:</label>
+        <input type="text" id="tableNumber" placeholder="Table Number">
+        <br>
+        <button onclick="submitOrder()">Submit Order</button>
+        <br>
+        <br>
+        <button id="payButton" onclick="sendPayment()"> PAY </button>
+      </div>
+    </aside>
   </div>
 
 </body>
