@@ -28,6 +28,10 @@ func AddOrderToQueue(order models.Order) error {
 	}
 }
 
+func GetQueuedOrders() []models.Order {
+	return orderQueue
+}
+
 func clearOrderQueue() {
 	orderQueue = []models.Order{}
 }
