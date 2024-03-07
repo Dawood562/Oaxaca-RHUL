@@ -18,7 +18,6 @@ test:
 		docker compose down; \
 		exit 1; \
 	fi
-	@docker compose down
 
 wipe:
 	docker volume rm backend_postgresql
