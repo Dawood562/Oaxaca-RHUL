@@ -6,37 +6,26 @@
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   <script src="menu.js"></script>
   <script type="text/javascript" src="order.js"></script>
-  <title>Oaxaca</title>
-  <link rel="stylesheet" href="style.css" type="text/css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <title>Order</title>
+  <link rel="icon" type="image/x-icon" href="icon.ico">
+  <link rel="stylesheet" href="order.css">
 </head>
 
-<body>
-  <div id="container">
-    <div id="headerArea">
-      <div id="header"></div>
-    </div>
-
-    <nav id="navbar">
-      <ul>
-        <li><a href="index.html">Home</a></li>
-        <li><a href="menu.html">Menu</a></li>
-        <li><a href="order.html">Order</a></li>
-        <li><a href="staff.html">Staff</a></li>
+<body onload="initOrder()">
+  <header>
+    <nav>
+      <div class="logo">Oaxaca</div>
       </ul>
     </nav>
-  </div>
-  <div id="flex">
-    <main>
-      <h2 id="orderHeading">
-        Order Summary
-      </h2>
-      <div id="orderDetails"></div>
+  </header>
 
-    </main>
+  <main>
+    <div class="order-container">
+      <h2 id="orderHeading">Order Summary</h2>
+      <div id="orderDetails"></div>
+    </div>
 
     <aside id="orderSidebar">
-
       <div id="orderTotal"></div>
       <button id="confirmOrderButton" onclick="showConfirmationSection()">Confirm Order</button>
       <button id="callHelpButton" onclick="sendHelp()">Call Waiter</button>
@@ -51,7 +40,7 @@
         <button id="payButton" onclick="sendPayment()"> PAY </button>
       </div>
     </aside>
-  </div>
+  </main>
 
 </body>
 
