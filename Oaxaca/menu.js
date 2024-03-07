@@ -20,8 +20,8 @@ function initMenuAll() {
 }
 
 // Function that takes in data and turns into menu item to be displayed
-function createMenuItem(index, id, itemName, price, calories) {
-  let comp = "<div class='MenuItemDiv' id='item" + index + "'> <img class='MenuItemImg' src='image/foodimg.jpg'><br> <div class='MenuItemDetails'><label class='MenuItemName'>" + itemName + "</label><br><label class='MenuItemPrice'>£" + price.toFixed(2) + "</label><label class='MenuItemCalories'>" + calories + "kcal</label></div>";
+function createMenuItem(index, id, itemName, price, calories,allergens) {
+  let comp = "<div class='MenuItemDiv' id='item" + index + "'> <img class='MenuItemImg' src='image/foodimg.jpg'><br> <div class='MenuItemDetails'><label class='MenuItemName'>" + itemName + "</label><br><label class='MenuItemPrice'>£" + price.toFixed(2) + "</label><label class='MenuItemCalories'>" + calories + "kcal</label></div>" + "</label><label class='MenuItemAllergens' >" + "Allergens: allergen1, allergen2" ;
   comp += "<input type='number' id='itemQuantityInput" + index + "' min='1' value='1' class='itemQuantityInput'>";
   comp += "<button id='addToBasketButton" + index + "' onclick='addToBasket(" + index + ", " + id + ", \"" + itemName + "\", " + price + ", " + calories + ")'>Add to Basket</button></a></div>";
 
@@ -157,7 +157,7 @@ async function addItemToDB(name, _price, _calories) {
       body: JSON.stringify({
         itemName: name,
         price: _price,
-        calories: _calories
+        calories: _calories,
       })
     })
      return 0
@@ -201,7 +201,7 @@ async function requestMenu(userSearchTerm, userMaxPrice, userMaxCalories) {
     let response = await fetch("http://localhost:4444/menu?" + new URLSearchParams({
       searchTerm: userSearchTerm,
       Price: userMaxPrice,
-      Calories: userMaxCalories
+      Calories: userMaxCalories,
     }).toString())
 
     if (!response.ok) {
