@@ -3,6 +3,7 @@ package endpoints
 import (
 	"encoding/json"
 	"strconv"
+	"strings"
 
 	"teamproject/database"
 
@@ -20,10 +21,12 @@ func Menu(c *fiber.Ctx) error {
 	if err != nil {
 		maxCalories = 0
 	}
+	allergens := strings.Split(strings.ToLower(c.Query("allergens")), ",")
 	filter := &database.MenuFilter{
 		SearchTerm:  c.Query("searchTerm"),
 		MaxPrice:    float32(maxPrice),
 		MaxCalories: int(maxCalories),
+		Allergens:   allergens,
 	}
 	// Retrieve the menu
 	r, err := FetchMenu(filter)

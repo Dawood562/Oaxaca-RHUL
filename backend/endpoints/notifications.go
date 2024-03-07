@@ -118,6 +118,18 @@ func BroadcastToWaiters(m string) {
 	}
 }
 
+// SendToTable sends a message to any customer websocket with the given table number
+func SendToTable(id uint, m string) {
+	customers.Lock()
+	defer customers.Unlock()
+	for _, u := range customers.users {
+		c, _ := u.(Customer)
+		if c.table == id {
+			c.ws.WriteMessage(websocket.TextMessage, []byte(m))
+		}
+	}
+}
+
 // BroadcastToKitchen sends m to all connected kitchen staff
 func BroadcastToKitchen(m string) {
 	kitchens.Lock()

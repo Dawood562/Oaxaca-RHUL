@@ -152,23 +152,23 @@ function deleteMenuItem() {
 
 // Add menu item
 async function addItemToDB(name, _price, _calories) {
-    try {
-        let response = await fetch("http://localhost:4444/add_item", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                itemName: name,
-                price: _price,
-                calories: _calories
-            })
-        });
-        return 0;
-    } catch (error) {
-        console.error(error);
-        return -1;
-    }
+  try {
+    let response = await fetch("http://localhost:4444/add_item", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        itemName: name,
+        price: _price,
+        calories: _calories,
+      })
+    })
+     return 0
+  } catch (error) {
+    console.error(error)
+     return -1
+  }
 }
 
 // Takes in name and returns id if found
@@ -200,12 +200,12 @@ async function removeItem(name) {
 
 // Fetches data from backend or throws error to console and provides example menu data
 async function requestMenu(userSearchTerm, userMaxPrice, userMaxCalories) {
-    try {
-        let response = await fetch("http://localhost:4444/menu?" + new URLSearchParams({
-            searchTerm: userSearchTerm,
-            maxPrice: userMaxPrice,
-            maxCalories: userMaxCalories
-        }).toString());
+  try {
+    let response = await fetch("http://localhost:4444/menu?" + new URLSearchParams({
+      searchTerm: userSearchTerm,
+      Price: userMaxPrice,
+      Calories: userMaxCalories,
+    }).toString())
 
         if (!response.ok) {
             console.log("ERROR fetching menu");

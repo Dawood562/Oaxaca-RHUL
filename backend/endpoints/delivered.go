@@ -6,25 +6,25 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func Confirm(c *fiber.Ctx) error {
+func Delivered(c *fiber.Ctx) error {
 	// Retrieve required ID arg
 	id, err := GetID(c)
 	if err != nil {
 		return err
 	}
 
-	// Attempt to pay for order
-	err = database.ConfirmOrder(uint(id))
+	// Attempt to mark order as delivered
+	err = database.DeliverOrder(uint(id))
 
 	if err != nil {
-		if err == database.ErrOrderAlreadyConfirmed {
+		if err == database.ErrOrderAlreadyDelivered || err == database.ErrOrderAlreadyCancelled {
 			return fiber.ErrConflict
 		}
 		return fiber.ErrNotFound
 	}
 
-	BroadcastToKitchen("CONFIRM")
 	BroadcastToWaiters("REFRESH")
+	SendToTable(uint(id), "REFRESH")
 
 	return nil
 }

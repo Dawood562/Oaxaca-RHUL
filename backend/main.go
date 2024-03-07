@@ -24,22 +24,29 @@ func main() {
 	}))
 
 	// Register routes
+	// Menu interaction
 	app.Get("/menu", endpoints.Menu)
 	app.Post("/add_item", endpoints.AddItem)
 	app.Delete("/remove_item", endpoints.RemoveItem)
 	app.Put("/edit_item", endpoints.EditItem)
-
+	// Order interaction
 	app.Post("/add_order", endpoints.AddOrder)
-	app.Delete("/remove_order", endpoints.RemoveOrder)
 	app.Get("/orders", endpoints.GetOrders)
 	app.Patch("/pay/:id", endpoints.Pay)
 	app.Put("/add_waiter", endpoints.RegisterWaiter)
 	app.Post("/remove_waiter", endpoints.RemoveWaiter)
+	// Order tracking
 	app.Patch("/confirm/:id", endpoints.Confirm)
 	app.Patch("/cancel/:id", endpoints.Cancel)
 	app.Patch("/pay/:id", endpoints.Pay)
+	app.Patch("/delivered/:id", endpoints.Delivered)
+	app.Get("/status/:id", endpoints.Status)
+	app.Patch("/ready/:id", endpoints.Ready)
+	// Image uploading and serving
+	app.Post("/upload", endpoints.Upload)
+	app.Static("/image", "./uploads")
 
-	// Register websocket endpoint
+	// Live websocket notifications
 	app.Get("/notifications", websocket.New(func(c *websocket.Conn) {
 		endpoints.HandleConnection(c)
 	}))
