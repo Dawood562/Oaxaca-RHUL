@@ -3,7 +3,6 @@ package endpoints
 import (
 	"bytes"
 	"net/http"
-	"teamproject/data"
 	"testing"
 
 	"github.com/gofiber/fiber/v2"
@@ -58,9 +57,9 @@ func TestRemoveWaiters(t *testing.T) {
 
 	for _, test := range testCases {
 		// Clear waiter data and then add test data
-		data.ClearWaiterList()
-		data.AddWaiter(data.Waiter{ID: 1, Username: "John"})
-		data.AddWaiter(data.Waiter{ID: 2, Username: "Bob"})
+		ClearWaiterList()
+		AddWaiterData(WaiterData{ID: 1, Username: "John"})
+		AddWaiterData(WaiterData{ID: 2, Username: "Bob"})
 
 		t.Run(test.name, func(t *testing.T) {
 			// Create a new HTTP request
@@ -76,7 +75,7 @@ func TestRemoveWaiters(t *testing.T) {
 			assert.Equal(t, test.code, res.StatusCode, "Check that request returned expected status code")
 
 			// Check waiter list is updated correctly
-			waiterData := *data.GetWaiter()
+			waiterData := *GetWaiter()
 			if test.code <= 299 { // If the operation was successful
 				assert.Equal(t, 1, len(waiterData), "Incorrect number of waiters in waiter list")
 				assert.Equal(t, "Bob", waiterData[0].Username, "Data not inserted correctly")
