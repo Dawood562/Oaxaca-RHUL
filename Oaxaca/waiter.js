@@ -6,7 +6,6 @@ var waiterUsername = "";
 document.addEventListener('DOMContentLoaded', e=>{
     registerWaiter();
     initSock(); // This should be called within register waiter after registering waiter
-    refreshOrders();
 
 });
 
@@ -39,6 +38,7 @@ async function registerWaiter(){
     }).then(resp => resp.json()).then(data => {
         console.log(data)
         waiterID = Number(data.id);
+        refreshOrders();
     })
 }
 
