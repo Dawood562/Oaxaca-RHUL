@@ -1,0 +1,188 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0e8e0;
+}
+
+header {
+    background-color: #4a3731;
+    color: #ffffff;
+    padding: 30px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.basket-icon {
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.filter-container {
+    margin: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 25%;
+    position: sticky;
+    top: 30px;
+    height: 30%;
+    overflow-y: auto;
+    font-weight: bold;
+    font-size: large;
+}
+
+.filter-container button {
+    font-weight: bold;
+    font-size: medium;
+    align-self: center;
+    padding: 10px 20px;
+    width: 100%;
+    margin-top: auto;
+}
+
+.filter-container input[type="text"] {
+    background-color: #f0e8e0;
+    padding: 15px;
+    border: none;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    width: 90%;
+}
+
+.filter-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+}
+
+input[type="range"] {
+    -webkit-appearance: none;
+    width: 200px;
+    height: 4px;
+    background: #d3d3d3;
+    outline: none;
+    border-radius: 2px;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: #4a3731;
+    cursor: pointer;
+    border-radius: 50%;
+}
+
+input[type="range"]::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: #4a3731;
+    cursor: pointer;
+    border-radius: 50%;
+}
+
+.filter-option {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.filter-option label {
+    margin-right: 10px;
+    flex-shrink: 0;
+}
+
+.filter-container button {
+    padding: 15px 30px;
+    background-color: #4a3731;
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.menu-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(25%, 1fr));
+    gap: 30px;
+    padding: 30px;
+    margin-left: 30px;
+}
+
+.MenuItemDiv {
+    background-color: #ffffff;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    padding: 30px;
+    margin-left: 30px;
+}
+
+.MenuItemImg {
+    width: 100%;
+    height: auto;
+    border-radius: 20px;
+    margin-bottom: 20px;
+}
+
+.MenuItemDetails {
+    margin-bottom: 20px;
+}
+
+.MenuItemName {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.MenuItemPrice,
+.MenuItemCalories,
+.MenuItemAllergen {
+    margin-top: 10px;
+    color: #666666;
+}
+
+.MenuItemAllergen {
+    font-weight: bold;
+}
+
+.itemQuantityInput {
+    margin-bottom: 20px;
+    padding: 10px;
+    width: 60px;
+}
+
+button {
+    padding: 15px 30px;
+    background-color: #4a3731;
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+main {
+    display: flex;
+}
