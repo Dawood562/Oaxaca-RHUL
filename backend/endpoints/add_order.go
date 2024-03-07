@@ -71,7 +71,7 @@ func AddOrder(c *fiber.Ctx) error {
 		}
 	} else {
 		// If there is no waiters, add to waiter order queue
-
+		AddOrderToQueue(o)
 	}
 
 	return nil
