@@ -14,15 +14,15 @@ function initMenuAll() {
         let index = 0;
         document.getElementById("MenuItemGridLayout").innerHTML = "";
         r.forEach(element => {
-            document.getElementById("MenuItemGridLayout").innerHTML += createMenuItem(index, element.itemName, element.price, element.calories);
+            document.getElementById("MenuItemGridLayout").innerHTML += createMenuItem(index, element.itemId ,element.itemName, element.price, element.calories);
             index++;
         });
     });
 }
 
-function createMenuItem(index, itemName, price, calories) {
+function createMenuItem(index, id, itemName, price, calories) {
     let comp = "<div class='MenuItemDiv' id='item" + index + "'> <img class='MenuItemImg' src='image/foodimg.jpg'><br> <div class='MenuItemDetails'><label class='MenuItemName'>" + itemName + "</label><br><label class='MenuItemPrice'>£" + price.toFixed(2) + "</label><label class='MenuItemCalories'>" + calories + "kcal</label></div>";
-    comp += "<button class='addBasketButton' onclick='addToBasket(" + index + ", \"" + itemName + "\", " + price + ", " + calories + ")'>Add to Basket</button>";
+    comp += "<button class='addBasketButton' onclick='addToBasket(" + index + "," + id + ", \"" + itemName + "\", " + price + ", " + calories + ")'>Add to Basket</button>";
     comp += "<button class='editMenuItemButton' onclick='editMenuForItem(" + index + ")'>Edit</button></a></div>"; // Add Edit button
     return comp;
 }
@@ -240,26 +240,53 @@ async function requestMenu(userSearchTerm, userMaxPrice, userMaxCalories) {
     }
 }
 
-function addToBasket(index, itemName, price, calories) {
-    let order = JSON.parse(localStorage.getItem('order')) || [];
-
-    const item = {
-        index: index,
-        itemName: itemName,
-        price: price,
-        calories: calories
-    };
-    order.push(item);
-    localStorage.setItem('order', JSON.stringify(order));
-    const orderDetailsDiv = document.getElementById('orderDetails');
-    const li = document.createElement('li');
-    li.innerHTML = `
-        <h3>${item.itemName}</h3>
-        <p>Price: £${item.price.toFixed(2)}</p>
-        <p>Calories: ${item.calories} kcal</p>
-    `;
-    orderDetailsDiv.appendChild(li);
-}
+// function to add menu item to basket
+// Stores menu items in basket using cookies
+// Cookie structure is CSV in form: id,itemName,price,calories,quantity
+function addToBasket(index, itemId, itemName, price, calories) {
+    let quantity = 1
+  
+    // This will work for now as we only store 1 type of cookie
+    let previousCookieContent = document.cookie.split("basket=")[1];
+    if(previousCookieContent == null){
+      document.cookie = "basket="
+      previousCookieContent = document.cookie.split("basket=")[1];
+    }
+  
+    let updated = false;
+  
+  
+    // Check that item is not already in basket
+    previousCookieContent.split("#").forEach(element => {
+      let splitCookie = element.split(",")
+      // Item found in basket
+      if(splitCookie[0] == itemId){
+        // Then update quantity instead
+        let newQuantity = Number(splitCookie[4])+Number(quantity);
+        
+        let indexOfItem = previousCookieContent.indexOf(element)
+        let indexOfEndOfItem = previousCookieContent.indexOf("#", indexOfItem)
+        let updatedCookieSegment = previousCookieContent.substring(indexOfItem, indexOfEndOfItem-1)+newQuantity
+        let updatedCookie = previousCookieContent.substring(0,indexOfItem)+updatedCookieSegment+previousCookieContent.substring(indexOfEndOfItem, previousCookieContent.length);
+        document.cookie = "basket="+updatedCookie;
+  
+        updated = true;
+      }
+    });
+  
+    if(!updated){
+      document.cookie="basket="+itemId+","+itemName+","+price+","+calories+","+quantity+"#"+previousCookieContent;
+  
+      let previousBasket = document.getElementById("basketIcon").innerHTML;
+      let previousBasketQuantity = previousBasket.substring(previousBasket.length-1,previousBasket.length);
+      let newQuantity = Number(previousBasketQuantity)+1;
+      document.getElementById("basketIcon").innerHTML = "🛒 "+newQuantity;
+    }
+  
+    console.log("Current basket:"+document.cookie);
+    
+  }
+  
 
 function updateOrderDetails() {
     const order = JSON.parse(localStorage.getItem('order'));
@@ -306,3 +333,27 @@ function filterItems() {
         });
     });
 }
+
+// Initialises basket quantity on page load to number of items in basket cookies
+function initBasketQuantity(){
+    if(document.cookie.length <= 0){
+      document.cookie="basket="
+    }
+    let cookieList = document.cookie.split(";");
+    let basketCookie = "";
+    cookieList.forEach(cookie => {
+      if(cookie.indexOf("basket=")!=-1){
+        cookie = cookie.substring(cookie.indexOf("basket=")+"basket=".length, cookie.length)
+        console.log(cookie)
+        // we found basket cookie
+        let splitCookie = cookie.split("#")
+        let basketCount = splitCookie.length
+        if(splitCookie[splitCookie.length-1].length <= 0){
+          basketCount--;
+        }
+        console.log(basketCount);
+        document.getElementById("basketIcon").innerHTML="🛒 "+basketCount;
+      }
+    })
+  }
+  
