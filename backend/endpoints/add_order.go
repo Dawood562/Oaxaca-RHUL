@@ -69,9 +69,6 @@ func AddOrder(c *fiber.Ctx) error {
 		if err != nil {
 			return c.SendString(err.Error())
 		}
-	} else {
-		// If there is no waiters, add to waiter order queue
-
 	}
 
 	return nil

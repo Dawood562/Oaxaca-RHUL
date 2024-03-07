@@ -73,12 +73,12 @@ func TestEditItem(t *testing.T) {
 				Calories:    600,
 				Allergens: []models.Allergen{
 					{
-						ID:     3,
+						ID:     4,
 						ItemID: 2,
 						Name:   "Gluten",
 					},
 					{
-						ID:     4,
+						ID:     5,
 						ItemID: 2,
 						Name:   "Lactose",
 					},
