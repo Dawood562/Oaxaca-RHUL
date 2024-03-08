@@ -21,7 +21,7 @@ function initMenuAll() {
 }
 
 function createMenuItem(index, id, itemName, imageURL, price, calories) {
-    let comp = `<div class='MenuItemDiv' id='item` + index + `'> <img class='MenuItemImg' src='http://localhost:4444/image/${imageURL}'><br> <div class='MenuItemDetails'><label class='MenuItemName'>` + itemName + `</label><br><label class='MenuItemPrice'>£` + price.toFixed(2) + `</label><label class='MenuItemCalories'>` + calories + `kcal</label></div>`;
+    let comp = `<div class='MenuItemDiv' id='item` + index + `'> <img class='MenuItemImg' src='http://localhost:4444/image/${imageURL}'><br> <div class='MenuItemDetails'><label class='MenuItemName'>` + itemName + `</label><br><label class='MenuItemPrice'>£` + price.toFixed(2) + `</label><br><label class='MenuItemCalories'>` + calories + ` kcal</label></div>`;
     comp += "<button class='addBasketButton' onclick='addToBasket(" + index + "," + id + ", \"" + itemName + "\", " + price + ", " + calories + ")'>Add to Basket</button>";
     comp += "<button class='editMenuItemButton' onclick='editMenuForItem(" + index + ")'>Edit</button></a></div>"; // Add Edit button
     return comp;
