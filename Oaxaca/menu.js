@@ -31,8 +31,28 @@ function createMenuItem(index, id, itemName, price, calories) {
 function editMenu() {
     console.log("Edit menu button clicked");
     if (!editMode) {
-        document.getElementById("MenuEditSection").innerHTML += "<div id='newItemDiv'><h3>Add new menu item:</h3><p><label>Name:</label><input type='text' id='newItemNameField'>  <label>Price:</label><input type='text' id='newItemPriceField'>  <label>Calories:</label><input type='text' id='newItemCaloriesField'>    <button onclick='addMenuItem()'>+</button></p></div>";
-        document.getElementById("MenuEditSection").innerHTML += "<div id='removeItemDiv'><h3>Delete menu item:</h3><p><label>Enter the name of the item you want to delete from the menu:</label><input type='text' id='deleteItemNameField'> <button onclick='deleteMenuItem()'>-</button></p></div>";
+        document.getElementById("MenuEditSection").innerHTML += `
+        <div id='newItemDiv'>
+            <h3>Add new menu item:</h3>
+            <p>
+                <label>Name:</label>
+                <input type='text' id='newItemNameField'><br>
+                <label>Upload Image</label><br>
+                <input type='file' id='newItemFileUpload'><br>
+                <label>Price:</label>
+                <input type='text' id='newItemPriceField'><br>
+                <label>Calories:</label><input type='text' id='newItemCaloriesField'><br>
+                <button onclick='addMenuItem()'>Add Item</button>
+            </p>
+        </div>
+        <div id='removeItemDiv'>
+        <h3>Delete menu item:</h3>
+            <p>
+                <label>Enter the name of the item you want to delete from the menu:</label>
+                <input type='text' id='deleteItemNameField'>
+                <button onclick='deleteMenuItem()'>-</button>
+            </p>
+        </div>`;
 
         // Add edit button to each menu item
         for (let i = 0; i < currentMenu.length; i++) {
@@ -122,13 +142,39 @@ async function submitMenuEdit(index) {
 // Functions to add and delete menu items
 async function addMenuItem() {
     let nameValue = document.getElementById("newItemNameField").value;
+    let image = document.getElementById("newItemFileUpload").files[0];
     let priceValue = parseFloat(document.getElementById("newItemPriceField").value);
     let caloriesValue = parseInt(document.getElementById("newItemCaloriesField").value);
-    let result = await addItemToDB(nameValue, priceValue, caloriesValue);
+
+    // Check that the user included an image
+    if(image == null) {
+        alert("Please upload an image for the item");
+        return;
+    }
+
+    let imageURL = await uploadImage(image);
+    let result = await addItemToDB(nameValue, imageURL, priceValue, caloriesValue);
 
     if (result >= 0) {
         document.getElementById("MenuItemGridLayout").innerHTML += createMenuItem(currentMenu.length, nameValue, priceValue, caloriesValue);
     }
+}
+
+async function uploadImage(image) {
+    let data = new FormData();
+    var resultFilename = "";
+    data.append("file", image);
+
+    await fetch("http://localhost:4444/upload", {
+        method: "POST",
+        body: data,
+    })
+    .then((res) => res.text())
+    .then((filename) => {
+        resultFilename = filename;
+    }).catch(() => alert("Failed to upload image"));
+
+    return resultFilename;
 }
 
 function deleteMenuItem() {
@@ -151,7 +197,7 @@ function deleteMenuItem() {
 }
 
 // Add menu item
-async function addItemToDB(name, _price, _calories) {
+async function addItemToDB(name, imageURL, _price, _calories) {
   try {
     let response = await fetch("http://localhost:4444/add_item", {
       method: 'POST',
@@ -160,6 +206,7 @@ async function addItemToDB(name, _price, _calories) {
       },
       body: JSON.stringify({
         itemName: name,
+        imageURL: imageURL,
         price: _price,
         calories: _calories,
       })
