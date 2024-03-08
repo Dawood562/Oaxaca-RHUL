@@ -14,14 +14,14 @@ function initMenuAll() {
         let index = 0;
         document.getElementById("MenuItemGridLayout").innerHTML = "";
         r.forEach(element => {
-            document.getElementById("MenuItemGridLayout").innerHTML += createMenuItem(index, element.itemId ,element.itemName, element.price, element.calories);
+            document.getElementById("MenuItemGridLayout").innerHTML += createMenuItem(index, element.itemId ,element.itemName, element.imageURL, element.price, element.calories);
             index++;
         });
     });
 }
 
-function createMenuItem(index, id, itemName, price, calories) {
-    let comp = "<div class='MenuItemDiv' id='item" + index + "'> <img class='MenuItemImg' src='image/foodimg.jpg'><br> <div class='MenuItemDetails'><label class='MenuItemName'>" + itemName + "</label><br><label class='MenuItemPrice'>£" + price.toFixed(2) + "</label><label class='MenuItemCalories'>" + calories + "kcal</label></div>";
+function createMenuItem(index, id, itemName, imageURL, price, calories) {
+    let comp = `<div class='MenuItemDiv' id='item` + index + `'> <img class='MenuItemImg' src='http://localhost:4444/image/${imageURL}'><br> <div class='MenuItemDetails'><label class='MenuItemName'>` + itemName + `</label><br><label class='MenuItemPrice'>£` + price.toFixed(2) + `</label><label class='MenuItemCalories'>` + calories + `kcal</label></div>`;
     comp += "<button class='addBasketButton' onclick='addToBasket(" + index + "," + id + ", \"" + itemName + "\", " + price + ", " + calories + ")'>Add to Basket</button>";
     comp += "<button class='editMenuItemButton' onclick='editMenuForItem(" + index + ")'>Edit</button></a></div>"; // Add Edit button
     return comp;
@@ -156,7 +156,7 @@ async function addMenuItem() {
     let result = await addItemToDB(nameValue, imageURL, priceValue, caloriesValue);
 
     if (result >= 0) {
-        document.getElementById("MenuItemGridLayout").innerHTML += createMenuItem(currentMenu.length, nameValue, priceValue, caloriesValue);
+        document.getElementById("MenuItemGridLayout").innerHTML += createMenuItem(currentMenu.length, nameValue, imageURL, priceValue, caloriesValue);
     }
 }
 
@@ -374,7 +374,7 @@ function filterItems() {
                 (maxCalories === 0 || element.calories <= maxCalories) &&
                 (maxPrice === 0 || element.price <= maxPrice)
             ) {
-                document.getElementById("MenuItemGridLayout").innerHTML += createMenuItem(index, element.itemName, element.price, element.calories);
+                document.getElementById("MenuItemGridLayout").innerHTML += createMenuItem(index, element.itemName, element.imageURL, element.price, element.calories);
                 index++;
             }
         });
