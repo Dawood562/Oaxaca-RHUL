@@ -128,6 +128,8 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .MenuItemDiv {
+    width: 30%;
+    height: 30em;
     background-color: #ffffff;
     border-radius: 20px;
     padding: 30px;
@@ -139,17 +141,16 @@ input[type="range"]::-moz-range-thumb {
     gap: 30px;
     padding: 30px;
     margin-left: 30px;
+    overflow: hidden;
 }
 
 .MenuItemImg {
-    width: 100%;
-    height: auto;
+    width: 90%;
+    object-fit: cover;
+    max-height: 12em;
+    margin-left: auto;
+    margin-right: auto;
     border-radius: 20px;
-    margin-bottom: 20px;
-}
-
-.MenuItemDetails {
-    margin-bottom: 20px;
 }
 
 .MenuItemName {
