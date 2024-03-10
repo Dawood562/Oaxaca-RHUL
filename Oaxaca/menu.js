@@ -155,7 +155,7 @@ async function addMenuItem() {
     let result = await addItemToDB(nameValue, imageURL, priceValue, caloriesValue);
 
     if (result >= 0) {
-        document.getElementById("MenuItemGridLayout").innerHTML += createMenuItem(currentMenu.length, nameValue, imageURL, priceValue, caloriesValue);
+        document.getElementById("MenuItemGridLayout").innerHTML += createMenuItem(currentMenu.length, currentMenu.length, nameValue, imageURL, priceValue, caloriesValue);
     }
 }
 
@@ -349,7 +349,7 @@ function updateOrderDetails() {
             orderDetailsDiv.appendChild(li);
         });
     } else {
-        orderDetailsDiv.innerHTML = `<p>No items selected.</p>`;
+        orderDetailsDiv.innerHTML = '<p>No items selected.</p>';
     }
 }
 
