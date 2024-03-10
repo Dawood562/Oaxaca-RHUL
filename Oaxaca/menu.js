@@ -23,15 +23,17 @@ function initMenuAll() {
 function createMenuItem(index, id, itemName, price, calories) {
   let comp = `
     <div class='MenuItemDiv' id='item${index}'>
-      <img class='MenuItemImg' src='image/foodimg.jpg'><br>
+      <img class='MenuItemImg' src="https://cdn.discordapp.com/attachments/1205538449722052641/1216347783133397063/foodimg.png?ex=66000f26&is=65ed9a26&hm=97d8d5d2a4d0dd2f3b20f96c9624f4ade73de51f2187804db5049b0bf28a25bc&"><br>
       <div class='MenuItemDetails'>
         <label class='MenuItemName'>${itemName}</label><br>
         <label class='MenuItemPrice'>£${price.toFixed(2)}</label><br>
         <label class='MenuItemCalories'>${calories} kcal</label><br>
         <label class='MenuItemAllergen'>Contains</label>
       </div>
-      <input type='number' id='itemQuantityInput${index}' min='1' value='1' class='itemQuantityInput'>
-      <button id='addToBasketButton${index}' onclick='addToBasket(${index}, ${id}, "${itemName}", ${price}, ${calories})'>Add to Basket</button>
+      <div class='MenuItemActions'>
+        <button id='addToBasketButton${index}' onclick='addToBasket(${index}, ${id}, "${itemName}", ${price}, ${calories})'>Add to Basket</button>
+        <input type='number' id='itemQuantityInput${index}' min='1' value='1' class='itemQuantityInput'>
+      </div>
     </div>
   `;
   return comp;
@@ -77,7 +79,6 @@ function editMenu() {
 var editingText = false;
 // Holds location of item being edited
 var currentlyEditing = -1;
-var oldText
 
 // Should replace name with label displaying name: and a textfield
 // Should replace price and calories of price label and textfield too
@@ -238,11 +239,6 @@ async function requestMenu(userSearchTerm, userMaxPrice, userMaxCalories) {
         price: 8.99,
         calories: 349,
         Type: "ENTREES"
-      }, {
-        itemName: "Ice Cream",
-        price: 7.42,
-        calories: 632,
-        Type: "DESSERT"
       }])
   }
 }
@@ -260,7 +256,6 @@ function addToBasket(index, itemId, itemName, price, calories) {
   }
 
   let updated = false;
-
 
   // Check that item is not already in basket
   previousCookieContent.split("#").forEach(element => {

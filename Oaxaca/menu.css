@@ -1,5 +1,5 @@
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Segoe UI', Verdana, sans-serif;
     margin: 0;
     padding: 0;
     background-color: #f0e8e0;
@@ -8,94 +8,108 @@ body {
 header {
     background-color: #4a3731;
     color: #ffffff;
-    padding: 30px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    padding: 1rem;
+    box-shadow: 0 0.125em 0.375em rgba(0, 0, 0, 0.1);
 }
 
 nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    color: #fff;
 }
 
-.logo {
-    font-size: 28px;
+.menu-icon {
+    font-size: 1.5em;
+    cursor: pointer;
+    position: relative;
+}
+
+.menu-icon:hover .floating-window {
+    display: block;
+}
+
+.floating-window {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: #fff;
+    padding: 1.25rem;
+    border-radius: 0.625rem;
+    box-shadow: 0 0.25rem 0.375rem rgba(0, 0, 0, 0.1);
+    z-index: 1;
+    font-size: 1rem;
+    text-decoration: none;
+    color: #4a3731;
+}
+
+.floating-window a {
+    font-size: 1.25rem;
+    display: block;
+    text-decoration: none;
+    color: #4a3731;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    transition: background-color 0.3s ease;
+}
+
+.floating-window a:hover {
+    background-color: #eeeeee;
+}
+
+.floating-window a:hover {
+    color: #5e4a42;
+    background-color: #eee;
+}
+
+.logo a {
+    font-size: 1.5em;
     font-weight: bold;
+    text-decoration: none;
+    color: #ffffff;
+}
+
+.logo a:hover {
+    color: #eeeeee;
 }
 
 .basket-icon {
-    font-size: 24px;
+    font-size: 1.5em;
     cursor: pointer;
 }
 
 .filter-container {
-    margin: 30px;
+    margin: 2%;
     display: flex;
     flex-direction: column;
     align-items: center;
     background-color: #ffffff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 25%;
+    padding: 1.25%;
+    border-radius: 0.625em;
+    box-shadow: 0 0.25em 0.5em rgba(0, 0, 0, 0.1);
+    width: 20%;
     position: sticky;
-    top: 30px;
+    top: 2%;
     height: 30%;
     overflow-y: auto;
-    font-weight: bold;
-    font-size: large;
 }
 
 .filter-container button {
     font-weight: bold;
     font-size: medium;
     align-self: center;
-    padding: 10px 20px;
+    padding: 0.625em 1.25em;
     width: 100%;
-    margin-top: auto;
-}
-
-.filter-container input[type="text"] {
-    background-color: #f0e8e0;
-    padding: 15px;
-    border: none;
-    border-radius: 10px;
-    margin-bottom: 10px;
-    width: 90%;
+    margin-top: 0.625em;
 }
 
 .filter-options {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 0.625em;
     align-items: center;
-}
-
-input[type="range"] {
-    -webkit-appearance: none;
-    width: 200px;
-    height: 4px;
-    background: #d3d3d3;
-    outline: none;
-    border-radius: 2px;
-}
-
-input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 20px;
-    height: 20px;
-    background: #4a3731;
-    cursor: pointer;
-    border-radius: 50%;
-}
-
-input[type="range"]::-moz-range-thumb {
-    width: 20px;
-    height: 20px;
-    background: #4a3731;
-    cursor: pointer;
-    border-radius: 50%;
+    width: 100%;
 }
 
 .filter-option {
@@ -105,16 +119,50 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .filter-option label {
-    margin-right: 10px;
+    margin-right: 1;
     flex-shrink: 0;
+    width: 20%;
+}
+
+.filter-option input[type="range"] {
+    flex-grow: 1;
+}
+
+.filter-container input[type="text"] {
+    font-size: large;
+    background-color: #f0e8e0;
+    padding: 0.9375em;
+    border: none;
+    border-radius: 0.625em;
+    margin-bottom: 0.625em;
+    width: 90%;
+}
+
+input[type="range"] {
+    -webkit-appearance: none;
+    width: 12.5em;
+    height: 0.25em;
+    background: #d3d3d3;
+    outline: none;
+    border-radius: 0.125em;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 0.75em;
+    height: 2em;
+    background: #4a3731;
+    cursor: pointer;
+    border-radius: 20%;
 }
 
 .filter-container button {
-    padding: 15px 30px;
+    padding: 0.9375em 1.875em;
     background-color: #4a3731;
     color: #ffffff;
     border: none;
-    border-radius: 10px;
+    border-radius: 0.625em;
     cursor: pointer;
 }
 
@@ -122,65 +170,81 @@ input[type="range"]::-moz-range-thumb {
     flex: 1;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(25%, 1fr));
-    gap: 30px;
-    padding: 30px;
-    margin-left: 30px;
+    gap: 2%;
+    padding: 2%;
+    margin-left: 2%;
 }
 
 .MenuItemDiv {
     background-color: #ffffff;
-    border-radius: 20px;
-    padding: 30px;
-    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 1.25em;
+    padding: 4%;
+    box-shadow: 0 0.375em 0.625em rgba(0, 0, 0, 0.1);
     text-align: center;
-    flex: 1;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 30px;
-    padding: 30px;
-    margin-left: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .MenuItemImg {
     width: 100%;
     height: auto;
-    border-radius: 20px;
-    margin-bottom: 20px;
+    border-radius: 1.25em;
+    margin-bottom: 1.25em;
 }
 
 .MenuItemDetails {
-    margin-bottom: 20px;
+    margin-bottom: 1.25em;
+    width: 100%;
 }
 
 .MenuItemName {
-    font-size: 24px;
+    font-size: 1.5em;
     font-weight: bold;
 }
 
 .MenuItemPrice,
 .MenuItemCalories,
 .MenuItemAllergen {
-    margin-top: 10px;
+    font-size: 1.15em;
+    margin-top: 0.625em;
     color: #666666;
 }
 
 .MenuItemAllergen {
+    font-size: 1.25em;
     font-weight: bold;
 }
 
+.MenuItemActions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
 .itemQuantityInput {
-    margin-bottom: 20px;
-    padding: 10px;
-    width: 60px;
+    margin-left: 1.25em;
+    padding: 1em;
+    width: 3.75em;
+    border: 1px solid #ccc;
+    border-radius: 0.625em;
+    font-size: 1em;
 }
 
 button {
-    padding: 15px 30px;
+    padding: 0.9375em 1.875em;
     background-color: #4a3731;
     color: #ffffff;
     border: none;
-    border-radius: 10px;
+    border-radius: 0.625em;
     cursor: pointer;
+    font-size: 1em;
+}
+
+button:hover {
+    background-color: #5e4a42;
 }
 
 main {
