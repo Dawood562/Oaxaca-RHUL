@@ -1,18 +1,18 @@
 var sock
 var sockInit = false
 
-document.addEventListener('DOMContentLoaded', e=>{
+document.addEventListener('DOMContentLoaded', e => {
     initSock(); // This should be called within register waiter after registering waiter
     refreshOrders();
 })
 
-function initSock(){
+function initSock() {
     sock = new WebSocket("ws://localhost:4444/notifications")
-    sock.onerror = function(event){
+    sock.onerror = function (event) {
         // If unsuccessfully connected
         alert("Unsuccessfully to connect to backend websocket 🖥️🔥");
     }
-    sock.addEventListener("open", e =>{
+    sock.addEventListener("open", e => {
         // WE NEED TO ADD A WAY TO GET USERS TABLE NUMBER
         sock.send("KITCHEN");
     })
@@ -24,24 +24,24 @@ function notifyService() {
     sock.send("SERVICE");
 }
 
-function handleMessages(e){
+function handleMessages(e) {
     console.log(e)
-    if (e.data == "WELCOME"){
+    if (e.data == "WELCOME") {
         console.log("Connected to backend websocket");
-    }else if (e.data == "OK"){
+    } else if (e.data == "OK") {
         console.log("Notification successfully received");
-    } else if(e.data == "CONFIRM"){
+    } else if (e.data == "CONFIRM") {
         refreshOrders();
-    } else if(e.data == "CANCEL"){
+    } else if (e.data == "CANCEL") {
         refreshOrders();
-    }  else if(e.data == "REFRESH") {
+    } else if (e.data == "REFRESH") {
         refreshOrders();
-    } else{
+    } else {
         console.log(e); // Display entire message if something went wrong for debugging
     }
 }
 
-async function refreshOrders(){
+async function refreshOrders() {
     let table = document.getElementById("order_table");
     table.innerHTML = `<caption>Customer Orders</caption>
                         <tr>
@@ -54,7 +54,7 @@ async function refreshOrders(){
                         </tr>`;
     let response = await fetch("http://localhost:4444/orders?confirmed=true")
     let data = await response.json()
-    for(var order of data) {
+    for (var order of data) {
         table.innerHTML += createOrder(order)
     }
 }
@@ -62,7 +62,7 @@ async function refreshOrders(){
 function createOrder(order) {
     let items = order.items.map((x) => x.itemId.itemName);
     let itemsStr = "";
-    for(var item of items) {
+    for (var item of items) {
         itemsStr += item + ", "
     }
     return `<tr>
@@ -78,20 +78,20 @@ function confirmOrder(id) {
     fetch("http://localhost:4444/confirm/" + id, {
         method: "PATCH"
     })
-    .then((res) => {
-        if(!res.ok) {
-            alert("Failed to confirm order!");
-        }
-    })
+        .then((res) => {
+            if (!res.ok) {
+                alert("Failed to confirm order!");
+            }
+        })
 }
 
 function cancelOrder(id) {
     fetch("http://localhost:4444/cancel/" + id, {
         method: "PATCH"
     })
-    .then((res) => {
-        if(!res.ok) {
-            alert("Failed to cancel order!");
-        }
-    })
+        .then((res) => {
+            if (!res.ok) {
+                alert("Failed to cancel order!");
+            }
+        })
 }
