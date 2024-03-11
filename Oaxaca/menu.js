@@ -35,12 +35,12 @@ function editMenu() {
             <h3>Add new menu item:</h3>
             <p>
                 <label>Name:</label>
-                <input type='text' id='newItemNameField'><br>
-                <label>Upload Image</label><br>
-                <input type='file' id='newItemFileUpload'><br>
+                <input type='text' id='newItemNameField'><br><br>
+                <label>Upload Image</label><br><br>
+                <input type='file' id='newItemFileUpload'><br><br>
                 <label>Price:</label>
-                <input type='text' id='newItemPriceField'><br>
-                <label>Calories:</label><input type='text' id='newItemCaloriesField'><br>
+                <input type='text' id='newItemPriceField'><br><br>
+                <label>Calories:</label><input type='text' id='newItemCaloriesField'><br><br>
                 <button onclick='addMenuItem()'>Add Item</button>
             </p>
         </div>`;
@@ -69,13 +69,12 @@ function editMenu() {
 
         editMode = true;
     } else {
+        editMode = false;
         document.getElementById("newItemDiv").remove();
-        document.getElementById("removeItemDiv").remove();
         const editButtons = document.querySelectorAll('.editMenuItemButton');
         editButtons.forEach(item => {
             item.remove();
         });
-        editMode = false;
     }
 }
 
@@ -156,7 +155,7 @@ async function addMenuItem() {
     let result = await addItemToDB(nameValue, imageURL, priceValue, caloriesValue);
 
     if (result >= 0) {
-        document.getElementById("MenuItemGridLayout").innerHTML += createMenuItem(currentMenu.length, currentMenu.length, nameValue, imageURL, priceValue, caloriesValue);
+        initMenuAll();    
     }
 }
 

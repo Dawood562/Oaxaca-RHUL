@@ -138,6 +138,16 @@ nav {
     width: 90%;
 }
 
+input[type="text"] {
+    font-size: large;
+    background-color: #ffffff;
+    padding: 0.6em;
+    border: none;
+    border-radius: 0.625em;
+    margin-bottom: 0.625em;
+    width: 90%;
+}
+
 input[type="range"] {
     -webkit-appearance: none;
     width: 12.5em;
