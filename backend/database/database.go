@@ -97,11 +97,34 @@ func RemoveItem(id uint) error {
 // QueryMenu returns the menu items from the database as a slice
 // If filter is provided, the returned item slice will be filtered as such
 func QueryMenu(filter *MenuFilter) []models.MenuItem {
-	preparedFilter := prepareArgs(filter)
-
 	var data []models.MenuItem
-	db.Model(&models.MenuItem{}).Preload("Allergens").Where("name LIKE ?", preparedFilter.SearchTerm).Where("calories <= ?", preparedFilter.MaxCalories).Where("price <= ?", preparedFilter.MaxPrice).Find(&data)
+	allergens := filterAllergens(filter.Allergens)
+	dbLocal := db.Model(&models.MenuItem{}).Preload("Allergens")
+	if len(filter.SearchTerm) > 3 {
+		dbLocal = dbLocal.Where("LOWER(name) LIKE LOWER(?)", fmt.Sprintf("%%%s%%", filter.SearchTerm))
+	}
+	if filter.MaxCalories > 0 {
+		dbLocal = dbLocal.Where("calories <= ?", filter.MaxCalories)
+	}
+	if filter.MaxPrice > 0 {
+		dbLocal = dbLocal.Where("price <= ?", filter.MaxPrice)
+	}
+	if len(allergens) > 0 {
+		dbLocal = dbLocal.Where("LOWER(allergens.name) NOT IN ?", allergens)
+	}
+
+	dbLocal.Find(&data)
 	return data
+}
+
+func filterAllergens(allergens []string) []string {
+	ret := []string{}
+	for _, allergen := range allergens {
+		if len(allergen) > 0 {
+			ret = append(ret, allergen)
+		}
+	}
+	return ret
 }
 
 // FetchItem retrieves the given item from the database
@@ -112,34 +135,6 @@ func FetchItem(id int) (models.MenuItem, error) {
 		return models.MenuItem{}, res.Error
 	}
 	return ret, nil
-}
-
-// prepareArgs applies defaults to a MenuFilter struct in preparation for use in a query
-func prepareArgs(filter *MenuFilter) *MenuFilter {
-	ret := &MenuFilter{}
-
-	// If the search term is shorter than 3 chars, disregard it
-	if len(filter.SearchTerm) < 3 {
-		ret.SearchTerm = "%"
-	} else {
-		ret.SearchTerm = "%" + filter.SearchTerm + "%"
-	}
-
-	// If no max calories are provided, set it to a high number
-	if filter.MaxCalories <= 0 {
-		ret.MaxCalories = 9999
-	} else {
-		ret.MaxCalories = filter.MaxCalories
-	}
-
-	// If no max price is provided, set it to a high number
-	if filter.MaxPrice <= 0 {
-		ret.MaxPrice = 9999
-	} else {
-		ret.MaxPrice = filter.MaxPrice
-	}
-
-	return ret
 }
 
 /*

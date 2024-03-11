@@ -1,16 +1,15 @@
 :root {
   --header-image: url('image/header.jpg');
-  --body-bg-image: url('');
   --content: white;
 }
 
 @font-face {
-  font-family: Crete Round;
+  font-family: 'Crete Round';
   src: url('font/CreteRound-Regular.ttf');
 }
 
 @font-face {
-  font-family: Mexican Tequila;
+  font-family: 'Mexican Tequila';
   src: url('font/MexicanTequila.ttf');
   font-weight: bold;
 }
@@ -18,12 +17,8 @@
 body {
   font-family: 'Crete Round', sans-serif;
   margin: 0;
-  background-color:burlywood;
+  background-color: burlywood;
   color: #591F0A;
-}
-
-* {
-  box-sizing: border-box;
 }
 
 #container {
@@ -31,7 +26,6 @@ body {
   max-height: auto;
   margin: 0 auto;
 }
-
 
 #container a {
   color: yellow;
@@ -46,14 +40,12 @@ body {
   height: 400px;
 }
 
-/* navigation section */
 #navbar {
   height: 40px;
   background-color: #591F0A;
   width: 100%;
   border-top: 1px solid white;
   border-bottom: 1px solid white;
-
 }
 
 #navbar ul {
@@ -68,7 +60,6 @@ body {
   padding-top: 10px;
 }
 
-/* navigation links*/
 #navbar li a {
   color: beige;
   font-weight: 800;
@@ -77,8 +68,8 @@ body {
 }
 
 #navbar li a:hover {
-  color: #0075C4;
-  text-decoration: underline;
+  color: hsl(40, 75%, 75%);
+  text-decoration: none;
 }
 
 #flex {
@@ -86,27 +77,19 @@ body {
 }
 
 aside {
-  background-color:  #996633;
+  background-color: #996633;
   width: 450px;
   padding: 20px;
   font-weight: bold;
   font-family: Georgia, 'Times New Roman', Times, serif;
-  border-right: 1px dashed white;
-   border-right: 1px dashed white;
- border-left:1px dashed white;
- border-top:1px dashed white;
+  border: 1px dashed white;
 }
 
 main {
-  background-color:burlywood;
+  background-color: burlywood;
   flex: 1;
   padding: 20px;
   order: 2;
-}
-
-
-*/ #leftSidebar {
-  order: 1;
 }
 
 #rightSidebar {
@@ -121,38 +104,33 @@ footer {
   text-align: center;
   font-size: 12px;
   border-top: 1px dashed white;
-  /*position:absolute;
-  bottom:0;
-  height: 2.5rem;
-  */
   margin-top: 20px;
 }
 
 h1,
 h3 {
-    color: #591F0A; }
+  color: #591F0A;
+}
+
 h1 {
-    font-family: Mexican Tequila;
-    font-size: 70px; }
+  font-family: 'Mexican Tequila';
+  font-size: 70px;
+}
+
 h2 {
-	font-family: Mexican Tequila;
-    font-size: 40px; 
-    text-align: center;}
+  font-family: 'Mexican Tequila';
+  font-size: 40px;
+  text-align: center;
+}
 
 td {
-    text-align: center;
-    background-color: white;
-    border-width: 2px;
-    border-style: solid;
-    border-color: initial;
-    border-image: initial;
-    box-sizing: border-box;
-    display: table-cell;
-    vertical-align: inherit;
-  
-    }
-
-
+  text-align: center;
+  background-color: white;
+  border: 2px solid;
+  box-sizing: border-box;
+  display: table-cell;
+  vertical-align: inherit;
+}
 
 strong {
   color: #591F0A;
@@ -171,8 +149,6 @@ strong {
   font-size: smaller;
   background-color: #13092D;
 }
-
-/*menu section*/
 
 #menuPage {
   display: flex;
@@ -239,7 +215,7 @@ strong {
 }
 
 .MenuItemDiv {
-  border-style: 5px dashed black;
+  border: 5px dashed black;
   width: 40%;
   padding-bottom: 10%;
 }
@@ -270,24 +246,21 @@ strong {
 
 #MenuItemGridLayout {
   display: grid;
-  grid-template-columns: 0.33fr 0.33fr 0.33fr;
+  grid-template-columns: repeat(3, 0.33fr);
   padding-left: 10%;
 }
 
-/* order page styling */
-#orderHeading{
- font-size:40px;
- }
-#orderDetails {
- text-align: center;
- font-family: Georgia, 'Times New Roman', Times, serif;
- border-radius:5px;
- border-right: 1.5px dashed #996633;
- border-left:1.5px dashed #996633 ;
- border-top:1.5px dashed #996633;
- border-bottom: 1.5px dashed #996633 ;
- 
+#orderHeading {
+  font-size: 40px;
 }
+
+#orderDetails {
+  text-align: center;
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  border: 1.5px dashed #996633;
+  border-radius: 5px;
+}
+
 #orderDetails li {
   display: flex;
   justify-content: space-between;
@@ -296,60 +269,63 @@ strong {
   color: black;
   font-size: 12px;
   border: 1px solid #591F0A;
-  margin-bottom: 10px;
-  margin-top: 10px;
-  margin-left:10px;
-  margin-right: 10px;
-  padding:10px;
-  border-radius:5px;
+  margin: 10px;
+  padding: 10px;
+  border-radius: 5px;
 }
+
 .removeButton {
-  background-color:burlywood;
+  background-color: burlywood;
   color: white;
   border: none;
   padding: 6px 10px;
   cursor: pointer;
   border-radius: 5px;
   font-size: 15px;
- 
 }
+
 .removeButton:hover {
   background-color: brown;
 }
-.itemQuantityInput{
-     width: 60%;
-}
-#basketIcon{
-    font-size:25px;
-    cursor:pointer;
-    color: white;
- }
-#addToBasketButton:hover{
-    background-color: brown;
-}
-#orderTotal{
-   background-color: beige;
-   padding: 20px;
-   margin-top: 20px;
-   text-align: center;
-   border-radius: 5px;
-  
-}
-#orderSidebar{
-    order:3;
-    background-color: #996633  ;
-    opacity: 0.8;
-}
-.addToBasketButton {
- background-color: #EFA00B; /* Initial background color */
- color: white;
- border: none;
- padding: 10px 20px;
- cursor: pointer;
- border-radius: 5px;
+
+.itemQuantityInput {
+  width: 60%;
 }
 
-#payButton{
+#basketIcon {
+  font-size: 25px;
+  cursor: pointer;
+  color: white;
+}
+
+#addToBasketButton:hover {
+  background-color: brown;
+}
+
+#orderTotal {
+  background-color: beige;
+  padding: 20px;
+  margin-top: 20px;
+  text-align: center;
+  border-radius: 5px;
+}
+
+#orderSidebar {
+  order: 3;
+  background-color: #996633;
+  opacity: 0.8;
+}
+
+.addToBasketButton {
+  background-color: #EFA00B;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+#payButton {
   color: whitesmoke;
   background-color: green;
   display: block;
@@ -361,76 +337,62 @@ strong {
   text-align: center;
 }
 
-#payButton:hover { 
+#payButton:hover {
   color: black;
   background-color: gainsboro;
 }
-.orderPageItem{
-  font-family: 'Crete Round', sans-serif;
-  font-size:26px;
-}
-.orderPageItemData{
-  padding-left: 5%;
 
+.orderPageItem {
+  font-family: 'Crete Round', sans-serif;
+  font-size: 26px;
 }
-/*CSS for styling table for order on waiter page*/
+
+.orderPageItemData {
+  padding-left: 5%;
+}
+
 #order_table {
   width: 100%;
   border: 1.4px solid #591F0A;
   background-color: beige;
-  border-radius:5px;
-  
- 
-
-  
+  border-radius: 5px;
 }
 
 #order_table th {
   text-align: center;
-  font-family:Georgia, 'Times New Roman', Times, serif;
-  color: solid #591F0A;
-  background-color:beige;
-  font-weight:bold;
-  font-size:19px;
-  padding:12px;
-
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  color: #591F0A;
+  background-color: beige;
+  font-weight: bold;
+  font-size: 19px;
+  padding: 12px;
 }
-
 
 .table-caption {
   font-weight: bold;
   font-size: 35px;
-  padding-bottom: 20px;
-  padding-top:20px;
-  font-family: Mexican Tequila;
-  text-align: left; 
+  padding: 20px 0;
+  font-family: 'Mexican Tequila';
   text-align: center;
-  padding:12px;
-
 }
-#order_table_body{
-  font-family:Georgia, 'Times New Roman', Times, serif;
+
+#order_table_body {
+  font-family: Georgia, 'Times New Roman', Times, serif;
   color: black;
   background-color: beige;
-  border:none;
-  padding:12px;
-  font-size:15px;
-
-
+  border: none;
+  padding: 12px;
+  font-size: 15px;
 }
+
 #order_table_body tr {
-  border: 1px solid #591F0A ;
+  border: 1px solid #591F0A;
 }
-.confirmButton {
-  background-color: burlywood; 
-  color: white;
-  border: none; 
-  border-radius: 5px;
-}
+
+.confirmButton,
 .cancelButton {
   background-color: burlywood;
-  color: white; 
-  border: none; 
-  border-radius: 5px; 
+  color: white;
+  border: none;
+  border-radius: 5px;
 }
-

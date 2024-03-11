@@ -24,7 +24,7 @@ func AddOrderToQueue(order models.Order) error {
 		orderQueue = append(orderQueue, order)
 		return nil
 	} else {
-		return errors.New("Order with same id already in queue")
+		return errors.New("order with same id already in queue")
 	}
 }
 
