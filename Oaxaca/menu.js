@@ -21,7 +21,7 @@ function initMenuAll() {
 }
 
 function createMenuItem(index, id, itemName, imageURL, price, calories) {
-    let comp = `<div class='MenuItemDiv' id='item` + index + `'> <img class='MenuItemImg' src='http://localhost:4444/image/${imageURL}'><div class='MenuItemDetails'><label class='MenuItemName'>` + itemName + `</label><br><label class='MenuItemPrice'>£` + price.toFixed(2) + `</label><br><label class='MenuItemCalories'>` + calories + ` kcal</label></div>`;
+    let comp = `<div class='MenuItemDiv' itemid="${id}" id='item` + index + `'> <img class='MenuItemImg' src='http://localhost:4444/image/${imageURL}'><div class='MenuItemDetails'><label class='MenuItemName'>` + itemName + `</label><br><label class='MenuItemPrice'>£` + price.toFixed(2) + `</label><br><label class='MenuItemCalories'>` + calories + ` kcal</label></div>`;
     comp += "<button class='addBasketButton' onclick='addToBasket(" + index + "," + id + ", \"" + itemName + "\", " + price + ", " + calories + ")'>Add to Basket</button>";
     return comp;
 }
@@ -43,28 +43,29 @@ function editMenu() {
                 <label>Calories:</label><input type='text' id='newItemCaloriesField'><br>
                 <button onclick='addMenuItem()'>Add Item</button>
             </p>
-        </div>
-        <div id='removeItemDiv'>
-        <h3>Delete menu item:</h3>
-            <p>
-                <label>Enter the name of the item you want to delete from the menu:</label>
-                <input type='text' id='deleteItemNameField'>
-                <button onclick='deleteMenuItem()'>-</button>
-            </p>
         </div>`;
 
         // Add edit button to each menu item
         for (let i = 0; i < currentMenu.length; i++) {
-            document.getElementById("item" + i).innerHTML += "<button index='" + i + "' class='editMenuItemButton'>Edit</button>";
+            document.getElementById("item" + i).innerHTML += `
+            <button index="${i}" class="editMenuItemButton">Edit</button>
+            <button index="${i}" class="deleteMenuItemButton">Delete</button>`;
         }
 
         const editButtons = document.querySelectorAll(".editMenuItemButton");
+        const deleteButtons = document.querySelectorAll(".deleteMenuItemButton");
 
         editButtons.forEach(item => {
             item.addEventListener('click', function () {
                 editMenuForItem(item.getAttribute("index"));
             });
         });
+
+        deleteButtons.forEach(item => {
+            item.addEventListener("click", () => {
+                deleteMenuItem(item.getAttribute("index"));
+            });
+        })
 
         editMode = true;
     } else {
@@ -176,20 +177,11 @@ async function uploadImage(image) {
     return resultFilename;
 }
 
-function deleteMenuItem() {
-    let nameValue = document.getElementById("deleteItemNameField").value;
-    removeItem(nameValue).then(r => {
+function deleteMenuItem(index) {
+    let id = document.getElementById(`item${index}`).getAttribute("itemid");
+    removeItem(id).then(r => {
         if (r >= 0) {
-            // First childNodes holds each item on menu
-            // Second childNodes holds the details of the first childnodes menu item
-            // Third childNodes holds the actual details. index 0 is name
-            for (let i = 0; i < document.getElementById("MenuItemGridLayout").childNodes.length; i++) {
-                if (document.getElementById("MenuItemGridLayout").childNodes[i].childNodes[4].childNodes[0].innerHTML == nameValue) {
-                    let gridLayout = document.getElementById("MenuItemGridLayout");
-                    let itemToRemove = document.getElementById("MenuItemGridLayout").childNodes[0];
-                    gridLayout.removeChild(itemToRemove);
-                }
-            }
+            document.getElementById(`item${index}`).remove();
         }
     });
 
@@ -229,11 +221,10 @@ function getIdFromName(name) {
 }
 
 // Contacts backend to remove menu item
-async function removeItem(name) {
-    nameId = String(getIdFromName(name));
+async function removeItem(id) {
     try {
         let response = await fetch("http://localhost:4444/remove_item?" + new URLSearchParams({
-            itemId: nameId
+            itemId: id
         }).toString(), {
             method: "DELETE"
         });
