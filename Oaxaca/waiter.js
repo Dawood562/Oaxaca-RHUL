@@ -1,5 +1,7 @@
 var sock;
 var sockInit = false;
+var waiterID = -1
+var waiterUsername = "";
 
 document.addEventListener('DOMContentLoaded', e => {
     registerWaiter();
@@ -7,7 +9,7 @@ document.addEventListener('DOMContentLoaded', e => {
     refreshOrders();
 
 });
-var waiterUsername = "";
+
 function getUserNameFromCookies() {
     let cookieData = document.cookie;
     cookieData.split(";").forEach(cookie => {
@@ -38,8 +40,10 @@ async function registerWaiter() {
             "waiterUsername": waiterUsername,
             "tableNumber": []
         })
+    }).then(resp => resp.json()).then(data => {
+        console.log(data)
+        waiterID = Number(data.id);
     })
-    console.log(response);
 }
 
 // On leaving waiter page
@@ -61,7 +65,7 @@ function initSock() {
     };
     sock.addEventListener("open", e => {
         // WE NEED TO ADD A WAY TO GET USERS TABLE NUMBER
-        sock.send("WAITER:Ben");
+        sock.send("WAITER:"+waiterUsername);
     });
     sock.addEventListener("message", e => handleMessages(e));
     sockInit = true;
@@ -104,6 +108,11 @@ function handleMessages(e) {
 
 
 async function refreshOrders() {
+    if(waiterID < 0){
+        console.log("Cannot refresh orders with no waiter id");
+        return;
+    }
+
     let table = document.getElementById("order_table");
     table.innerHTML = `<caption class="table-caption">Customer Orders</caption>
                         <tr>
@@ -115,7 +124,9 @@ async function refreshOrders() {
                             <th></th>
                             <th></th>
                         </tr>`;
-    let response = await fetch("http://localhost:4444/orders");
+    let response = await fetch("http://localhost:4444/orders?" + new URLSearchParams({
+        "waiterId": waiterID
+    }));
     let data = await response.json();
 
     for (var order of data) {

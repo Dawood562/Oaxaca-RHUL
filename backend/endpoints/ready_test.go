@@ -8,9 +8,9 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func TestCancel(t *testing.T) {
+func TestReady(t *testing.T) {
 	app := fiber.New()
-	app.Patch("/cancel/:id", Cancel)
+	app.Patch("/ready/:id", Ready)
 
-	PatchEndpointTest(t, "cancel", app)
+	PatchEndpointTest(t, "ready", app)
 }

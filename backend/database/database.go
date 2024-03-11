@@ -19,11 +19,14 @@ var (
 	ErrOrderAlreadyPaid      error = errors.New("order already paid for")
 	ErrOrderAlreadyConfirmed error = errors.New("order already confirmed")
 	ErrOrderAlreadyCancelled error = errors.New("order already cancelled")
+	ErrOrderAlreadyReady     error = errors.New("order already ready")
+	ErrOrderAlreadyDelivered error = errors.New("order already delivered")
 )
 
 const (
 	StatusAwaitingConfirmation string = "Awaiting Confirmation"
 	StatusPreparing            string = "Preparing"
+	StatusReady                string = "Ready"
 	StatusDelivered            string = "Delivered"
 	StatusCancelled            string = "Cancelled"
 )
@@ -94,11 +97,34 @@ func RemoveItem(id uint) error {
 // QueryMenu returns the menu items from the database as a slice
 // If filter is provided, the returned item slice will be filtered as such
 func QueryMenu(filter *MenuFilter) []models.MenuItem {
-	preparedFilter := prepareArgs(filter)
-
 	var data []models.MenuItem
-	db.Model(&models.MenuItem{}).Preload("Allergens").Where("name LIKE ?", preparedFilter.SearchTerm).Where("calories <= ?", preparedFilter.MaxCalories).Where("price <= ?", preparedFilter.MaxPrice).Find(&data)
+	allergens := filterAllergens(filter.Allergens)
+	dbLocal := db.Model(&models.MenuItem{}).Preload("Allergens")
+	if len(filter.SearchTerm) > 3 {
+		dbLocal = dbLocal.Where("LOWER(name) LIKE LOWER(?)", fmt.Sprintf("%%%s%%", filter.SearchTerm))
+	}
+	if filter.MaxCalories > 0 {
+		dbLocal = dbLocal.Where("calories <= ?", filter.MaxCalories)
+	}
+	if filter.MaxPrice > 0 {
+		dbLocal = dbLocal.Where("price <= ?", filter.MaxPrice)
+	}
+	if len(allergens) > 0 {
+		dbLocal = dbLocal.Where("LOWER(allergens.name) NOT IN ?", allergens)
+	}
+
+	dbLocal.Find(&data)
 	return data
+}
+
+func filterAllergens(allergens []string) []string {
+	ret := []string{}
+	for _, allergen := range allergens {
+		if len(allergen) > 0 {
+			ret = append(ret, allergen)
+		}
+	}
+	return ret
 }
 
 // FetchItem retrieves the given item from the database
@@ -109,34 +135,6 @@ func FetchItem(id int) (models.MenuItem, error) {
 		return models.MenuItem{}, res.Error
 	}
 	return ret, nil
-}
-
-// prepareArgs applies defaults to a MenuFilter struct in preparation for use in a query
-func prepareArgs(filter *MenuFilter) *MenuFilter {
-	ret := &MenuFilter{}
-
-	// If the search term is shorter than 3 chars, disregard it
-	if len(filter.SearchTerm) < 3 {
-		ret.SearchTerm = "%"
-	} else {
-		ret.SearchTerm = "%" + filter.SearchTerm + "%"
-	}
-
-	// If no max calories are provided, set it to a high number
-	if filter.MaxCalories <= 0 {
-		ret.MaxCalories = 9999
-	} else {
-		ret.MaxCalories = filter.MaxCalories
-	}
-
-	// If no max price is provided, set it to a high number
-	if filter.MaxPrice <= 0 {
-		ret.MaxPrice = 9999
-	} else {
-		ret.MaxPrice = filter.MaxPrice
-	}
-
-	return ret
 }
 
 /*
@@ -222,7 +220,7 @@ func PayOrder(id uint) error {
 	order := &models.Order{ID: id}
 	db.Model(order).First(&order)
 	order.Paid = true
-	db.Save(&order)
+	db.Save(order)
 	return nil
 }
 
@@ -254,7 +252,7 @@ func ConfirmOrder(id uint) error {
 	order := &models.Order{ID: id}
 	db.Model(order).First(&order)
 	order.Status = StatusPreparing
-	db.Save(&order)
+	db.Save(order)
 	return nil
 }
 
@@ -271,7 +269,52 @@ func CancelOrder(id uint) error {
 	order := &models.Order{ID: id}
 	db.Model(order).First(&order)
 	order.Status = StatusCancelled
-	db.Save(&order)
+	db.Save(order)
+
+	return nil
+}
+
+// ReadyOrder marks the given order as ready for delivery. Returns an error if the order is cancelled, already ready or already delivered.
+func ReadyOrder(id uint) error {
+	status, err := GetOrderStatus(id)
+	if err != nil {
+		return ErrOrderNotFound
+	}
+	if status == StatusCancelled {
+		return ErrOrderAlreadyCancelled
+	}
+	if status == StatusDelivered {
+		return ErrOrderAlreadyDelivered
+	}
+	if status == StatusReady {
+		return ErrOrderAlreadyReady
+	}
+
+	order := &models.Order{ID: id}
+	db.Model(order).First(&order)
+	order.Status = StatusReady
+	db.Save(order)
+
+	return nil
+}
+
+// DeliverOrder marks the given order as deliered. Returns an error if the order does not exist or is already delivered or cancelled.
+func DeliverOrder(id uint) error {
+	status, err := GetOrderStatus(id)
+	if err != nil {
+		return ErrOrderNotFound
+	}
+	if status == StatusCancelled {
+		return ErrOrderAlreadyCancelled
+	}
+	if status == StatusDelivered {
+		return ErrOrderAlreadyDelivered
+	}
+
+	order := &models.Order{ID: id}
+	db.Model(order).First(&order)
+	order.Status = StatusDelivered
+	db.Save(order)
 
 	return nil
 }

@@ -1,163 +1,202 @@
 // Will hold currently displayed version of menu
 var currentMenu;
 var editMode = false;
+
 // Called when menu page is initially loaded
 function initMenuAll() {
-  if (editMode) {
-    editMenu()
-  }
+    if (editMode) {
+        editMenu();
+    }
 
-  let data = requestMenu(0, 0, 0); // Zero value = none specified
-  data.then(r => {
-    currentMenu = r
-    let index = 0;
-    document.getElementById("MenuItemGridLayout").innerHTML = ""
-    r.forEach(element => {
-      document.getElementById("MenuItemGridLayout").innerHTML += createMenuItem(index, element.itemId, element.itemName, element.price, element.calories);
-      index++;
+    let data = requestMenu(0, 0, 0); // Zero value = none specified
+    data.then(r => {
+        currentMenu = r;
+        let index = 0;
+        document.getElementById("MenuItemGridLayout").innerHTML = "";
+        r.forEach(element => {
+            document.getElementById("MenuItemGridLayout").innerHTML += createMenuItem(index, element.itemId ,element.itemName, element.imageURL, element.price, element.calories);
+            index++;
+        });
     });
-  })
 }
 
-// Function that takes in data and turns into menu item to be displayed
-function createMenuItem(index, id, itemName, price, calories) {
-  let comp = `
-    <div class='MenuItemDiv' id='item${index}'>
-      <img class='MenuItemImg' src="https://cdn.discordapp.com/attachments/1205538449722052641/1216347783133397063/foodimg.png?ex=66000f26&is=65ed9a26&hm=97d8d5d2a4d0dd2f3b20f96c9624f4ade73de51f2187804db5049b0bf28a25bc&"><br>
-      <div class='MenuItemDetails'>
-        <label class='MenuItemName'>${itemName}</label><br>
-        <label class='MenuItemPrice'>£${price.toFixed(2)}</label><br>
-        <label class='MenuItemCalories'>${calories} kcal</label><br>
-        <label class='MenuItemAllergen'>Contains</label>
-      </div>
-      <div class='MenuItemActions'>
-        <button id='addToBasketButton${index}' onclick='addToBasket(${index}, ${id}, "${itemName}", ${price}, ${calories})'>Add to Basket</button>
-        <input type='number' id='itemQuantityInput${index}' min='1' value='1' class='itemQuantityInput'>
-      </div>
-    </div>
-  `;
-  return comp;
+function createMenuItem(index, id, itemName, imageURL, price, calories) {
+    let comp = `<div class='MenuItemDiv' id='item` + index + `'> <img class='MenuItemImg' src='http://localhost:4444/image/${imageURL}'><div class='MenuItemDetails'><label class='MenuItemName'>` + itemName + `</label><br><label class='MenuItemPrice'>£` + price.toFixed(2) + `</label><br><label class='MenuItemCalories'>` + calories + ` kcal</label></div>`;
+    comp += "<button class='addBasketButton' onclick='addToBasket(" + index + "," + id + ", \"" + itemName + "\", " + price + ", " + calories + ")'>Add to Basket</button>";
+    return comp;
 }
 
 // Toggle edit mode
 function editMenu() {
+    console.log("Edit menu button clicked");
+    if (!editMode) {
+        document.getElementById("MenuEditSection").innerHTML += `
+        <div id='newItemDiv'>
+            <h3>Add new menu item:</h3>
+            <p>
+                <label>Name:</label>
+                <input type='text' id='newItemNameField'><br>
+                <label>Upload Image</label><br>
+                <input type='file' id='newItemFileUpload'><br>
+                <label>Price:</label>
+                <input type='text' id='newItemPriceField'><br>
+                <label>Calories:</label><input type='text' id='newItemCaloriesField'><br>
+                <button onclick='addMenuItem()'>Add Item</button>
+            </p>
+        </div>
+        <div id='removeItemDiv'>
+        <h3>Delete menu item:</h3>
+            <p>
+                <label>Enter the name of the item you want to delete from the menu:</label>
+                <input type='text' id='deleteItemNameField'>
+                <button onclick='deleteMenuItem()'>-</button>
+            </p>
+        </div>`;
 
-  if (!editMode) {
-    document.getElementById("MenuEditSection").innerHTML += "<div id='newItemDiv'><h3>Add new menu item:</h3><p><label>Name:</label><input type='text' id='newItemNameField'>  <label>Price:</label><input type='text' id='newItemPriceField'>  <label>Calories:</label><input type='text' id='newItemCaloriesField'>    <button onclick='addMenuItem()'>+</button></p></div>";
-    document.getElementById("MenuEditSection").innerHTML += "<div id='removeItemDiv'><h3>Delete menu item:</h3><p><label>Enter the name of the item you want to delete from the menu:</label><input type='text' id='deleteItemNameField'> <button onclick='deleteMenuItem()'>-</button></p></div>";
+        // Add edit button to each menu item
+        for (let i = 0; i < currentMenu.length; i++) {
+            document.getElementById("item" + i).innerHTML += "<button index='" + i + "' class='editMenuItemButton'>Edit</button>";
+        }
 
-    // Add edit button to each menu item
-    for (let i = 0; i < currentMenu.length; i++) {
-      document.getElementById("item" + i).innerHTML += "<button index='" + i + "' id='itemEditButton' class='editMenuItem'>EDIT</button>"
-      let thing = document.getElementById("item" + i).childNodes[5].remove()
+        const editButtons = document.querySelectorAll(".editMenuItemButton");
+
+        editButtons.forEach(item => {
+            item.addEventListener('click', function () {
+                editMenuForItem(item.getAttribute("index"));
+            });
+        });
+
+        editMode = true;
+    } else {
+        document.getElementById("newItemDiv").remove();
+        document.getElementById("removeItemDiv").remove();
+        const editButtons = document.querySelectorAll('.editMenuItemButton');
+        editButtons.forEach(item => {
+            item.remove();
+        });
+        editMode = false;
     }
-
-    // Retrieve all edit buttons into iterable
-    const editButtons = document.querySelectorAll(".editMenuItem")
-
-    // For each edit button add click listener
-    editButtons.forEach(item => {
-      item.addEventListener('click', function () {
-        EditMenuField(item.getAttribute("index"))
-      })
-    })
-
-    editMode = true;
-  } else {
-    document.getElementById("newItemDiv").remove();
-    document.getElementById("removeItemDiv").remove();
-    const editButtons = document.querySelectorAll('.editMenuItem');
-    editButtons.forEach(item => {
-      item.remove();
-    })
-    editMode = false;
-  }
 }
 
 
-// Holds global variable on if a field is currently being edited
 var editingText = false;
 // Holds location of item being edited
 var currentlyEditing = -1;
+var oldText;
 
 // Should replace name with label displaying name: and a textfield
 // Should replace price and calories of price label and textfield too
-function EditMenuField(index) {
-  // Index 0 = item name
-  // Index 2 = item price
-  // Index 3 = item calories
-  let itemToEdit = document.getElementById("item" + index).childNodes[4].childNodes;
+function editMenuForItem(index) {
+    // Index 0 = item name
+    // Index 2 = item price
+    // Index 3 = item calories
+    let itemToEdit = document.getElementById("item" + index).childNodes[4].childNodes;
 
+    // Replace name with name tag and checkbox
+    itemToEdit[0].innerHTML = "<label class='editMenuItemPrompt'>New name:</label><input id='nameEditPrompt' class='editMenuItemPrompt' type='text'>";
+    itemToEdit[2].innerHTML = "<label class='editMenuItemPrompt'>New price:</label><input id='priceEditPrompt' class='editMenuItemPrompt' type='text'>";
+    itemToEdit[3].innerHTML = "<label class='editMenuItemPrompt'>New calories:</label><input id='caloriesEditPrompt' class='editMenuItemPrompt' type='text'>";
 
-  // Replace name with name tag and checkbox
-  itemToEdit[0].innerHTML = "<label class='editMenuItemPrompt'>New name:</label><input id='nameEditPrompt' class='editMenuItemPrompt' type='text'>";
-  itemToEdit[2].innerHTML = "<label class='editMenuItemPrompt'>New price:</label><input id='priceEditPrompt' class='editMenuItemPrompt' type='text'>";
-  itemToEdit[3].innerHTML = "<label class='editMenuItemPrompt'>New calories:</label><input id='caloriesEditPrompt' class='editMenuItemPrompt' type='text'>";
-
-  document.getElementById("itemEditButton").remove();
-  document.getElementById("item" + index).innerHTML += "<button index='" + index + "' id='itemEditButton32' class='editMenuItem'>Submit</button>"
-  document.getElementById("itemEditButton32").addEventListener('click', function () {
-    submitMenuEdit(index);
-    let toRemove = document.getElementsByClassName("editMenuItemPrompt")
-    toRemove[0].innerHTML = "<label>Submitted!</label>"
-    for (let i = 1; i < toRemove.length; i++) {
-      toRemove[i].innerHTML = ""
-    }
-    document.getElementById("nameEditPrompt").remove()
-    document.getElementById("priceEditPrompt").remove()
-    document.getElementById("caloriesEditPrompt").remove()
-    document.getElementById("itemEditButton32").remove()
-
-  })
-
-
-  // MUST REPLACE EDIT BUTTON TO BE CALLED SUBMIT AND MAKE IT CALL submitMenuEdit() FUNCTION
-  // SHOULD THEN REPLACE ALL THE BOXES WITH A SIMPLE "SUCCESSFUL" LABEL TO INDICATE CHANGE
+    document.getElementById("item" + index).innerHTML += "<button index='" + index + "' class='editMenuItemButton'>Submit</button>";
+    document.querySelector(".editMenuItemButton").addEventListener('click', function () {
+        submitMenuEdit(index);
+        let toRemove = document.getElementsByClassName("editMenuItemPrompt");
+        toRemove[0].innerHTML = "<label>Submitted!</label>";
+        for (let i = 1; i < toRemove.length; i++) {
+            toRemove[i].innerHTML = "";
+        }
+        document.getElementById("nameEditPrompt").remove();
+        document.getElementById("priceEditPrompt").remove();
+        document.getElementById("caloriesEditPrompt").remove();
+        document.querySelector(".editMenuItemButton").remove();
+    });
 }
 
 // Needs to take in index so that it can get id
 async function submitMenuEdit(index) {
-  let id = currentMenu[index].itemId;
-  let name = document.getElementById("nameEditPrompt").value;
-  let itemPrice = parseFloat(document.getElementById("priceEditPrompt").value);
-  let itemCalories = parseInt(document.getElementById("caloriesEditPrompt").value);
-  console.log(id + "," + name + "," + itemPrice + "," + itemCalories);
-  console.log(document.getElementById("nameEditPrompt"));
+    let id = currentMenu[index].itemId;
+    let name = document.getElementById("nameEditPrompt").value;
+    let itemPrice = parseFloat(document.getElementById("priceEditPrompt").value);
+    let itemCalories = parseInt(document.getElementById("caloriesEditPrompt").value);
 
-  try {
-    let response = await fetch("http://localhost:4444/edit_item", {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        itemId: id,
-        itemName: name,
-        price: itemPrice,
-        calories: itemCalories
-      })
-    })
+    try {
+        let response = await fetch("http://localhost:4444/edit_item", {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                itemId: id,
+                itemName: name,
+                price: itemPrice,
+                calories: itemCalories
+            })
+        });
 
-  } catch (error) {
-    console.error(error);
-  }
+    } catch (error) {
+        console.error(error);
+    }
 }
 
 // Functions to add and delete menu items
-function addMenuItem() {
-  let nameValue = document.getElementById("newItemNameField").value;
-  let priceValue = parseFloat(document.getElementById("newItemPriceField").value);
-  let caloriesValue = parseInt(document.getElementById("newItemCaloriesField").value);
-  addItemToDB(nameValue, priceValue, caloriesValue);
+async function addMenuItem() {
+    let nameValue = document.getElementById("newItemNameField").value;
+    let image = document.getElementById("newItemFileUpload").files[0];
+    let priceValue = parseFloat(document.getElementById("newItemPriceField").value);
+    let caloriesValue = parseInt(document.getElementById("newItemCaloriesField").value);
+
+    // Check that the user included an image
+    if(image == null) {
+        alert("Please upload an image for the item");
+        return;
+    }
+
+    let imageURL = await uploadImage(image);
+    let result = await addItemToDB(nameValue, imageURL, priceValue, caloriesValue);
+
+    if (result >= 0) {
+        document.getElementById("MenuItemGridLayout").innerHTML += createMenuItem(currentMenu.length, currentMenu.length, nameValue, imageURL, priceValue, caloriesValue);
+    }
+}
+
+async function uploadImage(image) {
+    let data = new FormData();
+    var resultFilename = "";
+    data.append("file", image);
+
+    await fetch("http://localhost:4444/upload", {
+        method: "POST",
+        body: data,
+    })
+    .then((res) => res.text())
+    .then((filename) => {
+        resultFilename = filename;
+    }).catch(() => alert("Failed to upload image"));
+
+    return resultFilename;
 }
 
 function deleteMenuItem() {
-  let nameValue = document.getElementById("deleteItemNameField").value;
-  removeItem(nameValue);
+    let nameValue = document.getElementById("deleteItemNameField").value;
+    removeItem(nameValue).then(r => {
+        if (r >= 0) {
+            // First childNodes holds each item on menu
+            // Second childNodes holds the details of the first childnodes menu item
+            // Third childNodes holds the actual details. index 0 is name
+            for (let i = 0; i < document.getElementById("MenuItemGridLayout").childNodes.length; i++) {
+                if (document.getElementById("MenuItemGridLayout").childNodes[i].childNodes[4].childNodes[0].innerHTML == nameValue) {
+                    let gridLayout = document.getElementById("MenuItemGridLayout");
+                    let itemToRemove = document.getElementById("MenuItemGridLayout").childNodes[0];
+                    gridLayout.removeChild(itemToRemove);
+                }
+            }
+        }
+    });
+
 }
 
 // Add menu item
-async function addItemToDB(name, _price, _calories) {
+async function addItemToDB(name, imageURL, _price, _calories) {
   try {
     let response = await fetch("http://localhost:4444/add_item", {
       method: 'POST',
@@ -166,43 +205,43 @@ async function addItemToDB(name, _price, _calories) {
       },
       body: JSON.stringify({
         itemName: name,
+        imageURL: imageURL,
         price: _price,
-        calories: _calories
+        calories: _calories,
       })
     })
-    return 0
+     return 0
   } catch (error) {
     console.error(error)
-    return -1
+     return -1
   }
 }
 
 // Takes in name and returns id if found
 function getIdFromName(name) {
-  for (let i = 0; i < currentMenu.length; i++) {
-    if (currentMenu[i].itemName == name) {
-      return currentMenu[i].itemId;
+    for (let i = 0; i < currentMenu.length; i++) {
+        if (currentMenu[i].itemName == name) {
+            return currentMenu[i].itemId;
+        }
     }
-  }
-  console.error("COULD NOT FIND ID FROM ITEM NAME: " + name);
-  return null;
+    console.error("COULD NOT FIND ID FROM ITEM NAME: " + name);
+    return null;
 }
 
 // Contacts backend to remove menu item
 async function removeItem(name) {
-  console.log(currentMenu)
-  nameId = String(getIdFromName(name))
-  try {
-    let response = await fetch("http://localhost:4444/remove_item?" + new URLSearchParams({
-      itemId: nameId
-    }).toString(), {
-      method: "DELETE"
-    })
-    return 0
-  } catch (error) {
-    console.error(error)
-    return -1
-  }
+    nameId = String(getIdFromName(name));
+    try {
+        let response = await fetch("http://localhost:4444/remove_item?" + new URLSearchParams({
+            itemId: nameId
+        }).toString(), {
+            method: "DELETE"
+        });
+        return 0;
+    } catch (error) {
+        console.error(error);
+        return -1;
+    }
 }
 
 // Fetches data from backend or throws error to console and provides example menu data
@@ -211,37 +250,42 @@ async function requestMenu(userSearchTerm, userMaxPrice, userMaxCalories) {
     let response = await fetch("http://localhost:4444/menu?" + new URLSearchParams({
       searchTerm: userSearchTerm,
       Price: userMaxPrice,
-      Calories: userMaxCalories
+      Calories: userMaxCalories,
     }).toString())
 
-    if (!response.ok) {
-      console.log("ERROR fetching menu")
-    }
+        if (!response.ok) {
+            console.log("ERROR fetching menu");
+        }
 
-    let data = await response.json()
-    return data
-  } catch (error) {
-    console.error(error)
-    // Return example error if unable to connect to backend
-    return (
-      [{
-        itemName: "Tequila",
-        price: 6.90,
-        calories: 12,
-        Type: "DRINK"
-      }, {
-        itemName: "Olives",
-        price: 7.99,
-        calories: 165,
-        Type: "APPETIZER"
-      }, {
-        itemName: "Mozzarella Sticks",
-        price: 8.99,
-        calories: 349,
-        Type: "ENTREES"
-      }])
-  }
+        let data = await response.json();
+        return data;
+    } catch (error) {
+        console.error(error);
+        // Return example error if unable to connect to backend
+        return ([{
+            itemName: "Tequila",
+            price: 6.90,
+            calories: 12,
+            Type: "DRINK"
+        }, {
+            itemName: "Olives",
+            price: 7.99,
+            calories: 165,
+            Type: "APPETIZER"
+        }, {
+            itemName: "Mozzarella Sticks",
+            price: 8.99,
+            calories: 349,
+            Type: "ENTREES"
+        }, {
+            itemName: "Ice Cream",
+            price: 7.42,
+            calories: 632,
+            Type: "DESSERT"
+        }]);
+    }
 }
+
 // function to add menu item to basket
 // Stores menu items in basket using cookies
 // Cookie structure is CSV in form: id,itemName,price,calories,quantity
@@ -307,66 +351,52 @@ function removeFromOrder(itemName) {
 }
 //updates order details and basket icon when DOM is loaded
 document.addEventListener('DOMContentLoaded', function () {
-  if (document.title.indexOf("Menu") != -1) {
-    initializeMenu();
-    initializeCategoryFilter();
-    updateBasketIcon();
-  }
+    updateOrderDetails();
 });
 
 function filterItems() {
-  let searchTerm = document.getElementById('searchTerm').value;
-  let maxCalories = parseInt(document.getElementById('maxCalories').value) || 0;
-  let maxPrice = parseFloat(document.getElementById('maxPrice').value) || 0;
-  if (searchTerm.length <= 0) {
-    searchTerm = 0;
-  }
-  let data = requestMenu(searchTerm, maxPrice, maxCalories);
-  data.then(r => {
-    let index = 0;
-    document.getElementById("MenuItemGridLayout").innerHTML = "";
-    r.forEach(element => {
-      document.getElementById("MenuItemGridLayout").innerHTML += createMenuItem(index, element.itemName, element.price, element.calories);
-      index++;
-    });
-  })
-}
+    let searchTerm = document.getElementById('searchTerm').value.toLowerCase();
+    let maxCalories = parseInt(document.getElementById('maxCalories').value) || 0;
+    let maxPrice = parseFloat(document.getElementById('maxPrice').value) || 0;
 
-function initializeMenu() {
-  const activeButton = document.querySelector('#menuFilter button.active');
-  if (activeButton) {
-    const category = activeButton.getAttribute('data-category');
-    const filter = {
-      searchTerm: '',
-      maxCalories: 0,
-      maxPrice: 0,
-      category: category
-    };
-    filterMenu(filter, activeButton);
-  } else {
-    filterItems();
-  }
+    let data = requestMenu('', 0, 0); // Fetch all menu items
+    data.then(r => {
+        let index = 0;
+        document.getElementById("MenuItemGridLayout").innerHTML = "";
+        r.forEach(element => {
+            // Check if the current item matches the filter criteria
+            if (
+                (searchTerm.length === 0 || element.itemName.toLowerCase().includes(searchTerm)) &&
+                (maxCalories === 0 || element.calories <= maxCalories) &&
+                (maxPrice === 0 || element.price <= maxPrice)
+            ) {
+                document.getElementById("MenuItemGridLayout").innerHTML += createMenuItem(index, element.itemName, element.imageURL, element.price, element.calories);
+                index++;
+            }
+        });
+    });
 }
 
 // Initialises basket quantity on page load to number of items in basket cookies
-function initBasketQuantity() {
-  if (document.cookie.length <= 0) {
-    document.cookie = "basket="
-  }
-  let cookieList = document.cookie.split(";");
-  let basketCookie = "";
-  cookieList.forEach(cookie => {
-    if (cookie.indexOf("basket=") != -1) {
-      cookie = cookie.substring(cookie.indexOf("basket=") + "basket=".length, cookie.length)
-      console.log(cookie)
-      // we found basket cookie
-      let splitCookie = cookie.split("#")
-      let basketCount = splitCookie.length
-      if (splitCookie[splitCookie.length - 1].length <= 0) {
-        basketCount--;
-      }
-      console.log(basketCount);
-      document.getElementById("basketIcon").innerHTML = "🛒 " + basketCount;
+function initBasketQuantity(){
+    if(document.cookie.length <= 0){
+      document.cookie="basket="
     }
-  })
-}
+    let cookieList = document.cookie.split(";");
+    let basketCookie = "";
+    cookieList.forEach(cookie => {
+      if(cookie.indexOf("basket=")!=-1){
+        cookie = cookie.substring(cookie.indexOf("basket=")+"basket=".length, cookie.length)
+        console.log(cookie)
+        // we found basket cookie
+        let splitCookie = cookie.split("#")
+        let basketCount = splitCookie.length
+        if(splitCookie[splitCookie.length-1].length <= 0){
+          basketCount--;
+        }
+        console.log(basketCount);
+        document.getElementById("basketIcon").innerHTML="🛒 "+basketCount;
+      }
+    })
+  }
+  
