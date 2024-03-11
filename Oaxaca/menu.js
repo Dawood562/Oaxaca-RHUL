@@ -8,15 +8,17 @@ function initMenuAll() {
         editMenu();
     }
 
-    let data = requestMenu(0, 0, 0); // Zero value = none specified
-    data.then(r => {
-        currentMenu = r;
-        let index = 0;
-        document.getElementById("MenuItemGridLayout").innerHTML = "";
-        r.forEach(element => {
-            document.getElementById("MenuItemGridLayout").innerHTML += createMenuItem(index, element.itemId ,element.itemName, element.imageURL, element.price, element.calories);
-            index++;
-        });
+    refreshMenu();
+}
+
+async function refreshMenu() {
+    let data = await requestMenu(0, 0, 0); // Zero value = none specified
+    currentMenu = data;
+    let index = 0;
+    document.getElementById("MenuItemGridLayout").innerHTML = "";
+    data.forEach(element => {
+        document.getElementById("MenuItemGridLayout").innerHTML += createMenuItem(index, element.itemId ,element.itemName, element.imageURL, element.price, element.calories);
+        index++;
     });
 }
 
@@ -26,55 +28,63 @@ function createMenuItem(index, id, itemName, imageURL, price, calories) {
     return comp;
 }
 
+async function refreshEditMenu() {
+    await refreshMenu();
+    document.getElementById("MenuEditSection").innerHTML = "";
+    document.getElementById("MenuEditSection").innerHTML += `
+    <div id='newItemDiv'>
+        <h3>Add new menu item:</h3>
+        <p>
+            <label>Name:</label>
+            <input type='text' id='newItemNameField'><br><br>
+            <label>Upload Image</label><br><br>
+            <input type='file' id='newItemFileUpload'><br><br>
+            <label>Price:</label>
+            <input type='text' id='newItemPriceField'><br><br>
+            <label>Calories:</label><input type='text' id='newItemCaloriesField'><br><br>
+            <button onclick='addMenuItem()'>Add Item</button>
+        </p>
+    </div>`;
+
+    // Add edit button to each menu item
+    for (let i = 0; i < currentMenu.length; i++) {
+        document.getElementById("item" + i).innerHTML += `
+        <button index="${i}" class="editMenuItemButton">Edit</button>
+        <button index="${i}" class="deleteMenuItemButton">Delete</button>`;
+    }
+
+    const editButtons = document.querySelectorAll(".editMenuItemButton");
+    const deleteButtons = document.querySelectorAll(".deleteMenuItemButton");
+
+    editButtons.forEach(item => {
+        item.addEventListener('click', function () {
+            editMenuForItem(item.getAttribute("index"));
+        });
+    });
+
+    deleteButtons.forEach(item => {
+        item.addEventListener("click", () => {
+            deleteMenuItem(item.getAttribute("index"));
+        });
+    })
+}
+
 // Toggle edit mode
 function editMenu() {
-    console.log("Edit menu button clicked");
     if (!editMode) {
-        document.getElementById("MenuEditSection").innerHTML += `
-        <div id='newItemDiv'>
-            <h3>Add new menu item:</h3>
-            <p>
-                <label>Name:</label>
-                <input type='text' id='newItemNameField'><br><br>
-                <label>Upload Image</label><br><br>
-                <input type='file' id='newItemFileUpload'><br><br>
-                <label>Price:</label>
-                <input type='text' id='newItemPriceField'><br><br>
-                <label>Calories:</label><input type='text' id='newItemCaloriesField'><br><br>
-                <button onclick='addMenuItem()'>Add Item</button>
-            </p>
-        </div>`;
-
-        // Add edit button to each menu item
-        for (let i = 0; i < currentMenu.length; i++) {
-            document.getElementById("item" + i).innerHTML += `
-            <button index="${i}" class="editMenuItemButton">Edit</button>
-            <button index="${i}" class="deleteMenuItemButton">Delete</button>`;
-        }
-
-        const editButtons = document.querySelectorAll(".editMenuItemButton");
-        const deleteButtons = document.querySelectorAll(".deleteMenuItemButton");
-
-        editButtons.forEach(item => {
-            item.addEventListener('click', function () {
-                editMenuForItem(item.getAttribute("index"));
-            });
-        });
-
-        deleteButtons.forEach(item => {
-            item.addEventListener("click", () => {
-                deleteMenuItem(item.getAttribute("index"));
-            });
-        })
-
+        refreshEditMenu();
         editMode = true;
     } else {
         editMode = false;
         document.getElementById("newItemDiv").remove();
         const editButtons = document.querySelectorAll('.editMenuItemButton');
+        const deleteButtons = document.querySelectorAll('.deleteMenuItemButton');
         editButtons.forEach(item => {
             item.remove();
         });
+        deleteButtons.forEach(item => {
+            item.remove();
+        })
     }
 }
 
@@ -155,7 +165,7 @@ async function addMenuItem() {
     let result = await addItemToDB(nameValue, imageURL, priceValue, caloriesValue);
 
     if (result >= 0) {
-        initMenuAll();    
+        await refreshEditMenu();
     }
 }
 
