@@ -14,7 +14,15 @@
 <body onload="initOrder()">
   <header>
     <nav>
-      <div class="logo">Oaxaca</div>
+      <div class="logo"><a href="index.html">Oaxaca</a></div>
+        <div class="menu-icon">
+          <a>&#9776;</a>
+          <div class="floating-window">
+            <a href="menu.html">Menu</a>
+            <a href="staff.html">Staff</a>
+          </div>
+        </div>
+      </div>
       </ul>
     </nav>
   </header>
@@ -31,11 +39,9 @@
       <button id="callHelpButton" onclick="sendHelp()">Call Waiter</button>
       <div id="confirmationSection" style="display: none;">
         <br>
-        <label for="tableNumber">Enter Table Number:</label>
         <input type="text" id="tableNumber" placeholder="Table Number">
         <br>
         <button onclick="submitOrder()">Submit Order</button>
-        <br>
         <br>
         <button id="payButton" onclick="sendPayment()"> PAY </button>
       </div>

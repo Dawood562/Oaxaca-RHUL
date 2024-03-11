@@ -3,7 +3,7 @@ var sockInit = false;
 var waiterID = -1
 var waiterUsername = "";
 
-document.addEventListener('DOMContentLoaded', e=>{
+document.addEventListener('DOMContentLoaded', e => {
     registerWaiter();
     initSock(); // This should be called within register waiter after registering waiter
 
@@ -13,27 +13,31 @@ function getUserNameFromCookies() {
     let cookieData = document.cookie;
     cookieData.split(";").forEach(cookie => {
         indexOfParam = cookie.indexOf("=");
-        if(cookie.substring(0, indexOfParam).indexOf("username") != -1){
-            waiterUsername = cookie.substring(indexOfParam+1, cookie.length);
+        if (cookie.substring(0, indexOfParam).indexOf("username") != -1) {
+            waiterUsername = cookie.substring(indexOfParam + 1, cookie.length);
         }
     })
 }
 
-async function registerWaiter(){
+async function registerWaiter() {
     getUserNameFromCookies();
+    let randId = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
+    console.log(randId);
 
-    if(waiterUsername.length <= 0){
-        console.log("WAITER NOT REGISTERED! INVALID USERNAME: {"+waiterUsername+"}");
+    if (waiterUsername.length <= 0) {
+        console.log("WAITER NOT REGISTERED! INVALID USERNAME: {" + waiterUsername + "}");
         return;
     }
 
     const response = await fetch("http://localhost:4444/add_waiter", {
-        method:"PUT",
-        headers:{
+        method: "PUT",
+        headers: {
             "Content-Type": "application/json"
         },
-        body:JSON.stringify({
-            "username": waiterUsername,
+        body: JSON.stringify({
+            "id": randId,
+            "waiterUsername": waiterUsername,
+            "tableNumber": []
         })
     }).then(resp => resp.json()).then(data => {
         console.log(data)
@@ -43,18 +47,14 @@ async function registerWaiter(){
 }
 
 // On leaving waiter page
-window.onbeforeunload = removeWaiter;
+document.addEventListener("beforeunload", (e) => {
 
-async function removeWaiter(){
-    const response = await fetch("http://localhost:4444/remove_waiter",{
-        method:"POST",
-        headers:{
-            "Content-Type": "application/json"
-        },
-        body:JSON.stringify({
-            "id": waiterID,
-        })
-    })
+    // Unregister waiter
+    removeWaiter();
+})
+
+function removeWaiter() {
+
 }
 
 function initSock() {
@@ -80,16 +80,16 @@ function handleMessages(e) {
         console.log("Connected to backend websocket");
     } else if (e.data == "OK") {
         console.log("Notification successfully received");
-    }else if (e.data == "SERVICE"){
+    } else if (e.data == "SERVICE") {
         // NOTIFICATION SENT BY KITCHEN STAFF TO WAITERS - DO STUFF HERE
         alert("Kitchen has called service!")
-    }else if (e.data.includes("HELP")){
+    } else if (e.data.includes("HELP")) {
         // NOTIFICATION SENT BY CUSTOMER TO WAITERS - CUSTOMER IS AT TABLE 'tableNumber' - DO STUFF BELOW
         let tableNumber = e.data.split(":")[1]
         alert("Table " + tableNumber + " needs help!")
-    }else if(e.data == "REFRESH") {
+    } else if (e.data == "REFRESH") {
         refreshOrders();
-    }  else if (e.data == "NEW") {
+    } else if (e.data == "NEW") {
         console.log("Notification: New order received");
         refreshOrders();
     } else if (e.data.startsWith("CANCELLED")) {
@@ -128,7 +128,7 @@ async function refreshOrders() {
         "waiterId": waiterID
     }));
     let data = await response.json();
-    
+
     for (var order of data) {
         if (order.status !== 'Cancelled') {
             table.innerHTML += createOrder(order);
@@ -198,12 +198,12 @@ async function notifyConfirmation(orderId) {
     if (!sockInit) {
         return console.error("SOCKET NOT INITIALIZED - CANNOT NOTIFY CONFIRMATION");
     }
-  
+
     console.log(`Sending confirmation request for order ${orderId}`);
 
     try {
         let response = await fetch(`http://localhost:4444/confirm/${orderId}`, {
-            method: 'PATCH', 
+            method: 'PATCH',
         });
 
         if (response.ok) {
