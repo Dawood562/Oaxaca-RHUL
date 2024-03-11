@@ -121,25 +121,6 @@ func TestDBAuth(t *testing.T) {
 	}
 }
 
-func TestPrepareArgsEmpty(t *testing.T) {
-	args := prepareArgs(&MenuFilter{})
-	assert.Equal(t, "%", args.SearchTerm, "Test search term default")
-	assert.Equal(t, float32(9999), args.MaxPrice, "Test price default")
-	assert.Equal(t, 9999, args.MaxCalories, "Test calorie default")
-}
-
-func TestPrepareArgsNotEmpty(t *testing.T) {
-	args := prepareArgs(&MenuFilter{
-		SearchTerm:  "test",
-		MaxPrice:    5.00,
-		MaxCalories: 500,
-	})
-
-	assert.Equal(t, "%test%", args.SearchTerm, "Test search term preparation")
-	assert.Equal(t, float32(5.00), args.MaxPrice, "Test price preparation")
-	assert.Equal(t, 500, args.MaxCalories, "Test calorie preparation")
-}
-
 func TestOrderRetrievalUnfiltered(t *testing.T) {
 	// Check no data is returned to when no orders are in table
 	ClearOrders()
@@ -241,6 +222,29 @@ func TestFetchingOrdersCorrectlyBringsOrderItems(t *testing.T) {
 	assert.NoError(t, err, "Shouldnt throw an error here")
 	assert.Equal(t, 2, len(testData), "Incorrect amount of data fetched")
 	assert.Equal(t, "Item1", testData[0].Items[0].Notes, "Incorrect item retrieved from order fetch")
+}
+
+func TestAllergenFilter(t *testing.T) {
+	ResetTestOrders()
+
+	item := &models.MenuItem{
+		Name: "Solid block of Gluten",
+		Allergens: []models.Allergen{
+			{
+				Name: "Gluten",
+			},
+		},
+	}
+	AddItem(item)
+
+	data := QueryMenu(&MenuFilter{})
+	assert.Contains(t, data, *item, "Test that the item is included normally")
+	data = QueryMenu(&MenuFilter{
+		Allergens: []string{
+			"gluten",
+		},
+	})
+	assert.NotContains(t, data, *item, "Test that item is excluded when gluten is specified as an allergen")
 }
 
 func TestPayOrder(t *testing.T) {
@@ -356,6 +360,30 @@ func TestAddAndRetrieveAllergens(t *testing.T) {
 	assert.NoError(t, err, "Test that removing a menu item with allergens does not create an error")
 	db.Model(&models.Allergen{}).Where("1=1").Count(&count)
 	assert.Equal(t, int64(0), count, "Test that the correct number of allergens are present in the database")
+}
+
+func TestReadyOrder(t *testing.T) {
+	ResetTestOrders()
+
+	status, err := GetOrderStatus(1)
+	assert.NoError(t, err)
+	assert.Equal(t, StatusAwaitingConfirmation, status, "Check that order begins with correct status")
+
+	err = ReadyOrder(1)
+	assert.NoError(t, err, "Test that marking a valid order as Ready creates no errors")
+	err = ReadyOrder(1)
+	assert.Error(t, err, "Test that marking an order as Ready twice creates an error")
+	err = ReadyOrder(3)
+	assert.Error(t, err, "Test that marking an invalid order as Ready creates an error")
+	status, _ = GetOrderStatus(1)
+	assert.Equal(t, StatusReady, status, "Test that order status was updated correctly")
+	// Test with conflicting statuses
+	DeliverOrder(2)
+	err = ReadyOrder(2)
+	assert.Error(t, err, "Test that a delivered order cannot be marked as ready")
+	CancelOrder(2)
+	err = ReadyOrder(2)
+	assert.Error(t, err, "Test that a cancelled order cannot be marked as ready")
 }
 
 func TestDeliverOrder(t *testing.T) {
