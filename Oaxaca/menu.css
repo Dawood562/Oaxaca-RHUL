@@ -180,17 +180,17 @@ input[type="range"]::-webkit-slider-thumb {
     flex: 1;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(25%, 1fr));
-    gap: 2%;
-    padding: 2%;
-    margin-left: 2%;
+    gap: 5em;
+    padding: 0.25em;
+    margin: 2em 1em 0 1em;
 }
 
 .MenuItemDiv {
-    width: 30%;
-    height: 30em;
+    width: 100%;
+    height: 25em;
     background-color: #ffffff;
     border-radius: 1.25em;
-    padding: 4%;
+    padding: 0.5em;
     box-shadow: 0 0.375em 0.625em rgba(0, 0, 0, 0.1);
     text-align: center;
     display: flex;
