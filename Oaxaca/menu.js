@@ -26,13 +26,13 @@ function createMenuItem(id, itemName, imageURL, price, calories, allergens) {
         <img class='MenuItemImg' src='http://localhost:4444/image/${imageURL}'>
         <div class='MenuItemDetails'>
             <label class='MenuItemName' id="itemName${id}">${itemName}</label><br>
-            <input style="display: none" placeholder="Item Name" id='nameEditPrompt${id}' class='editMenuItemPrompt' type='text'>
+            <input style="display: none; max-width:90%" placeholder="Item Name" id='nameEditPrompt${id}' class='editMenuItemPrompt' type='text'>
             <label class='MenuItemPrice' id="itemPrice${id}">£${price.toFixed(2)}</label><br>
             <p id="priceContext${id}" class="editMenuContext">£</p><input style="display: none" id='priceEditPrompt${id}' placeholder="Price" class='editMenuItemPrompt' type='text'>
             <label class='MenuItemCalories' id="itemCalories${id}">${calories}kcal</label>
             <label class='MenuItemAllergens' id="itemAllergens${id}"><br><b>Allergens:</b><br>${renderAllergens(allergens)}</label>
             <input style="display: none" id='caloriesEditPrompt${id}' class='editMenuItemPrompt' type='text' placeholder="Calories"><p id="caloriesContext${id}" class="editMenuContext">kcal</p>
-            <input style="display: none" id='allergensEditPrompt${id}' class='editMenuItemPrompt' type='text' placeholder="Allergens">
+            <input style="display: none; max-width:90%" id='allergensEditPrompt${id}' class='editMenuItemPrompt' type='text' placeholder="Allergens">
         </div>
         <button id='addItem${id}' + class='addBasketButton' onclick='addToBasket(${id}, "${itemName}", ${price}, ${calories})'>Add to Basket</button>
         <button index="${id}" id="editItem${id}" style="display: none" class="editMenuItemButton">Edit</button>
