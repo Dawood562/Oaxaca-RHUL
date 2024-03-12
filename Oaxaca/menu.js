@@ -1,7 +1,7 @@
 // Will hold currently displayed version of menu
 var currentMenu;
 var editMode = false;
-
+var currentEdit = -1;
 // Called when menu page is initially loaded
 function initMenuAll() {
     if (editMode) {
@@ -25,13 +25,18 @@ function createMenuItem(id, itemName, imageURL, price, calories) {
     <div class='MenuItemDiv' id='item${id}'>
         <img class='MenuItemImg' src='http://localhost:4444/image/${imageURL}'>
         <div class='MenuItemDetails'>
-            <label class='MenuItemName'>${itemName}</label><br>
-            <label class='MenuItemPrice'>£${price.toFixed(2)}</label><br>
-            <label class='MenuItemCalories'>${calories}kcal</label>
+            <label class='MenuItemName' id="itemName${id}">${itemName}</label><br>
+            <input style="display: none" id='nameEditPrompt${id}' class='editMenuItemPrompt' type='text'>
+            <label class='MenuItemPrice' id="itemPrice${id}">£${price.toFixed(2)}</label><br>
+            <input style="display: none" id='priceEditPrompt${id}' class='editMenuItemPrompt' type='text'>
+            <label class='MenuItemCalories' id="itemCalories${id}">${calories}kcal</label>
+            <input style="display: none" id='caloriesEditPrompt${id}' class='editMenuItemPrompt' type='text'>
         </div>
         <button id='addItem${id}' + class='addBasketButton' onclick='addToBasket(${id}, "${itemName}", ${price}, ${calories})'>Add to Basket</button>
         <button index="${id}" id="editItem${id}" style="display: none" class="editMenuItemButton">Edit</button>
-        <button index="${id}" id="editItem${id}" style="display: none" class="deleteMenuItemButton">Delete</button>
+        <button index="${id}" id="deleteItem${id}" style="display: none" class="deleteMenuItemButton">Delete</button>
+        <button index="${id}" id="cancelEditItem${id}" style="display: none" class="cancelEditMenuItemButton" onclick="closeEdit(${id})">Cancel</button>
+        <button index="${id}" id="submitEditItem${id}" style="display: none" class="submitEditMenuItemButton" onclick="submitEdit(${id})">Submit</button>
     </div>`;
 }
 
@@ -45,18 +50,32 @@ async function refreshEditMenu() {
     })
 
     document.querySelectorAll(".editMenuItemButton").forEach(item => {
-        item.style.display = "block";
+        item.style.display = "inline";
         item.addEventListener('click', function () {
             editMenuForItem(item.getAttribute("index"));
         });
     });
 
     document.querySelectorAll(".deleteMenuItemButton").forEach(item => {
-        item.style.display = "block";
+        item.style.display = "inline";
         item.addEventListener("click", () => {
             deleteMenuItem(item.getAttribute("index"));
         });
     })
+}
+
+function closeEdit(id) {
+    document.getElementById(`itemName${id}`).style.display = "inline";
+    document.getElementById(`nameEditPrompt${id}`).style.display = "none";
+    document.getElementById(`itemPrice${id}`).style.display = "inline";
+    document.getElementById(`priceEditPrompt${id}`).style.display = "none";
+    document.getElementById(`itemCalories${id}`).style.display = "inline";
+    document.getElementById(`caloriesEditPrompt${id}`).style.display = "none";
+    document.getElementById(`submitEditItem${id}`).style.display = "none";
+    document.getElementById(`cancelEditItem${id}`).style.display = "none";
+    document.getElementById(`editItem${id}`).style.display = "inline";
+    document.getElementById(`deleteItem${id}`).style.display = "inline";
+    currentEdit = -1;
 }
 
 // Toggle edit mode
@@ -66,6 +85,9 @@ function editMenu() {
         editMode = true;
     } else {
         editMode = false;
+        if(currentEdit !== -1) {
+            closeEdit(currentEdit);
+        }
         document.getElementById("menuEditSection").style.display = "none";
         document.querySelectorAll(".addBasketButton").forEach(item => {
             item.style.display = "block";
@@ -76,41 +98,47 @@ function editMenu() {
         document.querySelectorAll(".deleteMenuItemButton").forEach(item => {
             item.style.display = "none";
         })
+        document.querySelectorAll(".submitEditMenuItemButton").forEach(item => {
+            item.style.display = "none";
+        })
+        document.querySelectorAll(".cancelEditMenuItemButton").forEach(item => {
+            item.style.display = "none";
+        })
     }
 }
 
+function editMenuForItem(id) {
+    let item = getMenuItemById(id);
+    if(currentEdit === -1) {
+        // Replace name with name tag and checkbox
+        document.getElementById(`itemName${id}`).style.display = "none";
+        document.getElementById(`nameEditPrompt${id}`).style.display = "block";
+        document.getElementById(`nameEditPrompt${id}`).value = item.itemName;
 
-var editingText = false;
-// Holds location of item being edited
-var currentlyEditing = -1;
-var oldText;
+        document.getElementById(`itemPrice${id}`).style.display = "none";
+        document.getElementById(`priceEditPrompt${id}`).style.display = "block";
+        document.getElementById(`priceEditPrompt${id}`).value = item.price;
 
-// Should replace name with label displaying name: and a textfield
-// Should replace price and calories of price label and textfield too
-function editMenuForItem(index) {
-    // Index 0 = item name
-    // Index 2 = item price
-    // Index 3 = item calories
-    let itemToEdit = document.getElementById("item" + index).childNodes[4].childNodes;
+        document.getElementById(`itemCalories${id}`).style.display = "none";
+        document.getElementById(`caloriesEditPrompt${id}`).style.display = "block";
+        document.getElementById(`caloriesEditPrompt${id}`).value = item.calories;
 
-    // Replace name with name tag and checkbox
-    itemToEdit[0].innerHTML = "<label class='editMenuItemPrompt'>New name:</label><input id='nameEditPrompt' class='editMenuItemPrompt' type='text'>";
-    itemToEdit[2].innerHTML = "<label class='editMenuItemPrompt'>New price:</label><input id='priceEditPrompt' class='editMenuItemPrompt' type='text'>";
-    itemToEdit[3].innerHTML = "<label class='editMenuItemPrompt'>New calories:</label><input id='caloriesEditPrompt' class='editMenuItemPrompt' type='text'>";
+        document.getElementById(`submitEditItem${id}`).style.display = "inline";
+        document.getElementById(`cancelEditItem${id}`).style.display = "inline";
 
-    document.getElementById("item" + index).innerHTML += "<button index='" + index + "' class='editMenuItemButton'>Submit</button>";
-    document.querySelector(".editMenuItemButton").addEventListener('click', function () {
-        submitMenuEdit(index);
-        let toRemove = document.getElementsByClassName("editMenuItemPrompt");
-        toRemove[0].innerHTML = "<label>Submitted!</label>";
-        for (let i = 1; i < toRemove.length; i++) {
-            toRemove[i].innerHTML = "";
-        }
-        document.getElementById("nameEditPrompt").remove();
-        document.getElementById("priceEditPrompt").remove();
-        document.getElementById("caloriesEditPrompt").remove();
-        document.querySelector(".editMenuItemButton").remove();
-    });
+        document.getElementById(`editItem${id}`).style.display = "none";
+        document.getElementById(`deleteItem${id}`).style.display = "none";
+        currentEdit = id;
+    }
+}
+
+function submitEdit(id) {
+    console.log(`Submitted item ${id}`);
+    closeEdit(id);
+}
+
+function getMenuItemById(id) {
+    return currentMenu.find(item => item.itemId == id);
 }
 
 // Needs to take in index so that it can get id
