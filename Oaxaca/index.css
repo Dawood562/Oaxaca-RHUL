@@ -5,13 +5,18 @@
 }
 
 body {
-    font-family: Arial, sans-serif;
-    line-height: 1.6;
+    font-family: 'Segoe UI', Verdana, sans-serif;
+    line-height: 1.25;
     display: flex;
+    background-color: #f0e8e0;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background-color: #f0e8e0;
+    font-size: 1.15rem;
+}
+
+strong {
+    font-size: 1.25rem;
 }
 
 main {
@@ -26,7 +31,7 @@ nav ul {
 nav ul li {
     margin-bottom: 1.5rem;
     padding: 0.5rem;
-    border-radius: 5px;
+    border-radius: 0.3125rem;
     transition: background-color 0.25s;
 }
 
@@ -41,12 +46,9 @@ nav ul li a {
 }
 
 .hero {
-    max-width: 500px;
-    padding: 50px;
+    max-width: 31.25rem;
+    padding: 3.125rem;
     text-align: center;
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .hero h1 {
@@ -77,15 +79,15 @@ nav ul li a {
     top: 100%;
     left: 50%;
     transform: translateX(-50%);
-    min-width: 160px;
+    min-width: 10rem;
     background-color: #4a3731;
-    border-radius: 0 0 10px 10px;
     z-index: 1;
+    box-shadow: 0 0.375em 0.625em rgba(0, 0, 0, 0.1);
 }
 
 .dropdown li {
     width: 20vh;
-    padding: 12px 16px;
+    padding: 0.75rem 1rem;
     list-style: none;
 }
 

@@ -1,0 +1,148 @@
+body {
+    font-family: 'Segoe UI', Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0e8e0;
+}
+
+header {
+    background-color: #4a3731;
+    color: #ffffff;
+    padding: 1rem;
+    box-shadow: 0 0.125em 0.375em rgba(0, 0, 0, 0.1);
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo a {
+    font-size: 1.5em;
+    font-weight: bold;
+    text-decoration: none;
+    color: #ffffff;
+}
+
+nav ul li a:hover {
+    color: #eeeeee;
+}
+
+.menu-icon {
+    font-size: 1.5em;
+    cursor: pointer;
+    position: relative;
+  }
+  
+  .menu-icon:hover .floating-window {
+    display: block;
+  }
+  
+  .floating-window {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: #fff;
+    padding: 1.25rem;
+    border-radius: 0.625rem;
+    box-shadow: 0 0.25rem 0.375rem rgba(0, 0, 0, 0.1);
+    z-index: 1;
+    font-size: 1rem;
+    text-decoration: none;
+    color: #4a3731;
+  }
+  
+  .floating-window a {
+    font-size: 1.25rem;
+    display: block;
+    text-decoration: none;
+    color: #4a3731;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    transition: background-color 0.3s ease;
+  }
+  
+  .floating-window a:hover {
+    background-color: #eeeeee;
+  }
+  
+  .floating-window a:hover {
+    color: #5e4a42;
+    background-color: #eee;
+  }
+
+main {
+    display: flex;
+    padding: 2rem;
+}
+
+aside {
+    flex: 1;
+    background-color: #ffffff;
+    padding: 1.5rem;
+    border-radius: 0.625em;
+    box-shadow: 0 0.25em 0.5em rgba(0, 0, 0, 0.1);
+    margin-right: 2rem;
+}
+
+aside h2 {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.box {
+    background-color: #f0e8e0;
+    padding: 1rem;
+    border-radius: 0.625em;
+    margin-top: 1rem;
+}
+
+section {
+    flex: 2;
+}
+
+#order_table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 2rem;
+    background-color: #ffffff;
+    box-shadow: 0 0.25em 0.5em rgba(0, 0, 0, 0.1);
+}
+
+#order_table caption {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+#order_table th,
+#order_table td {
+    padding: 1rem;
+    text-align: left;
+}
+
+#order_table th {
+    background-color: #4a3731;
+    color: #ffffff;
+}
+
+#order_table tr:nth-child(even) {
+    background-color: #f0e8e0;
+}
+
+button {
+    padding: 0.5em 1em;
+    background-color: #4a3731;
+    color: #ffffff;
+    border: none;
+    border-radius: 0.3125em;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #5e4a42;
+}

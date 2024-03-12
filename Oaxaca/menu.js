@@ -8,73 +8,83 @@ function initMenuAll() {
         editMenu();
     }
 
-    let data = requestMenu(0, 0, 0); // Zero value = none specified
-    data.then(r => {
-        currentMenu = r;
-        let index = 0;
-        document.getElementById("MenuItemGridLayout").innerHTML = "";
-        r.forEach(element => {
-            document.getElementById("MenuItemGridLayout").innerHTML += createMenuItem(index, element.itemId ,element.itemName, element.imageURL, element.price, element.calories);
-            index++;
-        });
+    refreshMenu();
+}
+
+async function refreshMenu() {
+    let data = await requestMenu(0, 0, 0); // Zero value = none specified
+    currentMenu = data;
+    let index = 0;
+    document.getElementById("MenuItemGridLayout").innerHTML = "";
+    data.forEach(element => {
+        document.getElementById("MenuItemGridLayout").innerHTML += createMenuItem(index, element.itemId ,element.itemName, element.imageURL, element.price, element.calories);
+        index++;
     });
 }
 
 function createMenuItem(index, id, itemName, imageURL, price, calories) {
-    let comp = `<div class='MenuItemDiv' id='item` + index + `'> <img class='MenuItemImg' src='http://localhost:4444/image/${imageURL}'><div class='MenuItemDetails'><label class='MenuItemName'>` + itemName + `</label><br><label class='MenuItemPrice'>£` + price.toFixed(2) + `</label><br><label class='MenuItemCalories'>` + calories + ` kcal</label></div>`;
+    let comp = `<div class='MenuItemDiv' itemid="${id}" id='item` + index + `'> <img class='MenuItemImg' src='http://localhost:4444/image/${imageURL}'><div class='MenuItemDetails'><label class='MenuItemName'>` + itemName + `</label><br><label class='MenuItemPrice'>£` + price.toFixed(2) + `</label><br><label class='MenuItemCalories'>` + calories + ` kcal</label></div>`;
     comp += "<button class='addBasketButton' onclick='addToBasket(" + index + "," + id + ", \"" + itemName + "\", " + price + ", " + calories + ")'>Add to Basket</button>";
     return comp;
 }
 
+async function refreshEditMenu() {
+    await refreshMenu();
+    document.getElementById("MenuEditSection").innerHTML = "";
+    document.getElementById("MenuEditSection").innerHTML += `
+    <div id='newItemDiv'>
+        <h3>Add new menu item:</h3>
+        <p>
+            <label>Name:</label>
+            <input type='text' id='newItemNameField'><br><br>
+            <label>Upload Image</label><br><br>
+            <input type='file' id='newItemFileUpload'><br><br>
+            <label>Price:</label>
+            <input type='text' id='newItemPriceField'><br><br>
+            <label>Calories:</label><input type='text' id='newItemCaloriesField'><br><br>
+            <button onclick='addMenuItem()'>Add Item</button>
+        </p>
+    </div>`;
+
+    // Add edit button to each menu item
+    for (let i = 0; i < currentMenu.length; i++) {
+        document.getElementById("item" + i).innerHTML += `
+        <button index="${i}" class="editMenuItemButton">Edit</button>
+        <button index="${i}" class="deleteMenuItemButton">Delete</button>`;
+    }
+
+    const editButtons = document.querySelectorAll(".editMenuItemButton");
+    const deleteButtons = document.querySelectorAll(".deleteMenuItemButton");
+
+    editButtons.forEach(item => {
+        item.addEventListener('click', function () {
+            editMenuForItem(item.getAttribute("index"));
+        });
+    });
+
+    deleteButtons.forEach(item => {
+        item.addEventListener("click", () => {
+            deleteMenuItem(item.getAttribute("index"));
+        });
+    })
+}
+
 // Toggle edit mode
 function editMenu() {
-    console.log("Edit menu button clicked");
     if (!editMode) {
-        document.getElementById("MenuEditSection").innerHTML += `
-        <div id='newItemDiv'>
-            <h3>Add new menu item:</h3>
-            <p>
-                <label>Name:</label>
-                <input type='text' id='newItemNameField'><br>
-                <label>Upload Image</label><br>
-                <input type='file' id='newItemFileUpload'><br>
-                <label>Price:</label>
-                <input type='text' id='newItemPriceField'><br>
-                <label>Calories:</label><input type='text' id='newItemCaloriesField'><br>
-                <button onclick='addMenuItem()'>Add Item</button>
-            </p>
-        </div>
-        <div id='removeItemDiv'>
-        <h3>Delete menu item:</h3>
-            <p>
-                <label>Enter the name of the item you want to delete from the menu:</label>
-                <input type='text' id='deleteItemNameField'>
-                <button onclick='deleteMenuItem()'>-</button>
-            </p>
-        </div>`;
-
-        // Add edit button to each menu item
-        for (let i = 0; i < currentMenu.length; i++) {
-            document.getElementById("item" + i).innerHTML += "<button index='" + i + "' class='editMenuItemButton'>Edit</button>";
-        }
-
-        const editButtons = document.querySelectorAll(".editMenuItemButton");
-
-        editButtons.forEach(item => {
-            item.addEventListener('click', function () {
-                editMenuForItem(item.getAttribute("index"));
-            });
-        });
-
+        refreshEditMenu();
         editMode = true;
     } else {
+        editMode = false;
         document.getElementById("newItemDiv").remove();
-        document.getElementById("removeItemDiv").remove();
         const editButtons = document.querySelectorAll('.editMenuItemButton');
+        const deleteButtons = document.querySelectorAll('.deleteMenuItemButton');
         editButtons.forEach(item => {
             item.remove();
         });
-        editMode = false;
+        deleteButtons.forEach(item => {
+            item.remove();
+        })
     }
 }
 
@@ -155,7 +165,7 @@ async function addMenuItem() {
     let result = await addItemToDB(nameValue, imageURL, priceValue, caloriesValue);
 
     if (result >= 0) {
-        document.getElementById("MenuItemGridLayout").innerHTML += createMenuItem(currentMenu.length, currentMenu.length, nameValue, imageURL, priceValue, caloriesValue);
+        await refreshEditMenu();
     }
 }
 
@@ -176,20 +186,11 @@ async function uploadImage(image) {
     return resultFilename;
 }
 
-function deleteMenuItem() {
-    let nameValue = document.getElementById("deleteItemNameField").value;
-    removeItem(nameValue).then(r => {
+function deleteMenuItem(index) {
+    let id = document.getElementById(`item${index}`).getAttribute("itemid");
+    removeItem(id).then(r => {
         if (r >= 0) {
-            // First childNodes holds each item on menu
-            // Second childNodes holds the details of the first childnodes menu item
-            // Third childNodes holds the actual details. index 0 is name
-            for (let i = 0; i < document.getElementById("MenuItemGridLayout").childNodes.length; i++) {
-                if (document.getElementById("MenuItemGridLayout").childNodes[i].childNodes[4].childNodes[0].innerHTML == nameValue) {
-                    let gridLayout = document.getElementById("MenuItemGridLayout");
-                    let itemToRemove = document.getElementById("MenuItemGridLayout").childNodes[0];
-                    gridLayout.removeChild(itemToRemove);
-                }
-            }
+            document.getElementById(`item${index}`).remove();
         }
     });
 
@@ -229,11 +230,10 @@ function getIdFromName(name) {
 }
 
 // Contacts backend to remove menu item
-async function removeItem(name) {
-    nameId = String(getIdFromName(name));
+async function removeItem(id) {
     try {
         let response = await fetch("http://localhost:4444/remove_item?" + new URLSearchParams({
-            itemId: nameId
+            itemId: id
         }).toString(), {
             method: "DELETE"
         });
@@ -290,69 +290,66 @@ async function requestMenu(userSearchTerm, userMaxPrice, userMaxCalories) {
 // Stores menu items in basket using cookies
 // Cookie structure is CSV in form: id,itemName,price,calories,quantity
 function addToBasket(index, itemId, itemName, price, calories) {
-    let quantity = 1
-  
-    // This will work for now as we only store 1 type of cookie
-    let previousCookieContent = document.cookie.split("basket=")[1];
-    if(previousCookieContent == null){
-      document.cookie = "basket="
-      previousCookieContent = document.cookie.split("basket=")[1];
-    }
-  
-    let updated = false;
-  
-  
-    // Check that item is not already in basket
-    previousCookieContent.split("#").forEach(element => {
-      let splitCookie = element.split(",")
-      // Item found in basket
-      if(splitCookie[0] == itemId){
-        // Then update quantity instead
-        let newQuantity = Number(splitCookie[4])+Number(quantity);
-        
-        let indexOfItem = previousCookieContent.indexOf(element)
-        let indexOfEndOfItem = previousCookieContent.indexOf("#", indexOfItem)
-        let updatedCookieSegment = previousCookieContent.substring(indexOfItem, indexOfEndOfItem-1)+newQuantity
-        let updatedCookie = previousCookieContent.substring(0,indexOfItem)+updatedCookieSegment+previousCookieContent.substring(indexOfEndOfItem, previousCookieContent.length);
-        document.cookie = "basket="+updatedCookie;
-  
-        updated = true;
-      }
-    });
-  
-    if(!updated){
-      document.cookie="basket="+itemId+","+itemName+","+price+","+calories+","+quantity+"#"+previousCookieContent;
-  
-      let previousBasket = document.getElementById("basketIcon").innerHTML;
-      let previousBasketQuantity = previousBasket.substring(previousBasket.length-1,previousBasket.length);
-      let newQuantity = Number(previousBasketQuantity)+1;
-      document.getElementById("basketIcon").innerHTML = "🛒 "+newQuantity;
-    }
-  
-    console.log("Current basket:"+document.cookie);
-    
+  let quantity = document.getElementById("itemQuantityInput" + index).value
+
+  // This will work for now as we only store 1 type of cookie
+  let previousCookieContent = document.cookie.split("basket=")[1];
+  if (previousCookieContent == null) {
+    document.cookie = "basket="
+    previousCookieContent = document.cookie.split("basket=")[1];
   }
-  
 
-function updateOrderDetails() {
-    const order = JSON.parse(localStorage.getItem('order'));
-    const orderDetailsDiv = document.getElementById('orderDetails');
+  let updated = false;
 
-    if (order && order.length > 0) {
-        order.forEach(item => {
-            const li = document.createElement('li');
-            li.innerHTML = `
-                <h3>${item.itemName}</h3>
-                <p>Price: £${item.price.toFixed(2)}</p>
-                <p>Calories: ${item.calories} kcal</p>
-            `;
-            orderDetailsDiv.appendChild(li);
-        });
-    } else {
-        orderDetailsDiv.innerHTML = '<p>No items selected.</p>';
+  // Check that item is not already in basket
+  previousCookieContent.split("#").forEach(element => {
+    let splitCookie = element.split(",")
+    // Item found in basket
+    if (splitCookie[0] == itemId) {
+      // Then update quantity instead
+      let newQuantity = Number(splitCookie[4]) + Number(quantity);
+
+      let indexOfItem = previousCookieContent.indexOf(element)
+      let indexOfEndOfItem = previousCookieContent.indexOf("#", indexOfItem)
+      let updatedCookieSegment = previousCookieContent.substring(indexOfItem, indexOfEndOfItem - 1) + newQuantity
+      let updatedCookie = previousCookieContent.substring(0, indexOfItem) + updatedCookieSegment + previousCookieContent.substring(indexOfEndOfItem, previousCookieContent.length);
+      document.cookie = "basket=" + updatedCookie;
+
+      updated = true;
     }
+  });
+
+  if (!updated) {
+    document.cookie = "basket=" + itemId + "," + itemName + "," + price + "," + calories + "," + quantity + "#" + previousCookieContent;
+
+    let previousBasket = document.getElementById("basketIcon").innerHTML;
+    let previousBasketQuantity = previousBasket.substring(previousBasket.length - 1, previousBasket.length);
+    let newQuantity = Number(previousBasketQuantity) + 1;
+    document.getElementById("basketIcon").innerHTML = "🛒 " + newQuantity;
+  }
+
+  console.log("Current basket:" + document.cookie);
+
 }
 
+//function to update basket icon with the item quantity in order
+function updateBasketIcon() {
+  let order = JSON.parse(localStorage.getItem('order')) || [];
+  let basketIcon = document.getElementById('basketIcon');
+  let totalQuantity = order.reduce((total, item) => total + item.quantity, 0);
+  basketIcon.textContent = `🛒 ${totalQuantity}`;
+}
+
+//function ro remove menu item from the order
+function removeFromOrder(itemName) {
+  let order = JSON.parse(localStorage.getItem('order')) || [];
+  const itemIndex = order.findIndex(item => item.itemName === itemName);
+  if (itemIndex >= 0) {
+    order.splice(itemIndex, 1);
+    localStorage.setItem('order', JSON.stringify(order));
+  }
+}
+//updates order details and basket icon when DOM is loaded
 document.addEventListener('DOMContentLoaded', function () {
     updateOrderDetails();
 });

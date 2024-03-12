@@ -1,36 +1,42 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <title>Staff Page</title>
   <script src="staff.js"></script>
   <link rel="stylesheet" href="staff.css">
 </head>
+
 <body>
-
-  <div id="loginbox">
-    <form name="login" action="" id="loginform" method="post">
-        Username:<br>
-        <input name="username" id="UN" size="14" /><br>
-        Password:<br>
-        <input name="password" type="password" id="PW" size="14" /><br>
-        <input onclick="storeAccDetails()" type="submit" name="submit" value="login" /><br>
-    </form>
-    <br>
-    <a href="javascript:history.back();">close</a>
-  </div>
-
-  <div class="button-box" id="kitchen-button">
-    <a href="kitchen.html">
-      <img src="https://i.pinimg.com/736x/72/05/ba/7205ba0a0ee50d1f1fc39f765921f8d7.jpg" alt="Kitchen Image">
-        <span>Kitchen</span>
-    </a>
-  </div>
-  
-    <div class="button-box" id="waiter-button">
-      <a href="waiter.html">
-        <img src="https://www.collinsdictionary.com/images/full/waiter_110620211.jpg" alt="Waiter Image">
-          <span>Waiter</span>
-      </a>
+  <main>
+    <div id="loginbox">
+      <form name="login" action="" id="loginform" method="post">
+        Username<br><br>
+        <input name="username" id="UN" style="width: 200px; height: 20px;" /><br>
+        Password<br><br>
+        <input name="password" type="password" id="PW" style="width: 200px; height: 20px;" /><br><br>
+        <input onclick="storeAccDetails()" type="submit" name="submit" value="Login" class="login-button"><br>
+      </form>
+      <br>
+      <a href="javascript:void(0);" class="close" onclick="goHome()">Close</a>
     </div>
+
+    <div class="button-container">
+      <div class="button-box" id="kitchen-button" onclick="goToKitchen()">
+        <img
+          src="https://cdn.discordapp.com/attachments/1205538449722052641/1216349986191708271/chef.jpg?ex=66001133&is=65ed9c33&hm=deae949441da2ccea7ca8f032ffd4fee8c2da2f498afaf77a559e8c5c078e16c&"
+          alt="Kitchen Image">
+        <span>Kitchen</span>
+      </div>
+
+      <div class="button-box" id="waiter-button" onclick="goToWaiter()">
+        <img
+          src="https://cdn.discordapp.com/attachments/1205538449722052641/1216361053928034304/waiter.jpg?ex=66001b82&is=65eda682&hm=cbe4cc284270edcf57f0ef753c8174899cbd0e22366a3c68eb50ea60799e6df3&"
+          alt="Waiter Image">
+        <span>Waiter</span>
+      </div>
+    </div>
+  </main>
 </body>
+
 </html>
