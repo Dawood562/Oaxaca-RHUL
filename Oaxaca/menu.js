@@ -13,15 +13,16 @@ function initMenuAll() {
     let index = 0;
     document.getElementById("MenuItemGridLayout").innerHTML = ""
     r.forEach(element => {
-      document.getElementById("MenuItemGridLayout").innerHTML += createMenuItem(index, element.itemId, element.itemName, element.price, element.calories);
+      document.getElementById("MenuItemGridLayout").innerHTML += createMenuItem(index, element.itemId, element.itemName, element.price, element.calories, element.allergens);
       index++;
     });
   })
 }
 
+
 // Function that takes in data and turns into menu item to be displayed
-function createMenuItem(index, id, itemName, price, calories,allergens) {
-  let comp = "<div class='MenuItemDiv' id='item" + index + "'> <img class='MenuItemImg' src='image/foodimg.jpg'><br> <div class='MenuItemDetails'><label class='MenuItemName'>" + itemName + "</label><br><label class='MenuItemPrice'>£" + price.toFixed(2) + "</label><label class='MenuItemCalories'>" + calories + "kcal</label></div>" + "</label><label class='MenuItemAllergens' >" + "Allergens: allergen1, allergen2" ;
+function createMenuItem(index, id, itemName, price, calories, allergens) {
+  let comp = "<div class='MenuItemDiv' id='item" + index + "'> <img class='MenuItemImg' src='image/foodimg.jpg'><br> <div class='MenuItemDetails'><label class='MenuItemName'>" + itemName + "</label><br><label class='MenuItemPrice'>£" + price.toFixed(2) + "</label><label class='MenuItemCalories'>" + calories + "kcal</label></div>" + "</label><label class='MenuItemAllergens' >" + "Allergens:" + allergens;
   comp += "<input type='number' id='itemQuantityInput" + index + "' min='1' value='1' class='itemQuantityInput'>";
   comp += "<button id='addToBasketButton" + index + "' onclick='addToBasket(" + index + ", " + id + ", \"" + itemName + "\", " + price + ", " + calories + ")'>Add to Basket</button></a></div>";
 
@@ -147,7 +148,7 @@ function deleteMenuItem(){
 }
 
 // Add menu item
-async function addItemToDB(name, _price, _calories) {
+async function addItemToDB(name, _price, _calories, _allergies) {
   try {
     let response = await fetch("http://localhost:4444/add_item", {
       method: 'POST',
@@ -158,6 +159,7 @@ async function addItemToDB(name, _price, _calories) {
         itemName: name,
         price: _price,
         calories: _calories,
+        allergens: [_allergies]
       })
     })
      return 0
@@ -196,12 +198,13 @@ return 0
 }
 
 // Fetches data from backend or throws error to console and provides example menu data
-async function requestMenu(userSearchTerm, userMaxPrice, userMaxCalories) {
+async function requestMenu(userSearchTerm, userMaxPrice, userMaxCalories, userAllergens) {
   try {
     let response = await fetch("http://localhost:4444/menu?" + new URLSearchParams({
       searchTerm: userSearchTerm,
       Price: userMaxPrice,
       Calories: userMaxCalories,
+      allergens: userAllergens
     }).toString())
 
     if (!response.ok) {
@@ -218,22 +221,26 @@ async function requestMenu(userSearchTerm, userMaxPrice, userMaxCalories) {
         itemName: "Tequila",
         price: 6.90,
         calories: 12,
-        Type: "DRINK"
+        Type: "DRINK",
+        allergens: ["None"] 
       }, {
         itemName: "Olives",
         price: 7.99,
         calories: 165,
-        Type: "APPETIZER"
+        Type: "APPETIZER",
+        allergens: ["None"]
       }, {
         itemName: "Mozzarella Sticks",
         price: 8.99,
         calories: 349,
-        Type: "ENTREES"
+        Type: "ENTREES",
+        allergens: ["Dairy", "Gluten"]
       }, {
         itemName: "Ice Cream",
         price: 7.42,
         calories: 632,
-        Type: "DESSERT"
+        Type: "DESSERT",
+        allergens: ["Dairy"]
       }])
   }
 }
@@ -322,7 +329,7 @@ function filterItems(){
        let index = 0;
        document.getElementById("MenuItemGridLayout").innerHTML = "";
        r.forEach(element => {
-           document.getElementById("MenuItemGridLayout").innerHTML+= createMenuItem(index, element.itemName, element.price, element.calories);
+           document.getElementById("MenuItemGridLayout").innerHTML+= createMenuItem(index, element.itemName, element.price, element.calories, element.allergens);
            index++;
        });
    })
