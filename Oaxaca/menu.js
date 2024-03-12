@@ -137,7 +137,7 @@ function editMenuForItem(id) {
 }
 
 function submitEdit(id) {
-    console.log(`Submitted item ${id}`);
+    submitMenuEdit(id);
     closeEdit(id);
 }
 
@@ -146,11 +146,10 @@ function getMenuItemById(id) {
 }
 
 // Needs to take in index so that it can get id
-async function submitMenuEdit(index) {
-    let id = currentMenu[index].itemId;
-    let name = document.getElementById("nameEditPrompt").value;
-    let itemPrice = parseFloat(document.getElementById("priceEditPrompt").value);
-    let itemCalories = parseInt(document.getElementById("caloriesEditPrompt").value);
+async function submitMenuEdit(id) {
+    let name = document.getElementById(`nameEditPrompt${id}`).value;
+    let itemPrice = parseFloat(document.getElementById(`priceEditPrompt${id}`).value);
+    let itemCalories = parseInt(document.getElementById(`caloriesEditPrompt${id}`).value);
 
     try {
         let response = await fetch("http://localhost:4444/edit_item", {
@@ -161,14 +160,17 @@ async function submitMenuEdit(index) {
             body: JSON.stringify({
                 itemId: id,
                 itemName: name,
+                imageURL: getMenuItemById(id).imageURL,
                 price: itemPrice,
                 calories: itemCalories
             })
         });
 
     } catch (error) {
-        console.error(error);
+        alert("Failed to update item: " + error);
     }
+
+    refreshEditMenu();
 }
 
 // Functions to add and delete menu items
