@@ -21,40 +21,41 @@ function getUserNameFromCookies() {
 
 async function registerWaiter() {
     getUserNameFromCookies();
-    let randId = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
-    console.log(randId);
 
-    if (waiterUsername.length <= 0) {
-        console.log("WAITER NOT REGISTERED! INVALID USERNAME: {" + waiterUsername + "}");
+    if(waiterUsername.length <= 0){
+        console.log("WAITER NOT REGISTERED! INVALID USERNAME: {"+waiterUsername+"}");
         return;
     }
 
     const response = await fetch("http://localhost:4444/add_waiter", {
-        method: "PUT",
-        headers: {
+        method:"PUT",
+        headers:{
             "Content-Type": "application/json"
         },
-        body: JSON.stringify({
-            "id": randId,
-            "waiterUsername": waiterUsername,
-            "tableNumber": []
+        body:JSON.stringify({
+            "username": waiterUsername,
         })
     }).then(resp => resp.json()).then(data => {
         console.log(data)
         waiterID = Number(data.id);
         refreshOrders();
     })
+
 }
 
 // On leaving waiter page
-document.addEventListener("beforeunload", (e) => {
+window.onbeforeunload = removeWaiter;
 
-    // Unregister waiter
-    removeWaiter();
-})
-
-function removeWaiter() {
-
+async function removeWaiter(){
+    const response = await fetch("http://localhost:4444/remove_waiter",{
+        method:"POST",
+        headers:{
+            "Content-Type": "application/json"
+        },
+        body:JSON.stringify({
+            "id": waiterID,
+        })
+    })
 }
 
 function initSock() {
