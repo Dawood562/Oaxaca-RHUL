@@ -2,6 +2,9 @@ var sock;
 var sockInit = false;
 var waiterID = -1
 var waiterUsername = "";
+// When a waiter confirms or cancels an order that order is added to this list
+// and checked to make sure a waiter does not duplicate confirm an order
+var cancelConfirmBlacklist = [];
 
 document.addEventListener('DOMContentLoaded', e => {
     registerWaiter();
@@ -149,9 +152,9 @@ function createOrder(order) {
         <td>${new Date(order.orderTime).toLocaleTimeString()}</td>
         <td>${itemsStr.substring(0, itemsStr.length - 2)}</td>
         <td id="status`+order.orderId+`">${order.status}</td>
-        <td><button type="button" onclick="notifyCancellation(${order.orderId})">Cancel Order</button></td>
-        <td><button type="button" onclick="notifyConfirmation(${order.orderId})">Confirm Order</button></td>
-        <td><button type="button" onclick="notifyDelivered(${order.orderId})">Mark Delivered</button></td>
+        <td><button type="button" id="cancelOrderButton`+order.orderId+`" onclick="notifyCancellation(${order.orderId})">Cancel Order</button></td>
+        <td><button type="button" id="confirmOrderButton`+order.orderId+`" onclick="notifyConfirmation(${order.orderId})">Confirm Order</button></td>
+        <td><button type="button" id="confirmDeliveredButton`+order.orderId+` onclick="notifyDelivered(${order.orderId})">Mark Delivered</button></td>
     </tr>`;
 }
 
@@ -191,15 +194,22 @@ async function notifyConfirmation(orderId) {
         return console.error("SOCKET NOT INITIALIZED - CANNOT NOTIFY CONFIRMATION");
     }
 
+    if(cancelConfirmBlacklist.includes(orderId)){
+        return console.error("Order already confirmed/cancelled");
+    }
+
     console.log(`Sending confirmation request for order ${orderId}`);
 
     try {
         let response = await fetch(`http://localhost:4444/confirm/${orderId}`, {
             method: 'PATCH',
-        });
+        })
 
         if (response.ok) {
             console.log(`Confirmation request for order ${orderId} successful`);
+
+            // Add order id to blacklist
+            cancelConfirmBlacklist.push(orderId);
 
         } else if (response.status === 404) {
             console.log(`Order ${orderId} not found.`);
