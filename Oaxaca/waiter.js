@@ -147,7 +147,7 @@ function createOrder(order) {
         <td>${order.tableNumber}</td>
         <td>${new Date(order.orderTime).toLocaleTimeString()}</td>
         <td>${itemsStr.substring(0, itemsStr.length - 2)}</td>
-        <td>${order.status}</td>
+        <td id="status`+order.orderId+`">${order.status}</td>
         <td><button type="button" onclick="notifyCancellation(${order.orderId})">Cancel Order</button></td>
         <td><button type="button" onclick="notifyConfirmation(${order.orderId})">Confirm Order</button></td>
     </tr>`;
@@ -168,16 +168,6 @@ async function notifyCancellation(orderId) {
         if (response.ok) {
             console.log(`Cancellation request for order ${orderId} successful`);
 
-            // Update the order status to "Cancelled" directly on the client side
-            let row = document.querySelector(`[data-order-id="${orderId}"]`);
-            if (row) {
-                row.querySelector('td:nth-child(4)').textContent = 'Cancelled';
-                row.querySelector('td:nth-child(5) button').disabled = true;
-                row.querySelector('td:nth-child(6) button').disabled = true;
-                alert(`Order ${orderId} has been cancelled.`);
-            } else {
-                console.error(`Row with order ID ${orderId} not found.`);
-            }
         } else if (response.status === 404) {
             console.log(`Order ${orderId} not found.`);
             alert(`Order ${orderId} not found.`);
@@ -209,16 +199,6 @@ async function notifyConfirmation(orderId) {
         if (response.ok) {
             console.log(`Confirmation request for order ${orderId} successful`);
 
-            // Update the order status to "Confirmed" directly on the client side
-            let row = document.querySelector(`[data-order-id="${orderId}"]`);
-            if (row) {
-                row.querySelector('td:nth-child(4)').textContent = 'Confirmed';
-                row.querySelector('td:nth-child(5) button').disabled = true;
-                row.querySelector('td:nth-child(6) button').disabled = true;
-                alert(`Order ${orderId} has been confirmed.`);
-            } else {
-                console.error(`Row with order ID ${orderId} not found.`);
-            }
         } else if (response.status === 404) {
             console.log(`Order ${orderId} not found.`);
             alert(`Order ${orderId} not found.`);
