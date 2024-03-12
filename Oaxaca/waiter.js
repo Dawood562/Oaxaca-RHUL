@@ -250,6 +250,7 @@ async function notifyDelivered(orderId){
         });
         if(response.ok){
             console.log(`Successfully marked order ${orderId} as delivered`);
+            deliveredBlacklist.push(orderId);
         }else{
             console.error("Failed to mark as delivered:");
             console.log(response);
