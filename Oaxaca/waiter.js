@@ -151,6 +151,7 @@ function createOrder(order) {
         <td id="status`+order.orderId+`">${order.status}</td>
         <td><button type="button" onclick="notifyCancellation(${order.orderId})">Cancel Order</button></td>
         <td><button type="button" onclick="notifyConfirmation(${order.orderId})">Confirm Order</button></td>
+        <td><button type="button" onclick="notifyDelivered(${order.orderId})">Mark Delivered</button></td>
     </tr>`;
 }
 
