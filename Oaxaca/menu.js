@@ -16,11 +16,11 @@ async function refreshMenu() {
     currentMenu = data;
     document.getElementById("MenuItemGridLayout").innerHTML = "";
     data.forEach(element => {
-        document.getElementById("MenuItemGridLayout").innerHTML += createMenuItem(element.itemId ,element.itemName, element.imageURL, element.price, element.calories);
+        document.getElementById("MenuItemGridLayout").innerHTML += createMenuItem(element.itemId ,element.itemName, element.imageURL, element.price, element.calories, element.allergens);
     });
 }
 
-function createMenuItem(id, itemName, imageURL, price, calories) {
+function createMenuItem(id, itemName, imageURL, price, calories, allergens) {
     return `
     <div class='MenuItemDiv' id='item${id}'>
         <img class='MenuItemImg' src='http://localhost:4444/image/${imageURL}'>
@@ -30,6 +30,7 @@ function createMenuItem(id, itemName, imageURL, price, calories) {
             <label class='MenuItemPrice' id="itemPrice${id}">£${price.toFixed(2)}</label><br>
             <p id="priceContext${id}" class="editMenuContext">£</p><input style="display: none" id='priceEditPrompt${id}' class='editMenuItemPrompt' type='text'>
             <label class='MenuItemCalories' id="itemCalories${id}">${calories}kcal</label>
+            <label class='MenuItemAllergens' id="itemAllergens${id}"><br><b>Allergens:</b><br>${renderAllergens(allergens)}</label>
             <input style="display: none" id='caloriesEditPrompt${id}' class='editMenuItemPrompt' type='text'><p id="caloriesContext${id}" class="editMenuContext">kcal</p>
         </div>
         <button id='addItem${id}' + class='addBasketButton' onclick='addToBasket(${id}, "${itemName}", ${price}, ${calories})'>Add to Basket</button>
@@ -38,6 +39,17 @@ function createMenuItem(id, itemName, imageURL, price, calories) {
         <button index="${id}" id="cancelEditItem${id}" style="display: none" class="cancelEditMenuItemButton" onclick="closeEdit(${id})">Cancel</button>
         <button index="${id}" id="submitEditItem${id}" style="display: none" class="submitEditMenuItemButton" onclick="submitEdit(${id})">Submit</button>
     </div>`;
+}
+
+function renderAllergens(allergens) {
+    if(allergens.length === 0) {
+        return "None";
+    }
+    let formatter = Intl.ListFormat("en", {
+        style: "long",
+        type: "conjunction"
+    });
+    return formatter.format(allergens);
 }
 
 async function refreshEditMenu() {
@@ -389,7 +401,7 @@ function filterItems() {
                 (maxCalories === 0 || element.calories <= maxCalories) &&
                 (maxPrice === 0 || element.price <= maxPrice)
             ) {
-                document.getElementById("MenuItemGridLayout").innerHTML += createMenuItem(element.itemName, element.imageURL, element.price, element.calories);
+                document.getElementById("MenuItemGridLayout").innerHTML += createMenuItem(element.itemName, element.imageURL, element.price, element.calories, element.allergens);
             }
         });
     });
