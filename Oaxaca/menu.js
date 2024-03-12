@@ -26,12 +26,13 @@ function createMenuItem(id, itemName, imageURL, price, calories, allergens) {
         <img class='MenuItemImg' src='http://localhost:4444/image/${imageURL}'>
         <div class='MenuItemDetails'>
             <label class='MenuItemName' id="itemName${id}">${itemName}</label><br>
-            <input style="display: none" id='nameEditPrompt${id}' class='editMenuItemPrompt' type='text'>
+            <input style="display: none" placeholder="Item Name" id='nameEditPrompt${id}' class='editMenuItemPrompt' type='text'>
             <label class='MenuItemPrice' id="itemPrice${id}">£${price.toFixed(2)}</label><br>
-            <p id="priceContext${id}" class="editMenuContext">£</p><input style="display: none" id='priceEditPrompt${id}' class='editMenuItemPrompt' type='text'>
+            <p id="priceContext${id}" class="editMenuContext">£</p><input style="display: none" id='priceEditPrompt${id}' placeholder="Price" class='editMenuItemPrompt' type='text'>
             <label class='MenuItemCalories' id="itemCalories${id}">${calories}kcal</label>
             <label class='MenuItemAllergens' id="itemAllergens${id}"><br><b>Allergens:</b><br>${renderAllergens(allergens)}</label>
-            <input style="display: none" id='caloriesEditPrompt${id}' class='editMenuItemPrompt' type='text'><p id="caloriesContext${id}" class="editMenuContext">kcal</p>
+            <input style="display: none" id='caloriesEditPrompt${id}' class='editMenuItemPrompt' type='text' placeholder="Calories"><p id="caloriesContext${id}" class="editMenuContext">kcal</p>
+            <input style="display: none" id='allergensEditPrompt${id}' class='editMenuItemPrompt' type='text' placeholder="Allergens">
         </div>
         <button id='addItem${id}' + class='addBasketButton' onclick='addToBasket(${id}, "${itemName}", ${price}, ${calories})'>Add to Basket</button>
         <button index="${id}" id="editItem${id}" style="display: none" class="editMenuItemButton">Edit</button>
@@ -45,11 +46,11 @@ function renderAllergens(allergens) {
     if(allergens.length === 0) {
         return "None";
     }
-    let formatter = Intl.ListFormat("en", {
+    let formatter = new Intl.ListFormat("en", {
         style: "long",
         type: "conjunction"
     });
-    return formatter.format(allergens);
+    return formatter.format(allergens.map((item) => item.name));
 }
 
 async function refreshEditMenu() {
@@ -82,6 +83,7 @@ function closeEdit(id) {
     document.getElementById(`itemPrice${id}`).style.display = "inline";
     document.getElementById(`priceEditPrompt${id}`).style.display = "none";
     document.getElementById(`itemAllergens${id}`).style.display = "block";
+    document.getElementById(`allergensEditPrompt${id}`).style.display = "none";
     document.getElementById(`priceContext${id}`).style.display = "none";
     document.getElementById(`itemCalories${id}`).style.display = "inline";
     document.getElementById(`caloriesContext${id}`).style.display = "none";
@@ -131,6 +133,13 @@ function editMenuForItem(id) {
         document.getElementById(`nameEditPrompt${id}`).value = item.itemName;
 
         document.getElementById(`itemAllergens${id}`).style.display = "none";
+        document.getElementById(`allergensEditPrompt${id}`).style.display = "inline";
+        let allergens = "";
+        item.allergens.forEach(allergen => {
+            allergens += allergen.name + ", ";
+        });
+        console.log(item.allergens);
+        document.getElementById(`allergensEditPrompt${id}`).value = allergens.substring(0, allergens.length - 2);
 
         document.getElementById(`itemPrice${id}`).style.display = "none";
         document.getElementById(`priceEditPrompt${id}`).style.display = "inline";
@@ -165,6 +174,7 @@ async function submitMenuEdit(id) {
     let name = document.getElementById(`nameEditPrompt${id}`).value;
     let itemPrice = parseFloat(document.getElementById(`priceEditPrompt${id}`).value);
     let itemCalories = parseInt(document.getElementById(`caloriesEditPrompt${id}`).value);
+    let allergens = allergenStringToArray(document.getElementById(`allergensEditPrompt${id}`).value)
 
     try {
         let response = await fetch("http://localhost:4444/edit_item", {
@@ -177,7 +187,8 @@ async function submitMenuEdit(id) {
                 itemName: name,
                 imageURL: getMenuItemById(id).imageURL,
                 price: itemPrice,
-                calories: itemCalories
+                calories: itemCalories,
+                allergens: allergens
             })
         });
 
@@ -194,7 +205,7 @@ async function addMenuItem() {
     let image = document.getElementById("newItemFileUpload").files[0];
     let priceValue = parseFloat(document.getElementById("newItemPriceField").value);
     let caloriesValue = parseInt(document.getElementById("newItemCaloriesField").value);
-
+    let allergens = document.getElementById("newItemAllergensField").value;
     // Check that the user included an image
     if(image == null) {
         alert("Please upload an image for the item");
@@ -202,11 +213,19 @@ async function addMenuItem() {
     }
 
     let imageURL = await uploadImage(image);
-    let result = await addItemToDB(nameValue, imageURL, priceValue, caloriesValue);
+    let result = await addItemToDB(nameValue, imageURL, priceValue, caloriesValue, allergenStringToArray(allergens));
 
     if (result >= 0) {
         await refreshEditMenu();
     }
+}
+
+function allergenStringToArray(input) {
+    return input.split(",").map(item => {
+        return {
+            name: item.trim()
+        }
+    })
 }
 
 async function uploadImage(image) {
@@ -236,7 +255,7 @@ function deleteMenuItem(id) {
 }
 
 // Add menu item
-async function addItemToDB(name, imageURL, _price, _calories) {
+async function addItemToDB(name, imageURL, _price, _calories, _allergens) {
   try {
     let response = await fetch("http://localhost:4444/add_item", {
       method: 'POST',
@@ -248,6 +267,7 @@ async function addItemToDB(name, imageURL, _price, _calories) {
         imageURL: imageURL,
         price: _price,
         calories: _calories,
+        allergens: _allergens
       })
     })
      return 0
@@ -427,8 +447,8 @@ function initBasketQuantity(){
         if(splitCookie[splitCookie.length-1].length <= 0){
           basketCount--;
         }
-        console.log(basketCount);
-        document.getElementById("basketIcon").innerHTML="🛒 "+basketCount;
+        //console.log(basketCount);
+        //document.getElementById("basketIcon").innerHTML="🛒 "+basketCount;
       }
     })
   }
