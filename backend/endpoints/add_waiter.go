@@ -35,5 +35,15 @@ func RegisterWaiter(c *fiber.Ctx) error {
 	if err != nil {
 		return fiber.NewError(fiber.StatusConflict, err.Error())
 	}
+
+	// Add any pending orders to this waiter
+	pendingOrders := GetQueuedOrders()
+	if len(pendingOrders) > 0 {
+		for _, order := range pendingOrders {
+			AddTableNumber(randWaiterId, order.TableNumber)
+		}
+		ClearOrderQueue()
+	}
+
 	return c.JSON(WaiterResponse{ID: randWaiterId})
 }

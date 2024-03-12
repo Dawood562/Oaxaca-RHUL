@@ -9,7 +9,24 @@ document.addEventListener('DOMContentLoaded', e => {
 })
 
 function initBasketData() {
-    let basketCookies = document.cookie.split("basket=")[1].split("#");
+    let splitCookies = document.cookie.split(";");
+    let basketCookies = "";
+    let basketEmpty = true;
+    splitCookies.forEach(cookie => {
+        if(cookie.indexOf("basket=") >= 0){
+            basketCookies = cookie.split("basket=")[1].split("#");
+            if(basketCookies.length > 1){
+                basketEmpty = false;
+            }
+            
+        }
+    })
+
+    if (basketEmpty){
+        console.log("Basket is empty!");
+        return;
+    }
+
     basketCookies.forEach(item => {
         if (item.length > 0) {
             // For each item in basket
