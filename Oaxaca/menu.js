@@ -28,9 +28,9 @@ function createMenuItem(id, itemName, imageURL, price, calories) {
             <label class='MenuItemName' id="itemName${id}">${itemName}</label><br>
             <input style="display: none" id='nameEditPrompt${id}' class='editMenuItemPrompt' type='text'>
             <label class='MenuItemPrice' id="itemPrice${id}">£${price.toFixed(2)}</label><br>
-            <input style="display: none" id='priceEditPrompt${id}' class='editMenuItemPrompt' type='text'>
+            <p id="priceContext${id}" class="editMenuContext">£</p><input style="display: none" id='priceEditPrompt${id}' class='editMenuItemPrompt' type='text'>
             <label class='MenuItemCalories' id="itemCalories${id}">${calories}kcal</label>
-            <input style="display: none" id='caloriesEditPrompt${id}' class='editMenuItemPrompt' type='text'>
+            <input style="display: none" id='caloriesEditPrompt${id}' class='editMenuItemPrompt' type='text'><p id="caloriesContext${id}" class="editMenuContext">kcal</p>
         </div>
         <button id='addItem${id}' + class='addBasketButton' onclick='addToBasket(${id}, "${itemName}", ${price}, ${calories})'>Add to Basket</button>
         <button index="${id}" id="editItem${id}" style="display: none" class="editMenuItemButton">Edit</button>
@@ -69,7 +69,9 @@ function closeEdit(id) {
     document.getElementById(`nameEditPrompt${id}`).style.display = "none";
     document.getElementById(`itemPrice${id}`).style.display = "inline";
     document.getElementById(`priceEditPrompt${id}`).style.display = "none";
+    document.getElementById(`priceContext${id}`).style.display = "none";
     document.getElementById(`itemCalories${id}`).style.display = "inline";
+    document.getElementById(`caloriesContext${id}`).style.display = "none";
     document.getElementById(`caloriesEditPrompt${id}`).style.display = "none";
     document.getElementById(`submitEditItem${id}`).style.display = "none";
     document.getElementById(`cancelEditItem${id}`).style.display = "none";
@@ -112,16 +114,18 @@ function editMenuForItem(id) {
     if(currentEdit === -1) {
         // Replace name with name tag and checkbox
         document.getElementById(`itemName${id}`).style.display = "none";
-        document.getElementById(`nameEditPrompt${id}`).style.display = "block";
+        document.getElementById(`nameEditPrompt${id}`).style.display = "inline";
         document.getElementById(`nameEditPrompt${id}`).value = item.itemName;
 
         document.getElementById(`itemPrice${id}`).style.display = "none";
-        document.getElementById(`priceEditPrompt${id}`).style.display = "block";
+        document.getElementById(`priceEditPrompt${id}`).style.display = "inline";
         document.getElementById(`priceEditPrompt${id}`).value = item.price;
+        document.getElementById(`priceContext${id}`).style.display = "inline";
 
         document.getElementById(`itemCalories${id}`).style.display = "none";
-        document.getElementById(`caloriesEditPrompt${id}`).style.display = "block";
+        document.getElementById(`caloriesEditPrompt${id}`).style.display = "inline";
         document.getElementById(`caloriesEditPrompt${id}`).value = item.calories;
+        document.getElementById(`caloriesContext${id}`).style.display = "inline";
 
         document.getElementById(`submitEditItem${id}`).style.display = "inline";
         document.getElementById(`cancelEditItem${id}`).style.display = "inline";

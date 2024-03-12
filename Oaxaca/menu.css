@@ -128,6 +128,22 @@ nav {
     flex-grow: 1;
 }
 
+.editMenuItemPrompt {
+    font-size: large;
+    background-color: #f0e8e0 !important;
+    padding: 0.9375em;
+    border: none;
+    border-radius: 0.625em;
+    margin-bottom: 0.625em;
+    max-width: 50%;
+}
+
+.editMenuContext {
+    display: none;
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
 .filter-container input[type="text"] {
     font-size: large;
     background-color: #f0e8e0;
