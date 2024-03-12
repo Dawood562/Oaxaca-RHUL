@@ -37,21 +37,7 @@ function createMenuItem(id, itemName, imageURL, price, calories) {
 
 async function refreshEditMenu() {
     await refreshMenu();
-    document.getElementById("MenuEditSection").innerHTML = "";
-    document.getElementById("MenuEditSection").innerHTML += `
-    <div id='newItemDiv'>
-        <h3>Add new menu item:</h3>
-        <p>
-            <label>Name:</label>
-            <input type='text' id='newItemNameField'><br><br>
-            <label>Upload Image</label><br><br>
-            <input type='file' id='newItemFileUpload'><br><br>
-            <label>Price:</label>
-            <input type='text' id='newItemPriceField'><br><br>
-            <label>Calories:</label><input type='text' id='newItemCaloriesField'><br><br>
-            <button onclick='addMenuItem()'>Add Item</button>
-        </p>
-    </div>`;
+    document.getElementById("menuEditSection").style.display = "block";
 
     // Add edit button to each menu item
     document.querySelectorAll(".addBasketButton").forEach(item => {
@@ -80,17 +66,15 @@ function editMenu() {
         editMode = true;
     } else {
         editMode = false;
-        document.getElementById("newItemDiv").remove();
+        document.getElementById("menuEditSection").style.display = "none";
         document.querySelectorAll(".addBasketButton").forEach(item => {
             item.style.display = "block";
         })
-        const editButtons = document.querySelectorAll('.editMenuItemButton');
-        const deleteButtons = document.querySelectorAll('.deleteMenuItemButton');
-        editButtons.forEach(item => {
-            item.remove();
-        });
-        deleteButtons.forEach(item => {
-            item.remove();
+        document.querySelectorAll('.editMenuItemButton').forEach(item => {
+            item.style.display = "none";
+        })
+        document.querySelectorAll(".deleteMenuItemButton").forEach(item => {
+            item.style.display = "none";
         })
     }
 }

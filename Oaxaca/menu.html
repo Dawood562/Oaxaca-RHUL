@@ -46,7 +46,21 @@
             </div>
         </div>
 
-        <div id="MenuEditSection"></div>
+        <div id="menuEditSection" style="display: none">
+            <div id='newItemDiv'>
+                <h3>Add new menu item:</h3>
+                <p>
+                    <label>Name:</label>
+                    <input type='text' id='newItemNameField'><br><br>
+                    <label>Upload Image</label><br><br>
+                    <input type='file' id='newItemFileUpload'><br><br>
+                    <label>Price:</label>
+                    <input type='text' id='newItemPriceField'><br><br>
+                    <label>Calories:</label><input type='text' id='newItemCaloriesField'><br><br>
+                    <button onclick='addMenuItem()'>Add Item</button>
+                </p>
+            </div>
+        </div>
         
         <div id="MenuItemGridLayout" class="menu-grid"></div>
     </main>
