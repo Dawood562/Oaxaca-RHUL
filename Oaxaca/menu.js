@@ -81,6 +81,7 @@ function closeEdit(id) {
     document.getElementById(`nameEditPrompt${id}`).style.display = "none";
     document.getElementById(`itemPrice${id}`).style.display = "inline";
     document.getElementById(`priceEditPrompt${id}`).style.display = "none";
+    document.getElementById(`itemAllergens${id}`).style.display = "block";
     document.getElementById(`priceContext${id}`).style.display = "none";
     document.getElementById(`itemCalories${id}`).style.display = "inline";
     document.getElementById(`caloriesContext${id}`).style.display = "none";
@@ -128,6 +129,8 @@ function editMenuForItem(id) {
         document.getElementById(`itemName${id}`).style.display = "none";
         document.getElementById(`nameEditPrompt${id}`).style.display = "inline";
         document.getElementById(`nameEditPrompt${id}`).value = item.itemName;
+
+        document.getElementById(`itemAllergens${id}`).style.display = "none";
 
         document.getElementById(`itemPrice${id}`).style.display = "none";
         document.getElementById(`priceEditPrompt${id}`).style.display = "inline";
