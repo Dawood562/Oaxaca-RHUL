@@ -290,7 +290,7 @@ async function requestMenu(userSearchTerm, userMaxPrice, userMaxCalories) {
 // Stores menu items in basket using cookies
 // Cookie structure is CSV in form: id,itemName,price,calories,quantity
 function addToBasket(index, itemId, itemName, price, calories) {
-  let quantity = document.getElementById("itemQuantityInput" + index).value
+  let quantity = 1;
 
   // This will work for now as we only store 1 type of cookie
   let previousCookieContent = document.cookie.split("basket=")[1];
@@ -321,11 +321,6 @@ function addToBasket(index, itemId, itemName, price, calories) {
 
   if (!updated) {
     document.cookie = "basket=" + itemId + "," + itemName + "," + price + "," + calories + "," + quantity + "#" + previousCookieContent;
-
-    let previousBasket = document.getElementById("basketIcon").innerHTML;
-    let previousBasketQuantity = previousBasket.substring(previousBasket.length - 1, previousBasket.length);
-    let newQuantity = Number(previousBasketQuantity) + 1;
-    document.getElementById("basketIcon").innerHTML = "🛒 " + newQuantity;
   }
 
   console.log("Current basket:" + document.cookie);
