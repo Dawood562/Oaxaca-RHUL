@@ -5,6 +5,7 @@ var waiterUsername = "";
 // When a waiter confirms or cancels an order that order is added to this list
 // and checked to make sure a waiter does not duplicate confirm an order
 var cancelConfirmBlacklist = [];
+var deliveredBlacklist = [];
 
 document.addEventListener('DOMContentLoaded', e => {
     registerWaiter();
@@ -154,7 +155,7 @@ function createOrder(order) {
         <td id="status`+order.orderId+`">${order.status}</td>
         <td><button type="button" id="cancelOrderButton`+order.orderId+`" onclick="notifyCancellation(${order.orderId})">Cancel Order</button></td>
         <td><button type="button" id="confirmOrderButton`+order.orderId+`" onclick="notifyConfirmation(${order.orderId})">Confirm Order</button></td>
-        <td><button type="button" id="confirmDeliveredButton`+order.orderId+` onclick="notifyDelivered(${order.orderId})">Mark Delivered</button></td>
+        <td><button type="button" id="confirmDeliveredButton`+order.orderId+`" onclick="notifyDelivered(${order.orderId})">Mark Delivered</button></td>
     </tr>`;
 }
 
@@ -234,6 +235,15 @@ async function notifyConfirmation(orderId) {
 }
 
 async function notifyDelivered(orderId){
+
+    if (!cancelConfirmBlacklist.includes(orderId)){
+        return console.error("Cannot mark order as delivered if not confirmed!");
+    }
+
+    if (deliveredBlacklist.includes(orderId)){
+        return console.error("Already marked as delivered!");
+    }
+
     try{
         let response = await fetch(`http://localhost:4444/delivered/${orderId}`, {
             method: 'PATCH',
