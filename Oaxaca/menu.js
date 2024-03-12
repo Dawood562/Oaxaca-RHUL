@@ -349,10 +349,11 @@ function removeFromOrder(itemName) {
     localStorage.setItem('order', JSON.stringify(order));
   }
 }
-//updates order details and basket icon when DOM is loaded
-document.addEventListener('DOMContentLoaded', function () {
-    updateOrderDetails();
-});
+
+function applyFilter() {
+    // TODO: implement this
+    console.log("Applying filter");
+}
 
 function filterItems() {
     let searchTerm = document.getElementById('searchTerm').value.toLowerCase();
