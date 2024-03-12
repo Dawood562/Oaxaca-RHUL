@@ -216,3 +216,20 @@ async function notifyConfirmation(orderId) {
         alert(`Error while confirming order ${orderId}. Please check console for details.`);
     }
 }
+
+async function notifyDelivered(orderId){
+    try{
+        let response = await fetch(`http://localhost:4444/delivered/${orderId}`, {
+            method: 'PATCH',
+        });
+        if(response.ok){
+            console.log(`Successfully marked order ${orderId} as delivered`);
+        }else{
+            console.error("Failed to mark as delivered:");
+            console.log(response);
+        }
+    }catch (error){
+        console.error(`Error while marking order ${orderId} as delivered`);
+    }
+    
+}
