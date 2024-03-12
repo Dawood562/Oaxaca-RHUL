@@ -163,6 +163,10 @@ async function notifyCancellation(orderId) {
         return console.error("SOCKET NOT INITIALIZED - CANNOT NOTIFY CANCELLATION");
     }
 
+    if(cancelConfirmBlacklist.includes(orderId)){
+        return console.error("Order already confirmed/cancelled");
+    }
+
     console.log(`Sending cancellation request for order ${orderId}`);
 
     try {
@@ -172,6 +176,8 @@ async function notifyCancellation(orderId) {
 
         if (response.ok) {
             console.log(`Cancellation request for order ${orderId} successful`);
+
+            cancelConfirmBlacklist.push(orderId);
 
         } else if (response.status === 404) {
             console.log(`Order ${orderId} not found.`);
