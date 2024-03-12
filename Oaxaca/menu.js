@@ -11,11 +11,31 @@ function initMenuAll() {
     refreshMenu();
 }
 
+// Refreshes the menu with no filter
 async function refreshMenu() {
-    let data = await requestMenu(0, 0, 0); // Zero value = none specified
-    currentMenu = data;
+    await fetchMenuWithFilter("", 0, 0, []);
+}
+
+async function fetchMenuWithFilter(searchTerm, maxPrice, maxCalories, excludedAllergens) {
+    await fetch("http://localhost:4444/menu?" + new URLSearchParams({
+        searchTerm: searchTerm,
+        maxPrice: maxPrice,
+        maxCalories: maxCalories
+    }), {
+        method: "GET",
+    })
+    .then((res) => res.json())
+    .then((data) => {
+        currentMenu = data;
+        renderMenu();
+    }).catch((error) => {
+        alert("Failed to apply filter: " + error);
+    });
+}
+
+function renderMenu() {
     document.getElementById("MenuItemGridLayout").innerHTML = "";
-    data.forEach(element => {
+    currentMenu.forEach(element => {
         document.getElementById("MenuItemGridLayout").innerHTML += createMenuItem(element.itemId ,element.itemName, element.imageURL, element.price, element.calories, element.allergens);
     });
 }
@@ -29,7 +49,7 @@ function createMenuItem(id, itemName, imageURL, price, calories, allergens) {
             <input style="display: none; max-width:90%" placeholder="Item Name" id='nameEditPrompt${id}' class='editMenuItemPrompt' type='text'>
             <label class='MenuItemPrice' id="itemPrice${id}">£${price.toFixed(2)}</label><br>
             <p id="priceContext${id}" class="editMenuContext">£</p><input style="display: none" id='priceEditPrompt${id}' placeholder="Price" class='editMenuItemPrompt' type='text'>
-            <label class='MenuItemCalories' id="itemCalories${id}">${calories}kcal</label>
+            <label class='MenuItemCalories' id="itemCalories${id}">${calories} kcal</label>
             <label class='MenuItemAllergens' id="itemAllergens${id}"><br><b>Allergens:</b><br>${renderAllergens(allergens)}</label>
             <input style="display: none" id='caloriesEditPrompt${id}' class='editMenuItemPrompt' type='text' placeholder="Calories"><p id="caloriesContext${id}" class="editMenuContext">kcal</p>
             <input style="display: none; max-width:90%" id='allergensEditPrompt${id}' class='editMenuItemPrompt' type='text' placeholder="Allergens">
@@ -138,7 +158,6 @@ function editMenuForItem(id) {
         item.allergens.forEach(allergen => {
             allergens += allergen.name + ", ";
         });
-        console.log(item.allergens);
         document.getElementById(`allergensEditPrompt${id}`).value = allergens.substring(0, allergens.length - 2);
 
         document.getElementById(`itemPrice${id}`).style.display = "none";
@@ -305,48 +324,6 @@ async function removeItem(id) {
     }
 }
 
-// Fetches data from backend or throws error to console and provides example menu data
-async function requestMenu(userSearchTerm, userMaxPrice, userMaxCalories) {
-  try {
-    let response = await fetch("http://localhost:4444/menu?" + new URLSearchParams({
-      searchTerm: userSearchTerm,
-      Price: userMaxPrice,
-      Calories: userMaxCalories,
-    }).toString())
-
-        if (!response.ok) {
-            console.log("ERROR fetching menu");
-        }
-
-        let data = await response.json();
-        return data;
-    } catch (error) {
-        console.error(error);
-        // Return example error if unable to connect to backend
-        return ([{
-            itemName: "Tequila",
-            price: 6.90,
-            calories: 12,
-            Type: "DRINK"
-        }, {
-            itemName: "Olives",
-            price: 7.99,
-            calories: 165,
-            Type: "APPETIZER"
-        }, {
-            itemName: "Mozzarella Sticks",
-            price: 8.99,
-            calories: 349,
-            Type: "ENTREES"
-        }, {
-            itemName: "Ice Cream",
-            price: 7.42,
-            calories: 632,
-            Type: "DESSERT"
-        }]);
-    }
-}
-
 // function to add menu item to basket
 // Stores menu items in basket using cookies
 // Cookie structure is CSV in form: id,itemName,price,calories,quantity
@@ -384,8 +361,6 @@ function addToBasket(index, itemId, itemName, price, calories) {
     document.cookie = "basket=" + itemId + "," + itemName + "," + price + "," + calories + "," + quantity + "#" + previousCookieContent;
   }
 
-  console.log("Current basket:" + document.cookie);
-
 }
 
 //function to update basket icon with the item quantity in order
@@ -407,29 +382,11 @@ function removeFromOrder(itemName) {
 }
 
 function applyFilter() {
-    // TODO: implement this
-    console.log("Applying filter");
-}
-
-function filterItems() {
     let searchTerm = document.getElementById('searchTerm').value.toLowerCase();
     let maxCalories = parseInt(document.getElementById('maxCalories').value) || 0;
     let maxPrice = parseFloat(document.getElementById('maxPrice').value) || 0;
-
-    let data = requestMenu('', 0, 0); // Fetch all menu items
-    data.then(r => {
-        document.getElementById("MenuItemGridLayout").innerHTML = "";
-        r.forEach(element => {
-            // Check if the current item matches the filter criteria
-            if (
-                (searchTerm.length === 0 || element.itemName.toLowerCase().includes(searchTerm)) &&
-                (maxCalories === 0 || element.calories <= maxCalories) &&
-                (maxPrice === 0 || element.price <= maxPrice)
-            ) {
-                document.getElementById("MenuItemGridLayout").innerHTML += createMenuItem(element.itemName, element.imageURL, element.price, element.calories, element.allergens);
-            }
-        });
-    });
+    let allergens = [];
+    fetchMenuWithFilter(searchTerm, maxPrice, maxCalories, allergens);
 }
 
 // Initialises basket quantity on page load to number of items in basket cookies
@@ -442,7 +399,6 @@ function initBasketQuantity(){
     cookieList.forEach(cookie => {
       if(cookie.indexOf("basket=")!=-1){
         cookie = cookie.substring(cookie.indexOf("basket=")+"basket=".length, cookie.length)
-        console.log(cookie)
         // we found basket cookie
         let splitCookie = cookie.split("#")
         let basketCount = splitCookie.length
