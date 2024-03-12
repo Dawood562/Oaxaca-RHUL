@@ -76,6 +76,8 @@ func EditItem(item *models.MenuItem) error {
 	if result.RowsAffected == 0 {
 		return errors.New("item does not exist")
 	}
+	// Delete old allergen relations
+	db.Where(&models.Allergen{ItemID: item.ID}).Delete(&models.Allergen{})
 	// Update the item
 	result = db.Save(&item)
 	return result.Error
