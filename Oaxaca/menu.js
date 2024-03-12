@@ -225,7 +225,9 @@ function allergenStringToArray(input) {
         return {
             name: item.trim()
         }
-    })
+    }).filter((item) => {
+        return item.name.length > 0
+    });
 }
 
 async function uploadImage(image) {
