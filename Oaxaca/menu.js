@@ -14,18 +14,25 @@ function initMenuAll() {
 async function refreshMenu() {
     let data = await requestMenu(0, 0, 0); // Zero value = none specified
     currentMenu = data;
-    let index = 0;
     document.getElementById("MenuItemGridLayout").innerHTML = "";
     data.forEach(element => {
-        document.getElementById("MenuItemGridLayout").innerHTML += createMenuItem(index, element.itemId ,element.itemName, element.imageURL, element.price, element.calories);
-        index++;
+        document.getElementById("MenuItemGridLayout").innerHTML += createMenuItem(element.itemId ,element.itemName, element.imageURL, element.price, element.calories);
     });
 }
 
-function createMenuItem(index, id, itemName, imageURL, price, calories) {
-    let comp = `<div class='MenuItemDiv' itemid="${id}" id='item` + index + `'> <img class='MenuItemImg' src='http://localhost:4444/image/${imageURL}'><div class='MenuItemDetails'><label class='MenuItemName'>` + itemName + `</label><br><label class='MenuItemPrice'>£` + price.toFixed(2) + `</label><br><label class='MenuItemCalories'>` + calories + ` kcal</label></div>`;
-    comp += "<button class='addBasketButton' onclick='addToBasket(" + index + "," + id + ", \"" + itemName + "\", " + price + ", " + calories + ")'>Add to Basket</button>";
-    return comp;
+function createMenuItem(id, itemName, imageURL, price, calories) {
+    return `
+    <div class='MenuItemDiv' id='item${id}'>
+        <img class='MenuItemImg' src='http://localhost:4444/image/${imageURL}'>
+        <div class='MenuItemDetails'>
+            <label class='MenuItemName'>${itemName}</label><br>
+            <label class='MenuItemPrice'>£${price.toFixed(2)}</label><br>
+            <label class='MenuItemCalories'>${calories}kcal</label>
+        </div>
+        <button id='addItem${id}' + class='addBasketButton' onclick='addToBasket(${id}, "${itemName}", ${price}, ${calories})'>Add to Basket</button>
+        <button index="${id}" id="editItem${id}" style="display: none" class="editMenuItemButton">Edit</button>
+        <button index="${id}" id="editItem${id}" style="display: none" class="deleteMenuItemButton">Delete</button>
+    </div>`;
 }
 
 async function refreshEditMenu() {
@@ -47,22 +54,19 @@ async function refreshEditMenu() {
     </div>`;
 
     // Add edit button to each menu item
-    for (let i = 0; i < currentMenu.length; i++) {
-        document.getElementById("item" + i).innerHTML += `
-        <button index="${i}" class="editMenuItemButton">Edit</button>
-        <button index="${i}" class="deleteMenuItemButton">Delete</button>`;
-    }
+    document.querySelectorAll(".addBasketButton").forEach(item => {
+        item.style.display = "none";
+    })
 
-    const editButtons = document.querySelectorAll(".editMenuItemButton");
-    const deleteButtons = document.querySelectorAll(".deleteMenuItemButton");
-
-    editButtons.forEach(item => {
+    document.querySelectorAll(".editMenuItemButton").forEach(item => {
+        item.style.display = "block";
         item.addEventListener('click', function () {
             editMenuForItem(item.getAttribute("index"));
         });
     });
 
-    deleteButtons.forEach(item => {
+    document.querySelectorAll(".deleteMenuItemButton").forEach(item => {
+        item.style.display = "block";
         item.addEventListener("click", () => {
             deleteMenuItem(item.getAttribute("index"));
         });
@@ -77,6 +81,9 @@ function editMenu() {
     } else {
         editMode = false;
         document.getElementById("newItemDiv").remove();
+        document.querySelectorAll(".addBasketButton").forEach(item => {
+            item.style.display = "block";
+        })
         const editButtons = document.querySelectorAll('.editMenuItemButton');
         const deleteButtons = document.querySelectorAll('.deleteMenuItemButton');
         editButtons.forEach(item => {
@@ -186,11 +193,10 @@ async function uploadImage(image) {
     return resultFilename;
 }
 
-function deleteMenuItem(index) {
-    let id = document.getElementById(`item${index}`).getAttribute("itemid");
+function deleteMenuItem(id) {
     removeItem(id).then(r => {
         if (r >= 0) {
-            document.getElementById(`item${index}`).remove();
+            document.getElementById(`item${id}`).remove();
         }
     });
 
@@ -362,7 +368,6 @@ function filterItems() {
 
     let data = requestMenu('', 0, 0); // Fetch all menu items
     data.then(r => {
-        let index = 0;
         document.getElementById("MenuItemGridLayout").innerHTML = "";
         r.forEach(element => {
             // Check if the current item matches the filter criteria
@@ -371,8 +376,7 @@ function filterItems() {
                 (maxCalories === 0 || element.calories <= maxCalories) &&
                 (maxPrice === 0 || element.price <= maxPrice)
             ) {
-                document.getElementById("MenuItemGridLayout").innerHTML += createMenuItem(index, element.itemName, element.imageURL, element.price, element.calories);
-                index++;
+                document.getElementById("MenuItemGridLayout").innerHTML += createMenuItem(element.itemName, element.imageURL, element.price, element.calories);
             }
         });
     });
