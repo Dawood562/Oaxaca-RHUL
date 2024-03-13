@@ -72,45 +72,11 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             initMenuAll();
-            initializeMenu();
             initializeCategoryFilter();
         });
 
         function goToOrderPage() {
             window.location.href = "order.html";
-        }
-
-        function initializeMenu() {
-            const activeButton = document.querySelector('#menuFilter button.active');
-
-            if (activeButton) {
-                const category = activeButton.getAttribute('data-category');
-                const filter = {
-                    searchTerm: '',
-                    maxCalories: 0,
-                    maxPrice: 0,
-                    category: category
-                };
-                filterMenu(filter, activeButton);
-            } else {
-                applyFilter();
-            }
-        }
-
-        function filterItems() {
-            const searchTerm = document.getElementById('searchTerm').value.toLowerCase();
-            const maxCalories = parseInt(document.getElementById('maxCalories').value) || 0;
-            const maxPrice = parseFloat(document.getElementById('maxPrice').value) || 0;
-
-            const filter = {
-                searchTerm: searchTerm,
-                maxCalories: maxCalories,
-                maxPrice: maxPrice,
-                category: 'all'
-            };
-
-            filterMenu(filter, document.querySelector('#menuFilter button.filterButton'));
-            showFilterFeedback();
         }
 
         function resetFilter() {
@@ -122,81 +88,6 @@
             document.getElementById('maxCaloriesValue').textContent = "0";
 
             applyFilter();
-        }
-
-        function filterMenu(filter, button) {
-            const sections = document.querySelectorAll('.menuSection section');
-            const buttons = document.querySelectorAll('#menuFilter button.filterButton');
-
-            buttons.forEach(btn => {
-                btn.classList.remove('active');
-            });
-
-            button.classList.add('active');
-
-            sections.forEach(section => {
-                const sectionClass = section.classList[0];
-                const sectionTitle = section.querySelector('h2');
-                const listItems = section.querySelectorAll('ul li');
-
-                let sectionMatch = false;
-
-                listItems.forEach(item => {
-                    const itemName = item.innerText.toLowerCase();
-                    const itemCalories = parseInt(item.dataset.calories) || 0;
-                    const itemPrice = parseFloat(item.dataset.price) || 0;
-
-                    if (
-                        (filter.searchTerm === '' || itemName.includes(filter.searchTerm.toLowerCase())) &&
-                        (filter.maxCalories === 0 || itemCalories <= filter.maxCalories) &&
-                        (filter.maxPrice === 0 || itemPrice <= filter.maxPrice) &&
-                        (filter.category === 'all' || sectionClass === filter.category)
-                    ) {
-                        sectionMatch = true;
-                        item.style.display = 'block';
-                    } else {
-                        item.style.display = 'none';
-                    }
-                });
-
-                if (sectionMatch) {
-                    section.style.display = 'block';
-                    sectionTitle.style.display = 'block';
-                } else {
-                    section.style.display = 'none';
-                    sectionTitle.style.display = 'none';
-                }
-            });
-        }
-
-        function initializeCategoryFilter() {
-            const activeButton = document.querySelector('#menuFilter button.active');
-            if (activeButton) {
-                const category = activeButton.getAttribute('data-category');
-                filterMenuByCategory(category, activeButton);
-            }
-        }
-
-        function filterMenuByCategory(category, button) {
-            initMenuAll()
-            const sections = document.querySelectorAll('.menuSection section');
-            const buttons = document.querySelectorAll('#menuFilter button.filterButton');
-
-            buttons.forEach(btn => {
-                btn.classList.remove('active');
-            });
-
-            button.classList.add('active');
-
-            sections.forEach(section => {
-                const sectionClass = section.classList[0];
-
-                if (category === 'all' || sectionClass === category) {
-                    section.style.display = 'block';
-                } else {
-                    section.style.display = 'none';
-                }
-            });
         }
     </script>
 </body>
