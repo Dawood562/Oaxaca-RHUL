@@ -201,9 +201,22 @@ function replaceWithOrderStatus(){
     let submissionNotification = document.createElement('div');
     submissionNotification.innerHTML = `
     <label class='orderPageItem'>Submitted order!</label> <br>
-    <label>Status: </label> <label id=orderStatus>Awaiting confirmation...</label>
+    <label>Status: </label> <label id=orderStatus>Awaiting confirmation...</label> <button onclick="refreshOrderStatus()" id="refreshStatusButton">Refresh</button>
     `;
     orderList.appendChild(submissionNotification);
+}
+
+async function refreshOrderStatus(){
+    if(orderID < 0){
+        console.error("Cannot refresh order with no order id!")
+        return;
+    }
+    console.log("!"+orderID)
+    let response = await fetch(`http://localhost:4444/status/${orderID}`, {
+        method: 'GET',
+    }).then((res) => res.text()).then((data) => {
+        console.log("Retrieved status of: "+data);
+    });
 }
 
 function sendPayment() {
