@@ -5,14 +5,12 @@
 }
 
 body {
-    font-family: 'Segoe UI', Verdana, sans-serif;
-    line-height: 1.25;
+    line-height: 1.5;
     display: flex;
-    background-color: #f0e8e0;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    font-size: 1.15rem;
+    font-size: 1.2rem;
 }
 
 strong {
@@ -32,7 +30,6 @@ nav ul li {
     margin-bottom: 1.5rem;
     padding: 0.5rem;
     border-radius: 0.3125rem;
-    transition: background-color 0.25s;
 }
 
 nav ul li:hover {
@@ -71,6 +68,7 @@ nav ul li a {
     background-color: #4a3731;
     text-decoration: none;
     cursor: pointer;
+    border-radius: 0.625rem;
 }
 
 .dropdown {
@@ -79,19 +77,23 @@ nav ul li a {
     top: 100%;
     left: 50%;
     transform: translateX(-50%);
-    min-width: 10rem;
+    min-width: 100%;
     background-color: #4a3731;
     z-index: 1;
     box-shadow: 0 0.375em 0.625em rgba(0, 0, 0, 0.1);
+    border-radius: 0 0 0.625rem 0.625rem;
+    cursor: pointer;
 }
 
 .dropdown li {
     width: 20vh;
-    padding: 0.75rem 1rem;
+    padding: 0;
     list-style: none;
 }
 
 .dropdown li a {
+    display: block;
+    padding: 0.75rem 1rem;
     font-size: 1.2rem;
     color: #fff;
     text-decoration: none;
@@ -99,4 +101,17 @@ nav ul li a {
 
 .menu-container:hover .dropdown {
     display: block;
+}
+
+.menu-container:hover .menu-btn {
+    border-radius: 0.625rem 0.625rem 0 0;
+}
+
+.menu-btn:hover {
+    background-color: #5e4a42;
+}
+
+.dropdown li:hover {
+    background-color: #5e4a42;
+    border-radius: 0 0 0.625rem 0.625rem;
 }

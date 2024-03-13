@@ -4,6 +4,8 @@
 <head>
   <title>Staff Page</title>
   <script src="staff.js"></script>
+  <link rel="icon" type="image/x-icon" href="icon.ico">
+  <link rel="stylesheet" href="shared.css">
   <link rel="stylesheet" href="staff.css">
 </head>
 
@@ -11,13 +13,12 @@
   <main>
     <div id="loginbox">
       <form name="login" action="" id="loginform" method="post">
-        Username<br><br>
+        Username<br>
         <input name="username" id="UN" style="width: 200px; height: 20px;" /><br>
-        Password<br><br>
-        <input name="password" type="password" id="PW" style="width: 200px; height: 20px;" /><br><br>
+        Password<br>
+        <input name="password" type="password" id="PW" style="width: 200px; height: 20px;" /><br>
         <input onclick="storeAccDetails()" type="submit" name="submit" value="Login" class="login-button"><br>
       </form>
-      <br>
       <a href="javascript:void(0);" class="close" onclick="goHome()">Close</a>
     </div>
 
