@@ -28,6 +28,33 @@ main {
   width: 18.75rem;
 }
 
+#orderHeading div {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+#orderHeading div p {
+  font-size: 1.2rem;
+  color: #4a3731;
+  margin-bottom: 1rem;
+}
+
+#orderHeading div button {
+  background-color: #4a3731;
+  color: #fff;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 0.625rem;
+  font-size: 1.2rem;
+  cursor: pointer;
+  margin-bottom: 1rem;
+  width: auto;
+}
+
+#orderHeading div button:hover {
+  background-color: #5e4a42;
+}
+
 button {
   background-color: #4a3731;
   color: #fff;
