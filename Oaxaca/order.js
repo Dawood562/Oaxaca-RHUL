@@ -9,7 +9,24 @@ document.addEventListener('DOMContentLoaded', e => {
 })
 
 function initBasketData() {
-    let basketCookies = document.cookie.split("basket=")[1].split("#");
+    let splitCookies = document.cookie.split(";");
+    let basketCookies = "";
+    let basketEmpty = true;
+    splitCookies.forEach(cookie => {
+        if(cookie.indexOf("basket=") >= 0){
+            basketCookies = cookie.split("basket=")[1].split("#");
+            if(basketCookies.length > 1){
+                basketEmpty = false;
+            }
+            
+        }
+    })
+
+    if (basketEmpty){
+        console.log("Basket is empty!");
+        return;
+    }
+
     basketCookies.forEach(item => {
         if (item.length > 0) {
             // For each item in basket
@@ -122,7 +139,7 @@ function removeOrderFromCookie(id) {
     document.cookie = newCookieData;
 }
 
-
+var orderID = -1;
 function submitOrder() {
     let tableNum = Number(document.getElementById('tableNumber').value);
 
@@ -164,20 +181,42 @@ function submitOrder() {
             throw new Error("Could not place order");
         })
         .then((data) => {
-            console.log('Order submitted successfully');
+            console.log(`Order of id ${data} submitted successfully`);
+            orderID = Number(data);
 
             localStorage.removeItem('order'); // Clears the basket after a successful order
             localStorage.setItem("orderID", data);
+
+            document.cookie = "basket=";
+            removeAllOrders();
+            replaceWithOrderStatus();
         })
         .catch((err) => {
             alert(err);
         });
-    document.cookie = "basket=";
-    removeAllOrders();
+}
+
+function replaceWithOrderStatus(){
     let orderList = document.getElementById("orderHeading");
     let submissionNotification = document.createElement('div');
-    submissionNotification.innerHTML = "<label class='orderPageItem'>Submitted order!</label>";
+    submissionNotification.innerHTML = `
+    <label class='orderPageItem'>Submitted order!</label> <br>
+    <label>Status: </label> <label id=orderStatus>Awaiting confirmation...</label> <button onclick="refreshOrderStatus()" id="refreshStatusButton">Refresh</button>
+    `;
     orderList.appendChild(submissionNotification);
+}
+
+async function refreshOrderStatus(){
+    if(orderID < 0){
+        console.error("Cannot refresh order with no order id!")
+        return;
+    }
+    let response = await fetch(`http://localhost:4444/status/${orderID}`, {
+        method: 'GET',
+    }).then((res) => res.text()).then((data) => {
+        console.log("Retrieved status of: "+data);
+        document.getElementById("orderStatus").innerHTML = data;
+    });
 }
 
 function sendPayment() {

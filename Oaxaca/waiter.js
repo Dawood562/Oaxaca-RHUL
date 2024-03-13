@@ -2,6 +2,10 @@ var sock;
 var sockInit = false;
 var waiterID = -1
 var waiterUsername = "";
+// When a waiter confirms or cancels an order that order is added to this list
+// and checked to make sure a waiter does not duplicate confirm an order
+var cancelConfirmBlacklist = [];
+var deliveredBlacklist = [];
 
 document.addEventListener('DOMContentLoaded', e => {
     registerWaiter();
@@ -21,40 +25,41 @@ function getUserNameFromCookies() {
 
 async function registerWaiter() {
     getUserNameFromCookies();
-    let randId = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
-    console.log(randId);
 
-    if (waiterUsername.length <= 0) {
-        console.log("WAITER NOT REGISTERED! INVALID USERNAME: {" + waiterUsername + "}");
+    if(waiterUsername.length <= 0){
+        console.log("WAITER NOT REGISTERED! INVALID USERNAME: {"+waiterUsername+"}");
         return;
     }
 
     const response = await fetch("http://localhost:4444/add_waiter", {
-        method: "PUT",
-        headers: {
+        method:"PUT",
+        headers:{
             "Content-Type": "application/json"
         },
-        body: JSON.stringify({
-            "id": randId,
-            "waiterUsername": waiterUsername,
-            "tableNumber": []
+        body:JSON.stringify({
+            "username": waiterUsername,
         })
     }).then(resp => resp.json()).then(data => {
         console.log(data)
         waiterID = Number(data.id);
         refreshOrders();
     })
+
 }
 
 // On leaving waiter page
-document.addEventListener("beforeunload", (e) => {
+window.onbeforeunload = removeWaiter;
 
-    // Unregister waiter
-    removeWaiter();
-})
-
-function removeWaiter() {
-
+async function removeWaiter(){
+    const response = await fetch("http://localhost:4444/remove_waiter",{
+        method:"POST",
+        headers:{
+            "Content-Type": "application/json"
+        },
+        body:JSON.stringify({
+            "id": waiterID,
+        })
+    })
 }
 
 function initSock() {
@@ -147,15 +152,20 @@ function createOrder(order) {
         <td>${order.tableNumber}</td>
         <td>${new Date(order.orderTime).toLocaleTimeString()}</td>
         <td>${itemsStr.substring(0, itemsStr.length - 2)}</td>
-        <td>${order.status}</td>
-        <td><button type="button" onclick="notifyCancellation(${order.orderId})">Cancel Order</button></td>
-        <td><button type="button" onclick="notifyConfirmation(${order.orderId})">Confirm Order</button></td>
+        <td id="status`+order.orderId+`">${order.status}</td>
+        <td><button type="button" id="cancelOrderButton`+order.orderId+`" onclick="notifyCancellation(${order.orderId})">Cancel Order</button></td>
+        <td><button type="button" id="confirmOrderButton`+order.orderId+`" onclick="notifyConfirmation(${order.orderId})">Confirm Order</button></td>
+        <td><button type="button" id="confirmDeliveredButton`+order.orderId+`" onclick="notifyDelivered(${order.orderId})">Mark Delivered</button></td>
     </tr>`;
 }
 
 async function notifyCancellation(orderId) {
     if (!sockInit) {
         return console.error("SOCKET NOT INITIALIZED - CANNOT NOTIFY CANCELLATION");
+    }
+
+    if(cancelConfirmBlacklist.includes(orderId)){
+        return console.error("Order already confirmed/cancelled");
     }
 
     console.log(`Sending cancellation request for order ${orderId}`);
@@ -168,16 +178,8 @@ async function notifyCancellation(orderId) {
         if (response.ok) {
             console.log(`Cancellation request for order ${orderId} successful`);
 
-            // Update the order status to "Cancelled" directly on the client side
-            let row = document.querySelector(`[data-order-id="${orderId}"]`);
-            if (row) {
-                row.querySelector('td:nth-child(4)').textContent = 'Cancelled';
-                row.querySelector('td:nth-child(5) button').disabled = true;
-                row.querySelector('td:nth-child(6) button').disabled = true;
-                alert(`Order ${orderId} has been cancelled.`);
-            } else {
-                console.error(`Row with order ID ${orderId} not found.`);
-            }
+            cancelConfirmBlacklist.push(orderId);
+
         } else if (response.status === 404) {
             console.log(`Order ${orderId} not found.`);
             alert(`Order ${orderId} not found.`);
@@ -199,26 +201,23 @@ async function notifyConfirmation(orderId) {
         return console.error("SOCKET NOT INITIALIZED - CANNOT NOTIFY CONFIRMATION");
     }
 
+    if(cancelConfirmBlacklist.includes(orderId)){
+        return console.error("Order already confirmed/cancelled");
+    }
+
     console.log(`Sending confirmation request for order ${orderId}`);
 
     try {
         let response = await fetch(`http://localhost:4444/confirm/${orderId}`, {
             method: 'PATCH',
-        });
+        })
 
         if (response.ok) {
             console.log(`Confirmation request for order ${orderId} successful`);
 
-            // Update the order status to "Confirmed" directly on the client side
-            let row = document.querySelector(`[data-order-id="${orderId}"]`);
-            if (row) {
-                row.querySelector('td:nth-child(4)').textContent = 'Confirmed';
-                row.querySelector('td:nth-child(5) button').disabled = true;
-                row.querySelector('td:nth-child(6) button').disabled = true;
-                alert(`Order ${orderId} has been confirmed.`);
-            } else {
-                console.error(`Row with order ID ${orderId} not found.`);
-            }
+            // Add order id to blacklist
+            cancelConfirmBlacklist.push(orderId);
+
         } else if (response.status === 404) {
             console.log(`Order ${orderId} not found.`);
             alert(`Order ${orderId} not found.`);
@@ -233,4 +232,31 @@ async function notifyConfirmation(orderId) {
         console.error(`Error while confirming order ${orderId}: ${error}`);
         alert(`Error while confirming order ${orderId}. Please check console for details.`);
     }
+}
+
+async function notifyDelivered(orderId){
+
+    if (!cancelConfirmBlacklist.includes(orderId)){
+        return console.error("Cannot mark order as delivered if not confirmed!");
+    }
+
+    if (deliveredBlacklist.includes(orderId)){
+        return console.error("Already marked as delivered!");
+    }
+
+    try{
+        let response = await fetch(`http://localhost:4444/delivered/${orderId}`, {
+            method: 'PATCH',
+        });
+        if(response.ok){
+            console.log(`Successfully marked order ${orderId} as delivered`);
+            deliveredBlacklist.push(orderId);
+        }else{
+            console.error("Failed to mark as delivered:");
+            console.log(response);
+        }
+    }catch (error){
+        console.error(`Error while marking order ${orderId} as delivered`);
+    }
+    
 }
