@@ -28,18 +28,19 @@
     <main>
         <div class="filter-container">
             <input type="text" id="searchTerm" placeholder="Search">
+            <input type="text" id="excludedAllergens" placeholder="Exclude Allergens">
             <div class="filter-options">
                 <div class="filter-option">
                     <label for="maxCalories">Max Calories:</label>
-                    <input type="range" id="maxCalories" min="0" max="950" step="50" value="500"
+                    <input type="range" id="maxCalories" min="0" max="2000" step="50" value="0"
                         oninput="document.getElementById('maxCaloriesValue').textContent = this.value">
-                    <span id="maxCaloriesValue">500</span>
+                    <span id="maxCaloriesValue">0</span>
                 </div>
                 <div class="filter-option">
                     <label for="maxPrice">Max Price:</label>
-                    <input type="range" id="maxPrice" min="0" max="100" step="1" value="25"
+                    <input type="range" id="maxPrice" min="0" max="200" step="1" value="0"
                         oninput="document.getElementById('maxPriceValue').textContent = this.value">
-                    <span id="maxPriceValue">25</span>
+                    <span id="maxPriceValue">0</span>
                 </div>
                 <button onclick="applyFilter()">Apply Filter</button>
                 <button onclick="resetFilter()">Reset Filter</button>
@@ -47,7 +48,24 @@
             </div>
         </div>
 
-        <div id="MenuEditSection"></div>
+        <div id="menuEditSection" style="display: none">
+            <div id='newItemDiv'>
+                <h3>Add new menu item:</h3>
+                <p>
+                    <label>Name:</label>
+                    <input type='text' id='newItemNameField'><br><br>
+                    <label>Upload Image</label><br><br>
+                    <input type='file' id='newItemFileUpload'><br><br>
+                    <label>Price:</label>
+                    <input type='text' id='newItemPriceField'><br><br>
+                    <label>Calories:</label>
+                    <input type='text' id='newItemCaloriesField'><br><br>
+                    <label>Allergens:</label>
+                    <input type='text' id='newItemAllergensField'><br><br>
+                    <button onclick='addMenuItem()'>Add Item</button>
+                </p>
+            </div>
+        </div>
         
         <div id="MenuItemGridLayout" class="menu-grid"></div>
     </main>
@@ -97,8 +115,11 @@
 
         function resetFilter() {
             document.getElementById('searchTerm').value = '';
-            document.getElementById('maxCalories').value = '';
-            document.getElementById('maxPrice').value = '';
+            document.getElementById('maxCalories').value = 0;
+            document.getElementById('maxPrice').value = 0;
+            document.getElementById('excludedAllergens').value = '';
+            document.getElementById('maxPriceValue').textContent = "0";
+            document.getElementById('maxCaloriesValue').textContent = "0";
 
             applyFilter();
         }

@@ -76,6 +76,8 @@ func EditItem(item *models.MenuItem) error {
 	if result.RowsAffected == 0 {
 		return errors.New("item does not exist")
 	}
+	// Delete old allergen relations
+	db.Where(&models.Allergen{ItemID: item.ID}).Delete(&models.Allergen{})
 	// Update the item
 	result = db.Save(&item)
 	return result.Error
@@ -101,7 +103,7 @@ func QueryMenu(filter *MenuFilter) []models.MenuItem {
 	allergens := filterAllergens(filter.Allergens)
 	dbLocal := db.Model(&models.MenuItem{}).Preload("Allergens")
 	if len(filter.SearchTerm) > 3 {
-		dbLocal = dbLocal.Where("LOWER(name) LIKE LOWER(?)", fmt.Sprintf("%%%s%%", filter.SearchTerm))
+		dbLocal = dbLocal.Where("LOWER(menu_items.name) LIKE LOWER(?)", fmt.Sprintf("%%%s%%", filter.SearchTerm))
 	}
 	if filter.MaxCalories > 0 {
 		dbLocal = dbLocal.Where("calories <= ?", filter.MaxCalories)
@@ -110,7 +112,8 @@ func QueryMenu(filter *MenuFilter) []models.MenuItem {
 		dbLocal = dbLocal.Where("price <= ?", filter.MaxPrice)
 	}
 	if len(allergens) > 0 {
-		dbLocal = dbLocal.Where("LOWER(allergens.name) NOT IN ?", allergens)
+		subQuery := db.Model(&models.Allergen{}).Where("LOWER(allergens.name) IN ?", allergens).Group("allergens.item_id").Select("COUNT(*) as num_allergens, allergens.item_id as item_id")
+		dbLocal = dbLocal.Joins("FULL OUTER JOIN (?) as allergen_count ON allergen_count.item_id = menu_items.id", subQuery).Where("allergen_count.num_allergens = 0 OR allergen_count.num_allergens is NULL")
 	}
 
 	dbLocal.Find(&data)
