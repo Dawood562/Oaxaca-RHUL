@@ -21,6 +21,20 @@ func TestMenu(t *testing.T) {
 	app := fiber.New()
 	app.Get("/menu", Menu)
 
+	database.AddItem(&models.MenuItem{
+		Name:     "TESTFOODALLERGENS",
+		Price:    10,
+		Calories: 1000,
+		Allergens: []models.Allergen{
+			{
+				Name: "Gluten",
+			},
+			{
+				Name: "Dairy",
+			},
+		},
+	})
+
 	testCases := []struct {
 		name  string
 		args  map[string]string
@@ -29,7 +43,7 @@ func TestMenu(t *testing.T) {
 		{
 			name:  "NoFilters",
 			args:  map[string]string{},
-			items: []string{"TESTFOOD", "TESTFOOD2", "TESTFOOD3", "TESTFOOD4"},
+			items: []string{"TESTFOOD", "TESTFOOD2", "TESTFOOD3", "TESTFOOD4", "TESTFOODALLERGENS"},
 		},
 		{
 			name:  "WithSearchTerm",
@@ -50,6 +64,11 @@ func TestMenu(t *testing.T) {
 			name:  "WithMultipleFilters",
 			args:  map[string]string{"searchTerm": "TESTFOOD", "maxPrice": "6.50", "maxCalories": "450"},
 			items: []string{"TESTFOOD"},
+		},
+		{
+			name:  "WithAllergenFilter",
+			args:  map[string]string{"searchTerm": "TESTFOOD", "maxPrice": "11", "maxCalories": "1100", "allergens": "Gluten,Crustaceans"},
+			items: []string{"TESTFOOD", "TESTFOOD2", "TESTFOOD3", "TESTFOOD4"},
 		},
 	}
 

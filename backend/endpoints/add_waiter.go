@@ -10,6 +10,10 @@ type WaiterAPI struct {
 	Username string `json:"username"`
 }
 
+type WaiterResponse struct {
+	ID uint `json:"id"`
+}
+
 // Registers waiter to waiter data structure
 func RegisterWaiter(c *fiber.Ctx) error {
 	c.Accepts("application/json")
@@ -29,7 +33,17 @@ func RegisterWaiter(c *fiber.Ctx) error {
 	waiterData := WaiterData{ID: randWaiterId, Username: waiter.Username}
 	err = AddWaiterData(waiterData)
 	if err != nil {
-		return fiber.NewError(fiber.StatusConflict, "Cannot add waiter with same id as existing waiter")
+		return fiber.NewError(fiber.StatusConflict, err.Error())
 	}
-	return nil
+
+	// Add any pending orders to this waiter
+	pendingOrders := GetQueuedOrders()
+	if len(pendingOrders) > 0 {
+		for _, order := range pendingOrders {
+			AddTableNumber(randWaiterId, order.TableNumber)
+		}
+		ClearOrderQueue()
+	}
+
+	return c.JSON(WaiterResponse{ID: randWaiterId})
 }
