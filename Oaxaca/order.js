@@ -211,11 +211,11 @@ async function refreshOrderStatus(){
         console.error("Cannot refresh order with no order id!")
         return;
     }
-    console.log("!"+orderID)
     let response = await fetch(`http://localhost:4444/status/${orderID}`, {
         method: 'GET',
     }).then((res) => res.text()).then((data) => {
         console.log("Retrieved status of: "+data);
+        document.getElementById("orderStatus").innerHTML = data;
     });
 }
 
