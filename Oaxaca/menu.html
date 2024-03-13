@@ -31,15 +31,15 @@
             <div class="filter-options">
                 <div class="filter-option">
                     <label for="maxCalories">Max Calories:</label>
-                    <input type="range" id="maxCalories" min="0" max="950" step="50" value="500"
+                    <input type="range" id="maxCalories" min="0" max="2000" step="50" value="0"
                         oninput="document.getElementById('maxCaloriesValue').textContent = this.value">
-                    <span id="maxCaloriesValue">500</span>
+                    <span id="maxCaloriesValue">0</span>
                 </div>
                 <div class="filter-option">
                     <label for="maxPrice">Max Price:</label>
-                    <input type="range" id="maxPrice" min="0" max="100" step="1" value="25"
+                    <input type="range" id="maxPrice" min="0" max="200" step="1" value="0"
                         oninput="document.getElementById('maxPriceValue').textContent = this.value">
-                    <span id="maxPriceValue">25</span>
+                    <span id="maxPriceValue">0</span>
                 </div>
                 <button onclick="applyFilter()">Apply Filter</button>
                 <button onclick="resetFilter()">Reset Filter</button>
@@ -114,9 +114,11 @@
 
         function resetFilter() {
             document.getElementById('searchTerm').value = '';
-            document.getElementById('maxCalories').value = '';
-            document.getElementById('maxPrice').value = '';
+            document.getElementById('maxCalories').value = 0;
+            document.getElementById('maxPrice').value = 0;
             document.getElementById('excludedAllergens').value = '';
+            document.getElementById('maxPriceValue').textContent = "0";
+            document.getElementById('maxCaloriesValue').textContent = "0";
 
             applyFilter();
         }
