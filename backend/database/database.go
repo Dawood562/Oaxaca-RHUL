@@ -10,6 +10,7 @@ import (
 	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 var db *gorm.DB
@@ -34,7 +35,9 @@ const (
 func init() {
 	dbUsername, dbName, dbPassword := fetchDBAuth()
 	url := "postgres://" + dbUsername + ":" + dbPassword + "@db:5432/" + dbName
-	conn, err := gorm.Open(postgres.Open(url), &gorm.Config{})
+	conn, err := gorm.Open(postgres.Open(url), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Info),
+	})
 	db = conn
 	if err != nil {
 		log.Fatal(err)
@@ -103,7 +106,7 @@ func QueryMenu(filter *MenuFilter) []models.MenuItem {
 	allergens := filterAllergens(filter.Allergens)
 	dbLocal := db.Model(&models.MenuItem{}).Preload("Allergens")
 	if len(filter.SearchTerm) > 3 {
-		dbLocal = dbLocal.Where("LOWER(name) LIKE LOWER(?)", fmt.Sprintf("%%%s%%", filter.SearchTerm))
+		dbLocal = dbLocal.Where("LOWER(menu_items.name) LIKE LOWER(?)", fmt.Sprintf("%%%s%%", filter.SearchTerm))
 	}
 	if filter.MaxCalories > 0 {
 		dbLocal = dbLocal.Where("calories <= ?", filter.MaxCalories)
@@ -112,7 +115,8 @@ func QueryMenu(filter *MenuFilter) []models.MenuItem {
 		dbLocal = dbLocal.Where("price <= ?", filter.MaxPrice)
 	}
 	if len(allergens) > 0 {
-		dbLocal = dbLocal.Where("LOWER(allergens.name) NOT IN ?", allergens)
+		subQuery := db.Model(&models.Allergen{}).Where("LOWER(allergens.name) IN ?", allergens).Group("allergens.item_id").Select("COUNT(*) as num_allergens, allergens.item_id as item_id")
+		dbLocal = dbLocal.Joins("FULL OUTER JOIN (?) as allergen_count ON allergen_count.item_id = menu_items.id", subQuery).Where("allergen_count.num_allergens = 0 OR allergen_count.num_allergens is NULL")
 	}
 
 	dbLocal.Find(&data)
