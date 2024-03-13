@@ -337,7 +337,7 @@ async function removeItem(id) {
 // function to add menu item to basket
 // Stores menu items in basket using cookies
 // Cookie structure is CSV in form: id,itemName,price,calories,quantity
-function addToBasket(index, itemId, itemName, price, calories) {
+function addToBasket(itemId, itemName, price, calories) {
   let quantity = 1;
 
   // This will work for now as we only store 1 type of cookie
