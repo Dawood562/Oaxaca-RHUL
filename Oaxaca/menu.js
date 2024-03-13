@@ -17,14 +17,24 @@ async function refreshMenu() {
 }
 
 async function fetchMenuWithFilter(searchTerm, maxPrice, maxCalories, excludedAllergens) {
+    let allergenString = "";
+    excludedAllergens.forEach(item => {
+        allergenString += item.name + ",";
+    })
     await fetch("http://localhost:4444/menu?" + new URLSearchParams({
         searchTerm: searchTerm,
         maxPrice: maxPrice,
-        maxCalories: maxCalories
+        maxCalories: maxCalories,
+        allergens: allergenString.substring(0, allergenString.length - 1)
     }), {
         method: "GET",
     })
-    .then((res) => res.json())
+    .then((res) => {
+        if(res.ok) {
+            return res.json();
+        }
+        throw new Error("Server returned an error");
+    })
     .then((data) => {
         currentMenu = data;
         renderMenu();
@@ -385,7 +395,7 @@ function applyFilter() {
     let searchTerm = document.getElementById('searchTerm').value.toLowerCase();
     let maxCalories = parseInt(document.getElementById('maxCalories').value) || 0;
     let maxPrice = parseFloat(document.getElementById('maxPrice').value) || 0;
-    let allergens = [];
+    let allergens = allergenStringToArray(document.getElementById('excludedAllergens').value);
     fetchMenuWithFilter(searchTerm, maxPrice, maxCalories, allergens);
 }
 

@@ -10,7 +10,6 @@ import (
 	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
 )
 
 var db *gorm.DB
@@ -35,9 +34,7 @@ const (
 func init() {
 	dbUsername, dbName, dbPassword := fetchDBAuth()
 	url := "postgres://" + dbUsername + ":" + dbPassword + "@db:5432/" + dbName
-	conn, err := gorm.Open(postgres.Open(url), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Info),
-	})
+	conn, err := gorm.Open(postgres.Open(url), &gorm.Config{})
 	db = conn
 	if err != nil {
 		log.Fatal(err)

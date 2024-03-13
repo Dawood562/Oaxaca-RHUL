@@ -27,6 +27,7 @@
     <main>
         <div class="filter-container">
             <input type="text" id="searchTerm" placeholder="Search">
+            <input type="text" id="excludedAllergens" placeholder="Exclude Allergens">
             <div class="filter-options">
                 <div class="filter-option">
                     <label for="maxCalories">Max Calories:</label>
@@ -115,6 +116,7 @@
             document.getElementById('searchTerm').value = '';
             document.getElementById('maxCalories').value = '';
             document.getElementById('maxPrice').value = '';
+            document.getElementById('excludedAllergens').value = '';
 
             applyFilter();
         }
