@@ -128,6 +128,7 @@ async function refreshOrders() {
                             <th>Payment Status</th>
                             <th></th>
                             <th></th>
+                            <th></th>
                         </tr>`;
     let response = await fetch("http://localhost:4444/orders?" + new URLSearchParams({
         "waiterId": waiterID
@@ -153,6 +154,7 @@ function createOrder(order) {
         <td>${new Date(order.orderTime).toLocaleTimeString()}</td>
         <td>${itemsStr.substring(0, itemsStr.length - 2)}</td>
         <td id="status`+order.orderId+`">${order.status}</td>
+        <td>${order.paid ? "Paid" : "Unpaid"}</td>
         <td><button type="button" id="cancelOrderButton`+order.orderId+`" onclick="notifyCancellation(${order.orderId})">Cancel Order</button></td>
         <td><button type="button" id="confirmOrderButton`+order.orderId+`" onclick="notifyConfirmation(${order.orderId})">Confirm Order</button></td>
         <td><button type="button" id="confirmDeliveredButton`+order.orderId+`" onclick="notifyDelivered(${order.orderId})">Mark Delivered</button></td>
