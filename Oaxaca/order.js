@@ -18,7 +18,6 @@ function initBasketData() {
             if (basketCookies.length > 1) {
                 basketEmpty = false;
             }
-
         }
     })
 
@@ -36,12 +35,12 @@ function initBasketData() {
                 name: splitData[1],
                 price: splitData[2],
                 calories: splitData[3],
-                quantity: splitData[4]
+                quantity: splitData[4],
+                imageURL: splitData[5] // Add the imageURL property
             }
             basketData.push(itemData)
         }
     });
-
 }
 
 // Called when page is initialised and initialises websocket connection
@@ -94,16 +93,19 @@ function showOrdersToPage() {
         orderStore.appendChild(emptyMessage);
     } else {
         basketData.forEach(itemData => {
-            let item = document.createElement('li');
+            let item = document.createElement('div'); // Change to 'div' instead of 'li'
             item.className = "orderPageItem";
             item.innerHTML = `
                 <div class='orderItemEntry'>
-                <label class='orderPageItemData'>${itemData.name}</label>
-                <label class='orderPageItemData'>quantity: ${itemData.quantity}</label>
-                <label class='orderPageItemData'>Calories: ${Number(itemData.calories) * Number(itemData.quantity)} kcal</label>
-                <label class='orderPageItemData'>Price: £${(Number(itemData.price) * Number(itemData.quantity)).toFixed(2)}</label>
-                <button class="removeButton" onclick='removeOrderFromList(${itemData.id})'><i class="fa fa-trash"></i></button>
-                <div>`;
+                    <img src="http://localhost:4444/image/${itemData.imageURL}" alt="${itemData.name}" class="orderItemImage">
+                    <div class="orderItemDetails">
+                        <label class='orderPageItemData'>${itemData.name}</label>
+                        <label class='orderPageItemData'>Quantity: ${itemData.quantity}</label>
+                        <label class='orderPageItemData'>Calories: ${Number(itemData.calories) * Number(itemData.quantity)} kcal</label>
+                        <label class='orderPageItemData'>Price: £${(Number(itemData.price) * Number(itemData.quantity)).toFixed(2)}</label>
+                        <button class="removeButton" value="Remove" onclick='removeOrderFromList(${itemData.id})'><i class="fa fa-trash"></i></button>
+                    </div>
+                </div>`;
             orderStore.appendChild(item);
         });
     }
