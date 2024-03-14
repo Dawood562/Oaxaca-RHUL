@@ -337,7 +337,7 @@ async function removeItem(id) {
 // function to add menu item to basket
 // Stores menu items in basket using cookies
 // Cookie structure is CSV in form: id,itemName,price,calories,quantity
-function addToBasket(index, itemId, itemName, price, calories) {
+function addToBasket(itemId, itemName, price, calories) {
   let quantity = 1;
 
   // This will work for now as we only store 1 type of cookie
@@ -369,16 +369,9 @@ function addToBasket(index, itemId, itemName, price, calories) {
 
   if (!updated) {
     document.cookie = "basket=" + itemId + "," + itemName + "," + price + "," + calories + "," + quantity + "#" + previousCookieContent;
+    updateBasketQuantity()
   }
 
-}
-
-//function to update basket icon with the item quantity in order
-function updateBasketIcon() {
-  let order = JSON.parse(localStorage.getItem('order')) || [];
-  let basketIcon = document.getElementById('basketIcon');
-  let totalQuantity = order.reduce((total, item) => total + item.quantity, 0);
-  basketIcon.textContent = `🛒 ${totalQuantity}`;
 }
 
 //function ro remove menu item from the order
@@ -399,25 +392,38 @@ function applyFilter() {
     fetchMenuWithFilter(searchTerm, maxPrice, maxCalories, allergens);
 }
 
-// Initialises basket quantity on page load to number of items in basket cookies
-function initBasketQuantity(){
-    if(document.cookie.length <= 0){
-      document.cookie="basket="
+function getCookieQuantity(){
+    // if basket cookie doesnt exist, create it
+    if(document.cookie.indexOf("basket=") < 0){
+        document.cookie = "basket="
     }
-    let cookieList = document.cookie.split(";");
+
+    let cookies = document.cookie.split(";");
     let basketCookie = "";
-    cookieList.forEach(cookie => {
-      if(cookie.indexOf("basket=")!=-1){
-        cookie = cookie.substring(cookie.indexOf("basket=")+"basket=".length, cookie.length)
-        // we found basket cookie
-        let splitCookie = cookie.split("#")
-        let basketCount = splitCookie.length
-        if(splitCookie[splitCookie.length-1].length <= 0){
-          basketCount--;
+    // Find cookie with basket data
+    for(let i = 0; i < cookies.length; i++){
+        if(cookies[i].indexOf("basket=") >= 0){
+            basketCookie = cookies[i].split("basket=")[1];
         }
-        //console.log(basketCount);
-        //document.getElementById("basketIcon").innerHTML="🛒 "+basketCount;
-      }
-    })
-  }
-  
+    }
+    if(basketCookie.length <= 0){
+        return 0
+    }
+
+    // split basket
+    let basketSplit = basketCookie.split("#")
+    let basketQuantity = basketSplit.length;
+
+    // if basket seperator causes extra empty basket then subtract 1
+    if(basketSplit[basketSplit.length-1].length <= 0){
+        basketQuantity--;
+    }
+    return basketQuantity;
+}
+
+// Updates basket quantity
+function updateBasketQuantity(){
+    let basketIcon = document.getElementById("basket-quantity");
+    let currentBasketQuantity = getCookieQuantity();
+    basketIcon.innerHTML = "🛒 "+currentBasketQuantity;
+}
