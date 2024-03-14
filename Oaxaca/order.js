@@ -63,7 +63,7 @@ function initBasketData() {
 }
 
 // Called when page is initialised and initialises websocket connection
-function initSock() {
+function initSock(tableNo) {
     sock = new WebSocket("ws://localhost:4444/notifications")
     sock.onerror = function (event) {
         // If unsuccessfully connected
@@ -71,10 +71,11 @@ function initSock() {
     }
     sock.addEventListener("open", e => {
         // WE NEED TO ADD A WAY TO GET USERS TABLE NUMBER
-        sock.send("CUSTOMER:1")
+        sock.send("CUSTOMER:".concat(tableNo))
     })
 
     sock.addEventListener("message", e => handleMessages(e))
+    document.cookie = "username=table".concat(tableno); // Set "username" entry to table number
 }
 
 function closeSock() {
@@ -181,6 +182,13 @@ function removeOrderFromCookie(id) {
 
 var orderID = -1;
 function submitOrder() {
+
+    try {
+        x = sock.readyState;
+    } catch (e) {
+        initSock(tableNum);
+    }
+
     let tableNum = Number(document.getElementById('tableNumber').value);
 
     if (basketData.length == 0) {
@@ -195,12 +203,6 @@ function submitOrder() {
         itemObjects.push({ item: Number(element.id), notes: "Stuff" });
         totalBill += Number(element.price);
     });
-
-    //  Checking if the WebSocket connection is established
-    if (sock.readyState !== WebSocket.OPEN) {
-        alert('Error: WebSocket connection not established. Please refresh the page and try again.');
-        return;
-    }
 
 
     fetch('http://localhost:4444/add_order?', {
@@ -234,6 +236,11 @@ function submitOrder() {
         .catch((err) => {
             alert(err);
         });
+
+    // Change table number field so it cannot be changed
+    tableNoField = document.getElementById("tableNumber");
+    tableNoField.setAttribute('readonly', true);
+
 }
 
 function replaceWithOrderStatus() {
