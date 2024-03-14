@@ -34,6 +34,9 @@ func GetOrders(c *fiber.Ctx) error {
 		}
 		// Find waiters with same id
 		waiterList := GetWaiter(WaiterData{ID: uint(waiterID)})
+		if waiterList == nil {
+			return c.SendString("Provided waiter id does not exist...")
+		}
 		if len(*waiterList) <= 0 {
 			return c.SendString("Error finding waiter from provided id")
 		}
