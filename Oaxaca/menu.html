@@ -15,7 +15,7 @@
     <header>
         <nav>
             <div class="logo"><a href="index.html">Oaxaca</a></div>
-            <div id="basket-quantity"><label>🛒 0</label></div>
+            <div id="basket-quantity" onclick="goToOrderPage()"><label>🛒 0</label></div>
             <div class="menu-icon">
                 <a>&#9776;</a>
                 <div class="floating-window">
@@ -75,10 +75,6 @@
             initMenuAll();
             initializeCategoryFilter();
         });
-
-        function goToOrderPage() {
-            window.location.href = "order.html";
-        }
 
         function resetFilter() {
             document.getElementById('searchTerm').value = '';

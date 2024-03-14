@@ -427,3 +427,8 @@ function updateBasketQuantity(){
     let currentBasketQuantity = getCookieQuantity();
     basketIcon.innerHTML = "🛒 "+currentBasketQuantity;
 }
+
+function goToOrderPage() {
+    console.log("!");
+    window.location.href = "order.html";
+}
