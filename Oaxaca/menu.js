@@ -46,7 +46,9 @@ async function fetchMenuWithFilter(searchTerm, maxPrice, maxCalories, excludedAl
 function renderMenu() {
     document.getElementById("MenuItemGridLayout").innerHTML = "";
     currentMenu.forEach(element => {
-        document.getElementById("MenuItemGridLayout").innerHTML += createMenuItem(element.itemId ,element.itemName, element.imageURL, element.price, element.calories, element.allergens);
+        if(element.itemName.length > 0 ){
+            document.getElementById("MenuItemGridLayout").innerHTML += createMenuItem(element.itemId ,element.itemName, element.imageURL, element.price, element.calories, element.allergens);
+        }
     });
 }
 
