@@ -3,10 +3,29 @@ var sockInit = false
 var basketData = []
 
 document.addEventListener('DOMContentLoaded', e => {
-    initSock();
+    initTableNo();
     initBasketData()
     showOrdersToPage();
 })
+
+function initTableNo() {
+    // Retrieve table number from cookies
+    tableNo = null;
+    let cookieData = document.cookie;
+    cookieData.split(";").forEach(cookie => {
+        indexOfParam = cookie.indexOf("=");
+        if (cookie.substring(0, indexOfParam).indexOf("username") != -1 && cookie.substring(indexOfParam, cookie.length).indexOf("table") != -1) {
+            tableNo = cookie.substring(indexOfParam + 6, cookie.length);
+        }
+    })
+
+    if (tableNo != null) {
+        tableNoField = document.getElementById("tableNumber");
+        tableNoField.value = tableNo;
+        tableNoField.setAttribute('readonly', true);
+        initSock(tableNo);
+    }
+}
 
 function initBasketData() {
     let splitCookies = document.cookie.split(";");
@@ -56,6 +75,10 @@ function initSock() {
     })
 
     sock.addEventListener("message", e => handleMessages(e))
+}
+
+function closeSock() {
+    sock.close();
 }
 
 // Displays connection and communication status to console
