@@ -369,26 +369,44 @@ function addToBasket(itemId, itemName, price, calories, imageURL) {
   }
 
   let updated = false;
+  let i = -1;
+  let updatedIndex = -1;
 
   // Check that item is not already in basket
   previousCookieContent.split("#").forEach(element => {
+    i++;
     let splitCookie = element.split(",")
     // Item found in basket
     if (splitCookie[0] == itemId) {
-      // Then update quantity instead
-      let newQuantity = Number(splitCookie[4]) + Number(quantity);
-
-      let indexOfItem = previousCookieContent.indexOf(element)
-      let indexOfEndOfItem = previousCookieContent.indexOf("#", indexOfItem)
-      let updatedCookieSegment = previousCookieContent.substring(indexOfItem, indexOfEndOfItem - 1) + newQuantity
-      let updatedCookie = previousCookieContent.substring(0, indexOfItem) + updatedCookieSegment + previousCookieContent.substring(indexOfEndOfItem, previousCookieContent.length);
-      document.cookie = "basket=" + updatedCookie;
-
-      updated = true;
+        updated = true;
+        updatedIndex = i;
     }
   });
 
-  if (!updated) {
+  let splitCookieContent = previousCookieContent.split("#");
+  
+  if(updated){  
+    // Update quantity:
+    let toModify = splitCookieContent[updatedIndex].split(",");
+    toModify[4]++;
+    
+    let newCookie = "basket=";
+    let count = 0;
+    splitCookieContent.forEach(item => {
+        if(item.length > 0){
+            if(count == updatedIndex){
+                // Add toModify
+                newCookie+=toModify+"#";
+            }else{
+                // Add back original
+                newCookie+=item+"#";
+            }
+        }
+        count++;
+    })
+    document.cookie = newCookie;
+  }
+  else {
     document.cookie = "basket=" + itemId + "," + itemName + "," + price + "," + calories + "," + quantity + "," + imageURL + "#" + previousCookieContent;
   }
 
