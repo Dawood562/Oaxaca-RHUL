@@ -32,7 +32,3 @@ function goToKitchen() {
 function goToWaiter() {
     window.location.href = "waiter.html";
 }
-
-function goHome() {
-    window.location.href = "index.html";
-}
