@@ -368,7 +368,7 @@ function addToBasket(index, itemId, itemName, price, calories) {
   });
 
   if (!updated) {
-    document.cookie = "basket=" + itemId + "," + itemName + "," + price + "," + calories + "," + quantity + "#" + previousCookieContent;
+    document.cookie = "basket=" + itemId + "," + itemName + "," + price + "," + calories + "," + quantity + "," + imageURL + "#" + previousCookieContent;
   }
 
 }
