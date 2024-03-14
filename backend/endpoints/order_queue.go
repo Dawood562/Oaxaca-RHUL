@@ -32,6 +32,6 @@ func GetQueuedOrders() []models.Order {
 	return orderQueue
 }
 
-func clearOrderQueue() {
+func ClearOrderQueue() {
 	orderQueue = []models.Order{}
 }

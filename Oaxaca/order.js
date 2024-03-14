@@ -2,39 +2,56 @@ var sock
 var sockInit = false
 var basketData = []
 
-document.addEventListener('DOMContentLoaded', e=>{
+document.addEventListener('DOMContentLoaded', e => {
     initSock();
     initBasketData()
     showOrdersToPage();
 })
 
-function initBasketData(){
-    let basketCookies = document.cookie.split("basket=")[1].split("#");
+function initBasketData() {
+    let splitCookies = document.cookie.split(";");
+    let basketCookies = "";
+    let basketEmpty = true;
+    splitCookies.forEach(cookie => {
+        if(cookie.indexOf("basket=") >= 0){
+            basketCookies = cookie.split("basket=")[1].split("#");
+            if(basketCookies.length > 1){
+                basketEmpty = false;
+            }
+            
+        }
+    })
+
+    if (basketEmpty){
+        console.log("Basket is empty!");
+        return;
+    }
+
     basketCookies.forEach(item => {
-        if(item.length > 0){
+        if (item.length > 0) {
             // For each item in basket
             let splitData = item.split(",")
             let itemData = {
-                id:splitData[0],
-                name:splitData[1],
-                price:splitData[2],
-                calories:splitData[3],
-                quantity:splitData[4]
+                id: splitData[0],
+                name: splitData[1],
+                price: splitData[2],
+                calories: splitData[3],
+                quantity: splitData[4]
             }
             basketData.push(itemData)
-        }     
+        }
     });
 
 }
 
 // Called when page is initialised and initialises websocket connection
-function initSock(){
+function initSock() {
     sock = new WebSocket("ws://localhost:4444/notifications")
-    sock.onerror = function(event){
+    sock.onerror = function (event) {
         // If unsuccessfully connected
         alert("Unsuccessfully to connect to backend websocket 🖥️🔥")
     }
-    sock.addEventListener("open", e =>{
+    sock.addEventListener("open", e => {
         // WE NEED TO ADD A WAY TO GET USERS TABLE NUMBER
         sock.send("CUSTOMER:1")
     })
@@ -43,26 +60,26 @@ function initSock(){
 }
 
 // Displays connection and communication status to console
-function handleMessages(e){
-    if (e.data == "WELCOME"){
+function handleMessages(e) {
+    if (e.data == "WELCOME") {
         console.log("Connected to backend websocket")
-    }else if (e.data == "OK"){
+    } else if (e.data == "OK") {
         console.log("Notification successfully received")
-    }else{
+    } else {
         console.log(e) // Display entire message if something went wrong for debugging
     }
 }
 
 // Notifies backend a customer needs help
-function sendHelp(){
+function sendHelp() {
     sock.send("HELP")
 }
 
-   function showConfirmationSection() {
-  document.getElementById('confirmationSection').style.display = 'block';
+function showConfirmationSection() {
+    document.getElementById('confirmationSection').style.display = 'block';
 }
 
-function showOrdersToPage(){
+function showOrdersToPage() {
     let orderStore = document.getElementById("orderHeading");
     basketData.forEach(itemData => {
         let item = document.createElement('li');
@@ -73,25 +90,25 @@ function showOrdersToPage(){
             <label class='orderPageItemData'>quantity: ${itemData.quantity}</label>
             <label class='orderPageItemData'>Calories: ${Number(itemData.calories) * Number(itemData.quantity)} kcal</label>
             <label class='orderPageItemData'>Price: £${(Number(itemData.price) * Number(itemData.quantity)).toFixed(2)}</label>
-            <button class="removeButton" onclick='removeOrderFromList(`+itemData.id+`)'><i class = "fa fa-trash"></i></button>
+            <button class="removeButton" onclick='removeOrderFromList(`+ itemData.id + `)'><i class = "fa fa-trash"></i></button>
             <div>`
         orderStore.appendChild(item);
     });
 }
 
-function removeOrderFromList(id){
+function removeOrderFromList(id) {
     let removedItem = false;
-    for(let i = 0; i < basketData.length; i++){
-        if (basketData[i].id == id){
+    for (let i = 0; i < basketData.length; i++) {
+        if (basketData[i].id == id) {
             basketData.splice(i, 1);
             i = basketData.length;
             removedItem = true;
-            console.log("New size of basketData: "+basketData.length)
+            console.log("New size of basketData: " + basketData.length)
             removeOrderFromCookie(id);
         }
     }
 
-    if(removedItem){
+    if (removedItem) {
         // Clear orders from page:
         removeAllOrders();
         showOrdersToPage();
@@ -99,30 +116,30 @@ function removeOrderFromList(id){
 
 }
 
-function removeAllOrders(){
+function removeAllOrders() {
     let orderList = document.getElementById("orderHeading").childNodes;
     // Backwards for loop because when element 1 removed, element 2 takes 1's place
-    for(let i = orderList.length-1; i > 0; i--){
+    for (let i = orderList.length - 1; i > 0; i--) {
         orderList[1].remove();
     }
 }
 
-function removeOrderFromCookie(id){
+function removeOrderFromCookie(id) {
     let cookies = document.cookie.split("basket=")[1].split("#");
     let newCookieData = "basket=";
-    cookies.forEach(cookie =>{
-        if(cookie.length > 0){
+    cookies.forEach(cookie => {
+        if (cookie.length > 0) {
             // If cookie doesnt match expected cookie to remove then add it back to cookie 
-            if(cookie.split(",")[0] != id){
-                newCookieData+=cookie+"#";
+            if (cookie.split(",")[0] != id) {
+                newCookieData += cookie + "#";
             }
         }
     })
     // Update cookies
-    document.cookie=newCookieData;
+    document.cookie = newCookieData;
 }
 
-
+var orderID = -1;
 function submitOrder() {
     let tableNum = Number(document.getElementById('tableNumber').value);
 
@@ -135,7 +152,7 @@ function submitOrder() {
     let totalBill = 0.0;
     let itemObjects = [];
     basketData.forEach(element => {
-        itemObjects.push({item: Number(element.id), notes:"Stuff"});
+        itemObjects.push({ item: Number(element.id), notes: "Stuff" });
         totalBill += Number(element.price);
     });
 
@@ -145,7 +162,7 @@ function submitOrder() {
         return;
     }
 
-    
+
     fetch('http://localhost:4444/add_order?', {
         method: 'POST',
         headers: {
@@ -157,39 +174,61 @@ function submitOrder() {
             items: itemObjects
         })
     })
-    .then((res) => {
-        if(res.ok) {
-            return res.text();
-        }
-        throw new Error("Could not place order");
-    })
-    .then((data) => {
-        console.log('Order submitted successfully');
+        .then((res) => {
+            if (res.ok) {
+                return res.text();
+            }
+            throw new Error("Could not place order");
+        })
+        .then((data) => {
+            console.log(`Order of id ${data} submitted successfully`);
+            orderID = Number(data);
 
-        localStorage.removeItem('order'); // Clears the basket after a successful order
-        localStorage.setItem("orderID", data);
-    })
-    .catch((err) => {
-        alert(err);
-    });
-    document.cookie="basket=";
-    removeAllOrders();
+            localStorage.removeItem('order'); // Clears the basket after a successful order
+            localStorage.setItem("orderID", data);
+
+            document.cookie = "basket=";
+            removeAllOrders();
+            replaceWithOrderStatus();
+        })
+        .catch((err) => {
+            alert(err);
+        });
+}
+
+function replaceWithOrderStatus(){
     let orderList = document.getElementById("orderHeading");
     let submissionNotification = document.createElement('div');
-    submissionNotification.innerHTML="<label class='orderPageItem'>Submitted order!</label>";
+    submissionNotification.innerHTML = `
+    <label class='orderPageItem'>Submitted order!</label> <br>
+    <label>Status: </label> <label id=orderStatus>Awaiting confirmation...</label> <button onclick="refreshOrderStatus()" id="refreshStatusButton">Refresh</button>
+    `;
     orderList.appendChild(submissionNotification);
 }
 
-function sendPayment(){
+async function refreshOrderStatus(){
+    if(orderID < 0){
+        console.error("Cannot refresh order with no order id!")
+        return;
+    }
+    let response = await fetch(`http://localhost:4444/status/${orderID}`, {
+        method: 'GET',
+    }).then((res) => res.text()).then((data) => {
+        console.log("Retrieved status of: "+data);
+        document.getElementById("orderStatus").innerHTML = data;
+    });
+}
+
+function sendPayment() {
     let id = localStorage.getItem("orderID");
     fetch("http://localhost:4444/pay/" + id, {
         method: "PATCH"
     })
-    .then((res) => {
-        if(res.ok) {
-            alert("Payment received. Thank you for dining with us :)");
-        } else {
-            alert("There was a problem with payment. Please try again later.");
-        }
-    })
+        .then((res) => {
+            if (res.ok) {
+                alert("Payment received. Thank you for dining with us :)");
+            } else {
+                alert("There was a problem with payment. Please try again later.");
+            }
+        })
 }

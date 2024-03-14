@@ -46,6 +46,8 @@ func main() {
 	app.Post("/upload", endpoints.Upload)
 	app.Static("/image", "./uploads")
 
+	app.Get("/debug", endpoints.DebugEndpoint)
+
 	// Live websocket notifications
 	app.Get("/notifications", websocket.New(func(c *websocket.Conn) {
 		endpoints.HandleConnection(c)
