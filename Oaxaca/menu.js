@@ -57,6 +57,8 @@ function createMenuItem(id, itemName, imageURL, price, calories, allergens) {
         <div class='MenuItemDetails'>
             <label class='MenuItemName' id="itemName${id}">${itemName}</label><br>
             <input style="display: none; max-width:90%" placeholder="Item Name" id='nameEditPrompt${id}' class='editMenuItemPrompt' type='text'>
+            <br><label style="display: none" for='imageEditPrompt${id}'>Image</label>
+            <input style="display: none" type='file' id='imageEditPrompt${id}' class='editMenuItemPrompt'>
             <label class='MenuItemPrice' id="itemPrice${id}">£${price.toFixed(2)}</label><br>
             <p id="priceContext${id}" class="editMenuContext">£</p><input style="display: none" id='priceEditPrompt${id}' placeholder="Price" class='editMenuItemPrompt' type='text'>
             <label class='MenuItemCalories' id="itemCalories${id}">${calories} kcal</label>
@@ -163,6 +165,9 @@ function editMenuForItem(id) {
         document.getElementById(`nameEditPrompt${id}`).style.display = "inline";
         document.getElementById(`nameEditPrompt${id}`).value = item.itemName;
 
+        document.querySelector(`label[for='imageEditPrompt${id}']`).style.display = "inline";
+        document.getElementById(`imageEditPrompt${id}`).style.display = "inline";
+
         document.getElementById(`itemAllergens${id}`).style.display = "none";
         document.getElementById(`allergensEditPrompt${id}`).style.display = "inline";
         let allergens = "";
@@ -205,6 +210,14 @@ async function submitMenuEdit(id) {
     let itemPrice = parseFloat(document.getElementById(`priceEditPrompt${id}`).value);
     let itemCalories = parseInt(document.getElementById(`caloriesEditPrompt${id}`).value);
     let allergens = allergenStringToArray(document.getElementById(`allergensEditPrompt${id}`).value)
+    let newImage = document.getElementById(`imageEditPrompt${id}`).files[0];
+
+    let imageURL;
+    if (newImage) {
+        imageURL = await uploadImage(newImage);
+    } else {
+        imageURL = getMenuItemById(id).imageURL;
+    }
 
     try {
         let response = await fetch("http://localhost:4444/edit_item", {
@@ -213,9 +226,9 @@ async function submitMenuEdit(id) {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                itemId: id,
+                itemId: id, 
                 itemName: name,
-                imageURL: getMenuItemById(id).imageURL,
+                imageURL: imageURL,
                 price: itemPrice,
                 calories: itemCalories,
                 allergens: allergens
@@ -392,14 +405,6 @@ function addToBasket(itemId, itemName, price, calories, imageURL) {
     document.cookie = "basket=" + itemId + "," + itemName + "," + price + "," + calories + "," + quantity + "," + imageURL + "#" + previousCookieContent;
   }
 
-}
-
-//function to update basket icon with the item quantity in order
-function updateBasketIcon() {
-  let order = JSON.parse(localStorage.getItem('order')) || [];
-  let basketIcon = document.getElementById('basketIcon');
-  let totalQuantity = order.reduce((total, item) => total + item.quantity, 0);
-  basketIcon.textContent = `🛒 ${totalQuantity}`;
 }
 
 //function ro remove menu item from the order
