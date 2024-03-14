@@ -1,34 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Oaxaca Kitchen</title>
-    <link rel="stylesheet" href="style.css" type="text/css">
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <title>Oaxaca Kitchen</title>
+  <link rel="stylesheet" href="shared.css">
+  <link rel="stylesheet" href="kitchen.css">
+  <script src="kitchen.js"></script>
 </head>
 
-<script src="kitchen.js"> </script>
+<body>
+  <header>
+    <nav>
+      <div class="logo"><a href="index.html">Oaxaca</a></div>
+      <div class="menu-icon">
+        <a>&#9776;</a>
+        <div class="floating-window">
+          <a href="menu.html">Menu</a>
+          <a href="staff.html">Staff</a>
+        </div>
+      </div>
+    </nav>
+  </header>
 
-<div id="container">
-<div id="headerArea">
-<div id="header">
-</div>
-<nav id="navbar">
-  <ul>
-  <li><a href="index.html">Home</a></li>
-  <li><a href="menu.html">Menu</a></li>
-  <li><a href="#">Link</a></li>
-  <li><a href="#">Link</a></li>
-  <li><a href="waiter.html">Staff</a></li>
-  </ul>
-</nav>
-<div id="KitchenPage">
-  <table class="Kitchen" id="order_table">
-  </table>
+  <main>
+    <div id="KitchenPage">
+      <table class="Kitchen" id="order_table">
+        <caption>Customer Orders</caption>
+        <tr>
+          <th>Table</th>
+          <th>Time</th>
+          <th>Items</th>
+          <th>Status</th>
+          <th></th>
+          <th></th>
+        </tr>
+      </table>
 
-  <button onclick="notifyService()">Call Waiters</button>
-
-</div>
+      <button onclick="notifyService()">Call Waiters</button>
+    </div>
+  </main>
+</body>
 
 </html>
-

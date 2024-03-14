@@ -2,226 +2,95 @@
 <html lang="en">
 
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="x-ua-compatible" content="ie=edge">
-  <title>Menu - Oaxaca</title>
-  <link rel="stylesheet" href="style.css" type="text/css">
-  <script type="text/javascript" src="menu.js"></script>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu</title>
+    <script type="text/javascript" src="menu.js"></script>
+    <link rel="icon" type="image/x-icon" href="icon.ico">
+    <link rel="stylesheet" href="shared.css">
+    <link rel="stylesheet" href="menu.css">
 </head>
 
-<body onload="initBasketQuantity()">
-  <div id="container">
-    <div id="headerArea">
-      <div id="header"></div>
+<body onload="updateBasketQuantity()">
+    <header>
+        <nav>
+            <div class="logo"><a href="index.html">Oaxaca</a></div>
+            <div id="basket-quantity"><label>🛒 0</label></div>
+            <div class="menu-icon">
+                <a>&#9776;</a>
+                <div class="floating-window">
+                    <a href="order.html">Basket</a>
+                    <a href="staff.html">Staff</a>
+                </div>
+            </div>
+        </nav>
+    </header>
 
-      <nav id="navbar">
-        <ul>
-          <li><a href="index.html">Home</a></li>
-          <li><a href="menu.html">Menu</a></li>
-          <li><a href="order.html">Order</a></li>
-          <li><a href="https://www.youtube.com/watch?v=xvFZjo5PgG0">Link</a></li>
-          <li><a href="staff.html">Staff</a></li>
-          </ul>
-      </nav>
-    </div>
+    <main>
+        <div class="filter-container">
+            <input type="text" id="searchTerm" placeholder="Search">
+            <input type="text" id="excludedAllergens" placeholder="Exclude Allergens">
+            <div class="filter-options">
+                <div class="filter-option">
+                    <label for="maxCalories">Max Calories:</label>
+                    <input type="range" id="maxCalories" min="0" max="2000" step="50" value="0"
+                        oninput="document.getElementById('maxCaloriesValue').textContent = this.value">
+                    <span id="maxCaloriesValue">0</span>
+                </div>
+                <div class="filter-option">
+                    <label for="maxPrice">Max Price:</label>
+                    <input type="range" id="maxPrice" min="0" max="200" step="1" value="0"
+                        oninput="document.getElementById('maxPriceValue').textContent = this.value">
+                    <span id="maxPriceValue">0</span>
+                </div>
+                <button onclick="applyFilter()">Apply Filter</button>
+                <button onclick="resetFilter()">Reset Filter</button>
+                <button onclick="editMenu()">Edit Menu</button>
+            </div>
+        </div>
 
-    <div id="flex">
-
-      <aside id="leftSidebar">
-    
-        <h2 id="menuTitle" align="center">Menu Filters</h2>
+        <div id="menuEditSection" style="display: none">
+            <div id='newItemDiv'>
+                <h3>Add new menu item:</h3>
+                <p>
+                    <label>Name:</label>
+                    <input type='text' id='newItemNameField'><br><br>
+                    <label>Upload Image</label><br><br>
+                    <input type='file' id='newItemFileUpload'><br><br>
+                    <label>Price:</label>
+                    <input type='text' id='newItemPriceField'><br><br>
+                    <label>Calories:</label>
+                    <input type='text' id='newItemCaloriesField'><br><br>
+                    <label>Allergens:</label>
+                    <input type='text' id='newItemAllergensField'><br><br>
+                    <button onclick='addMenuItem()'>Add Item</button>
+                </p>
+            </div>
+        </div>
         
-        <div class="box">
-
-          <div id="menuFilter">
-            <div class="filterOption">
-              <label for="searchTerm">Search Item:</label>
-              <input type="text" id="searchTerm" placeholder="Enter item name">
-            </div>
-
-            <div class="filterOption">
-              <label for="maxCalories">Max Calories:</label>
-              <input type="number" id="maxCalories" placeholder="Enter max calories">
-            </div>
-
-            <div class="filterOption">
-              <label for="maxPrice">Max Price:</label>
-              <input type="number" id="maxPrice" placeholder="Enter max price">
-            </div>
-
-            <button onclick="applyFilter()" class="filterButton">Apply Filter</button>
-            <button onclick="resetFilter()" class="filterButton">Reset Filter</button>
-
-            <div class="filterOption" id="categoryFilter">
-              <label for="categoryFilter">Category:</label>
-              <button onclick="filterMenuByCategory('all', this)" data-category="all" class="active">Show All</button>
-            </div>
-          </div>
-
-        </div>
-
-        <div>
-          <p>
-            <button onclick="editMenu()">Edit Menu</button>
-          </p>
-        </div>
-
-      </aside> <!--Above section is in sidebar for cleaner presentation-->
-
-      <main id="menuPage"> <!--Main section of page-->
-        <div class="menuSection">
-          <section class="appetizersSection" data-calories="200" data-price="10.00">
-            <h2>Dishes & Drinks</h2>
-            <div id="MenuItemGridLayout">
-
-            </div>
-            <div id="MenuEditSection">
-
-            </div>
-          </section>
-          <div id="basketIcon" onclick="goToOrderPage()">🛒 0</div>
-
-
-        </div>
-      </main>
-
-    </div>
-
-  </div>
-
-  <script>
-
-    function goToOrderPage() {
-      window.location.href = "order.html";
-    }
-
-    document.addEventListener("DOMContentLoaded", function () {
-      initializeMenu();
-      initializeCategoryFilter();
-      //initMenuAll()
-    });
-
-
-    function initializeMenu() {
-      const activeButton = document.querySelector('#menuFilter button.active');
-
-      if (activeButton) {
-        const category = activeButton.getAttribute('data-category');
-        const filter = {
-          searchTerm: '',
-          maxCalories: 0,
-          maxPrice: 0,
-          category: category
-        };
-        filterMenu(filter, activeButton);
-      } else {
-        applyFilter();
-      }
-    }
-
-
-
-    function filterItems() {
-      const searchTerm = document.getElementById('searchTerm').value.toLowerCase();
-      const maxCalories = parseInt(document.getElementById('maxCalories').value) || 0;
-      const maxPrice = parseFloat(document.getElementById('maxPrice').value) || 0;
-
-      const filter = {
-        searchTerm: searchTerm,
-        maxCalories: maxCalories,
-        maxPrice: maxPrice,
-        category: 'all'
-      };
-
-      filterMenu(filter, document.querySelector('#menuFilter button.filterButton'));
-      showFilterFeedback();
-    }
-
-    function resetFilter() {
-      document.getElementById('searchTerm').value = '';
-      document.getElementById('maxCalories').value = '';
-      document.getElementById('maxPrice').value = '';
-
-      applyFilter();
-    }
-
-    function filterMenu(filter, button) {
-      const sections = document.querySelectorAll('.menuSection section');
-      const buttons = document.querySelectorAll('#menuFilter button.filterButton');
-
-      buttons.forEach(btn => {
-        btn.classList.remove('active');
-      });
-
-      button.classList.add('active');
-
-      sections.forEach(section => {
-        const sectionClass = section.classList[0];
-        const sectionTitle = section.querySelector('h2');
-        const listItems = section.querySelectorAll('ul li');
-
-        let sectionMatch = false;
-
-        listItems.forEach(item => {
-          const itemName = item.innerText.toLowerCase();
-          const itemCalories = parseInt(item.dataset.calories) || 0;
-          const itemPrice = parseFloat(item.dataset.price) || 0;
-
-          if (
-            (filter.searchTerm === '' || itemName.includes(filter.searchTerm.toLowerCase())) &&
-            (filter.maxCalories === 0 || itemCalories <= filter.maxCalories) &&
-            (filter.maxPrice === 0 || itemPrice <= filter.maxPrice) &&
-            (filter.category === 'all' || sectionClass === filter.category)
-          ) {
-            sectionMatch = true;
-            item.style.display = 'block';
-          } else {
-            item.style.display = 'none';
-          }
+        <div id="MenuItemGridLayout" class="menu-grid"></div>
+    </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            initMenuAll();
+            initializeCategoryFilter();
         });
 
-        if (sectionMatch) {
-          section.style.display = 'block';
-          sectionTitle.style.display = 'block';
-        } else {
-          section.style.display = 'none';
-          sectionTitle.style.display = 'none';
+        function goToOrderPage() {
+            window.location.href = "order.html";
         }
-      });
-    }
 
-    function initializeCategoryFilter() {
-      const activeButton = document.querySelector('#menuFilter button.active');
-      if (activeButton) {
-        const category = activeButton.getAttribute('data-category');
-        filterMenuByCategory(category, activeButton);
-      }
-    }
+        function resetFilter() {
+            document.getElementById('searchTerm').value = '';
+            document.getElementById('maxCalories').value = 0;
+            document.getElementById('maxPrice').value = 0;
+            document.getElementById('excludedAllergens').value = '';
+            document.getElementById('maxPriceValue').textContent = "0";
+            document.getElementById('maxCaloriesValue').textContent = "0";
 
-    function filterMenuByCategory(category, button) {
-      initMenuAll()
-      const sections = document.querySelectorAll('.menuSection section');
-      const buttons = document.querySelectorAll('#menuFilter button.filterButton');
-
-      buttons.forEach(btn => {
-        btn.classList.remove('active');
-      });
-
-      button.classList.add('active');
-
-      sections.forEach(section => {
-        const sectionClass = section.classList[0];
-
-        if (category === 'all' || sectionClass === category) {
-          section.style.display = 'block';
-        } else {
-          section.style.display = 'none';
+            applyFilter();
         }
-      });
-    }
-  </script>
+    </script>
 </body>
 
 </html>
-

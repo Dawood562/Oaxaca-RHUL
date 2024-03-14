@@ -21,3 +21,4 @@ test:
 
 wipe:
 	docker volume rm backend_postgresql
+	docker volume rm backend_uploads

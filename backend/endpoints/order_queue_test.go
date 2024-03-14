@@ -8,12 +8,12 @@ import (
 )
 
 func TestPendingOrdersEmpty(t *testing.T) {
-	clearOrderQueue()
+	ClearOrderQueue()
 	assert.False(t, IsAnyPendingOrders(), "Pending orders should return false when no items in pending order queue")
 }
 
 func TestOrderAddedCorrectly(t *testing.T) {
-	clearOrderQueue()
+	ClearOrderQueue()
 	assert.False(t, IsAnyPendingOrders(), "Pending orders should return false when no items in pending order queue")
 	testOrder1 := models.Order{ID: 1}
 	AddOrderToQueue(testOrder1)
@@ -33,7 +33,7 @@ func TestOrdersReturnCorrectly(t *testing.T) {
 }
 
 func resetTestData(t *testing.T) {
-	clearOrderQueue()
+	ClearOrderQueue()
 	testOrder1 := models.Order{ID: 1, Status: "Ready"}
 	testOrder2 := models.Order{ID: 1}
 	testOrder3 := models.Order{ID: 2, Status: "Pending"}

@@ -1,65 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-	<meta charset="utf-8">
+    <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <script src="waiter.js"></script>
-	<script src="menu.js"></script>
-	<title>Staff Portal</title>
-    <link rel="stylesheet" href="style.css" type="text/css">
-
+    <script src="menu.js"></script>
+    <script src="staff.js"></script>
+    <title>Staff Portal</title>
+    <link rel="stylesheet" href="shared.css">
+    <link rel="stylesheet" href="waiter.css" type="text/css">
 </head>
-    <div id="container">
-    <div id="headerArea">
-    <div id="header">
 
-    </div>
-            
-    <nav id="navbar">
-        <ul>
-        <li><a href="index.html">Home</a></li>
-        <li><a href="menu.html">Menu</a></li>
-        <li><a href="order.html">Order</a></li>
-        <li><a href="#">Link</a></li>
-        <li><a href="staff.html">Staff</a></li>
-        </ul>
-    </nav>
-    </div>
+<body>
+    <header>
+        <nav>
+            <div class="logo"><a href="index.html">Oaxaca</a></div>
+            <div class="menu-icon">
+                <a>&#9776;</a>
+                <div class="floating-window">
+                    <a href="menu.html">Menu</a>
+                    <a href="staff.html">Staff</a>
+                </div>
+            </div>
+        </nav>
+    </header>
 
-    <div id="flex">
+    <main>
+        <aside id="leftSidebar">
+            <h2>Staff Portal</h2>
+            <p>
+                <strong>This page is for staff access only. This page is designed for our team members to streamline
+                    operations and enhance communication. Here, you'll find essential tools and information to help you
+                    manage orders efficiently and stay informed about delivery times.</strong>
+            </p>
+            <div class="box">
+                <strong>You are able to do the following functions on this page</strong>
+                <ul>
+                    <li>Cancel and manage orders</li>
+                    <li>View and change order status</li>
+                    <li>Confirm deliveries</li>
+                    <li>View delivery times</li>
+                </ul>
+            </div>
+            <br><br>
+            Your privacy and the security of sensitive information are our top priorities. Access is limited to
+            authorized personnel only. Please ensure that you keep your login credentials confidential. If you have any
+            issues, please raise it to the IT Staff.
+            <br>
+        </aside>
 
-    <aside id="leftSidebar"> 
-        <h2 align='center'>STAFF PORTAL</h2>
-        <p>
-        <strong>For staff access only. This platform is designed for our valued team members to streamline operations 
-        and enhance communication. Here, you'll find essential tools and information to help you manage orders 
-        efficiently and stay informed about delivery times.</strong>
-        </p>
-        <div class="box">
-            <ul>
-            <li>Cancel and manage orders</li>
-            <li>View and change order status</li>
-            <li>Communication between kitchen and waiter staff</li>
-            <li>Confirm deliveries</li>
-            <li>View delivery times</li>
-            </ul>
-        </div>
-        <br><br>
-        Your privacy and the security of sensitive information are our top priorities. Access is limited to authorized personnel only. Please ensure that you keep your login credentials confidential.
-        <br><br>
-        For any technical issues or assistance, please contact the IT support team.
-        
-    </aside>
-            
-    <main> 
-
-        <table class="Orders" id="order_table">
-            <tbody id="order_table_body"></tbody>
-
-        </table>
+        <section>
+            <table class="Orders" id="order_table">
+                <tbody id="order_table_body"></tbody>
+            </table>
+        </section>
     </main>
+</body>
 
-    </div>
-    
-    </div>
-        
+</html>
