@@ -112,6 +112,8 @@ async function refreshEditMenu() {
 function closeEdit(id) {
     document.getElementById(`itemName${id}`).style.display = "inline";
     document.getElementById(`nameEditPrompt${id}`).style.display = "none";
+    document.getElementById(`imageEditPrompt${id}`).style.display = "none";
+    document.querySelector(`label[for='imageEditPrompt${id}']`).style.display = "none";
     document.getElementById(`itemPrice${id}`).style.display = "inline";
     document.getElementById(`priceEditPrompt${id}`).style.display = "none";
     document.getElementById(`itemAllergens${id}`).style.display = "block";
