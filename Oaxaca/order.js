@@ -99,12 +99,12 @@ function showOrdersToPage() {
                 <div class='orderItemEntry'>
                     <img src="http://localhost:4444/image/${itemData.imageURL}" alt="${itemData.name}" class="orderItemImage">
                     <div class="orderItemDetails">
-                        <label class='orderPageItemData'>${itemData.name}</label>
-                        <label class='orderPageItemData'>Quantity: ${itemData.quantity}</label>
-                        <label class='orderPageItemData'>Calories: ${Number(itemData.calories) * Number(itemData.quantity)} kcal</label>
-                        <label class='orderPageItemData'>Price: £${(Number(itemData.price) * Number(itemData.quantity)).toFixed(2)}</label>
-                        <button class="removeButton" value="Remove" onclick='removeOrderFromList(${itemData.id})'><i class="fa fa-trash"></i></button>
+                        <label class='orderPageItemDataN'>${itemData.name}</label>
+                        <label class='orderPageItemDataP'>£${(Number(itemData.price) * Number(itemData.quantity)).toFixed(2)}</label>
+                        <label class='orderPageItemDataC'>${Number(itemData.calories) * Number(itemData.quantity)} kcal</label>
+                        <label class='orderPageItemDataQ'>Quantity: ${itemData.quantity}</label>
                     </div>
+                    <button class="removeButton" onclick='removeOrderFromList(${itemData.id})'>Remove<i class="fa fa-trash"></i></button>
                 </div>`;
             orderStore.appendChild(item);
         });

@@ -92,7 +92,7 @@ input[type="text"] {
 
 .orderItemEntry {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   width: 100%;
 }
 
@@ -105,13 +105,42 @@ input[type="text"] {
 
 .orderItemDetails {
   flex-grow: 1;
+  display: flex;
+  flex-direction: column;
 }
 
-.orderPageItemData {
+.orderPageItemDataN {
+  text-align: left;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.orderPageItemDataC {
+  text-align: left;
+  color: #555555;
+  font-size: 0.9rem;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.orderPageItemDataP {
+  text-align: left;
+  font-size: 1.25rem;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.orderPageItemDataQ {
+  text-align: left;
+  font-size: 1.25rem;
   display: block;
   margin-bottom: 0.5rem;
 }
 
 .removeButton {
-  font-size: 500px;
+  color: #fff;
+  border: none;
+  padding: 0.5rem;
+  border-radius: 50%;
+  font-size: 1rem;
 }
