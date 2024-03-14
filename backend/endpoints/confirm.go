@@ -25,6 +25,7 @@ func Confirm(c *fiber.Ctx) error {
 
 	BroadcastToKitchen("CONFIRM")
 	BroadcastToWaiters("REFRESH")
+	BroadcastToCustomers("REFRESH")
 
 	return nil
 }

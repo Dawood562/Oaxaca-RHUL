@@ -25,6 +25,7 @@ func Cancel(c *fiber.Ctx) error {
 
 	BroadcastToKitchen("CANCEL")
 	BroadcastToWaiters("REFRESH")
+	BroadcastToCustomers("REFRESH")
 
 	return nil
 }

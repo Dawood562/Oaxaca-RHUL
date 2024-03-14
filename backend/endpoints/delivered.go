@@ -25,6 +25,7 @@ func Delivered(c *fiber.Ctx) error {
 
 	BroadcastToWaiters("REFRESH")
 	SendToTable(uint(id), "REFRESH")
+	BroadcastToCustomers("REFRESH") // hehe sorry ;)
 
 	return nil
 }

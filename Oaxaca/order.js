@@ -65,6 +65,8 @@ function handleMessages(e) {
         console.log("Connected to backend websocket")
     } else if (e.data == "OK") {
         console.log("Notification successfully received")
+    } else if (e.data == "REFRESH"){
+        refreshOrderStatus()
     } else {
         console.log(e) // Display entire message if something went wrong for debugging
     }
