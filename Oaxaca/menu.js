@@ -422,7 +422,7 @@ function addToBasket(itemId, itemName, price, calories, imageURL) {
   else {
     document.cookie = "basket=" + itemId + "," + itemName + "," + price + "," + calories + "," + quantity + "," + imageURL + "#" + previousCookieContent;
   }
-
+  updateBasketQuantity();
 }
 
 //function ro remove menu item from the order
