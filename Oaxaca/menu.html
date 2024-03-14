@@ -29,29 +29,39 @@
     <main>
         <div class="filter-container">
             <input type="text" id="searchTerm" placeholder="Search">
-            <p>Allergens to exclude:</p>
-
-            <div class="excludedAllergens">
-            <input type="checkbox" id="glutenAllergen" placeholder="Exclude Allergens" >
-            <label for="glutenAllergen">Gluten</label>
-            <input type="checkbox" id="dairyAllergen" placeholder="Exclude Allergens" >
-            <label for="dairyAllergen">Dairy</label> <br>
-            <input type="checkbox" id="nutAllergen" placeholder="Exclude Allergens" >
-            <label for="nutAllergen">Nuts</label>
-            </div>
-
+            
             <div class="filter-options">
                 <div class="filter-option">
                     <label for="maxCalories">Max Calories:</label>
                     <input type="range" id="maxCalories" min="0" max="2000" step="50" value="0"
-                        oninput="document.getElementById('maxCaloriesValue').textContent = this.value">
+                    oninput="document.getElementById('maxCaloriesValue').textContent = this.value">
                     <span id="maxCaloriesValue">0</span>
                 </div>
                 <div class="filter-option">
                     <label for="maxPrice">Max Price:</label>
                     <input type="range" id="maxPrice" min="0" max="200" step="1" value="0"
-                        oninput="document.getElementById('maxPriceValue').textContent = this.value">
+                    oninput="document.getElementById('maxPriceValue').textContent = this.value">
                     <span id="maxPriceValue">0</span>
+                </div>
+                <p>Don't show dishes containing:</p>
+                <div class="excludedAllergens">
+                    <input type="checkbox" id="glutenAllergen">
+                    <label for="glutenAllergen">Gluten</label>
+    
+                    <input type="checkbox" id="dairyAllergen">
+                    <label for="dairyAllergen">Dairy</label><br>
+    
+                    <input type="checkbox" id="nutAllergen">
+                    <label for="nutAllergen">Nuts</label>
+    
+                    <input type="checkbox" id="eggAllergen">
+                    <label for="eggAllergen">Eggs</label><br>
+    
+                    <input type="checkbox" id="crustaceanAllergen">
+                    <label for="crustaceanAllergen">Crustaceans</label>
+    
+                    <input type="checkbox" id="fishAllergen">
+                    <label for="fishAllergen">Fish</label>
                 </div>
                 <button onclick="applyFilter()">Apply Filter</button>
                 <button onclick="resetFilter()">Reset Filter</button>
@@ -83,7 +93,6 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             initMenuAll();
-            initializeCategoryFilter();
         });
 
         function goToOrderPage() {
@@ -94,7 +103,9 @@
             document.getElementById('searchTerm').value = '';
             document.getElementById('maxCalories').value = 0;
             document.getElementById('maxPrice').value = 0;
-            document.getElementById('excludedAllergens').value = '';
+            document.querySelectorAll('.excludedAllergens > input[type="checkbox"]').forEach(item => {
+                item.checked = false
+            });
             document.getElementById('maxPriceValue').textContent = "0";
             document.getElementById('maxCaloriesValue').textContent = "0";
 
