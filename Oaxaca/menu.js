@@ -19,7 +19,7 @@ async function refreshMenu() {
 async function fetchMenuWithFilter(searchTerm, maxPrice, maxCalories, excludedAllergens) {
     let allergenString = "";
     excludedAllergens.forEach(item => {
-        allergenString += item.name + ",";
+        allergenString += item + ",";
     })
     await fetch("http://localhost:4444/menu?" + new URLSearchParams({
         searchTerm: searchTerm,
@@ -64,7 +64,7 @@ function createMenuItem(id, itemName, imageURL, price, calories, allergens) {
             <input style="display: none" id='caloriesEditPrompt${id}' class='editMenuItemPrompt' type='text' placeholder="Calories"><p id="caloriesContext${id}" class="editMenuContext">kcal</p>
             <input style="display: none; max-width:90%" id='allergensEditPrompt${id}' class='editMenuItemPrompt' type='text' placeholder="Allergens">
         </div>
-        <button id='addItem${id}' + class='addBasketButton' onclick='addToBasket(${id}, "${itemName}", ${price}, ${calories})'>Add to Basket</button>
+        <button id='addItem${id}' + class='addBasketButton' onclick='addToBasket(${id}, "${itemName}", ${price}, ${calories}, "${imageURL}")'>Add to Basket</button>
         <button index="${id}" id="editItem${id}" style="display: none" class="editMenuItemButton">Edit</button>
         <button index="${id}" id="deleteItem${id}" style="display: none" class="deleteMenuItemButton">Delete</button>
         <button index="${id}" id="cancelEditItem${id}" style="display: none" class="cancelEditMenuItemButton" onclick="closeEdit(${id})">Cancel</button>
@@ -106,6 +106,7 @@ async function refreshEditMenu() {
         });
     })
 }
+
 
 function closeEdit(id) {
     document.getElementById(`itemName${id}`).style.display = "inline";
@@ -249,6 +250,26 @@ async function addMenuItem() {
     }
 }
 
+function getAllergenList() {
+    let labels = [];
+    let allergens = [];
+    document.querySelectorAll('.excludedAllergens > label').forEach(item => {
+        labels.push(item);
+    });
+    document.querySelectorAll('.excludedAllergens > input[type="checkbox"]').forEach(item => {
+        if(item.checked) {
+            // Find label matching this item
+            let id = item.id;
+            labels.forEach(label => {
+                if(label.htmlFor === id) {
+                    allergens.push(label.innerHTML);
+                }
+            });
+        }
+    });
+    return allergens;
+}
+
 function allergenStringToArray(input) {
     return input.split(",").map(item => {
         return {
@@ -337,7 +358,7 @@ async function removeItem(id) {
 // function to add menu item to basket
 // Stores menu items in basket using cookies
 // Cookie structure is CSV in form: id,itemName,price,calories,quantity
-function addToBasket(itemId, itemName, price, calories) {
+function addToBasket(itemId, itemName, price, calories, imageURL) {
   let quantity = 1;
 
   // This will work for now as we only store 1 type of cookie
@@ -368,10 +389,17 @@ function addToBasket(itemId, itemName, price, calories) {
   });
 
   if (!updated) {
-    document.cookie = "basket=" + itemId + "," + itemName + "," + price + "," + calories + "," + quantity + "#" + previousCookieContent;
-    updateBasketQuantity()
+    document.cookie = "basket=" + itemId + "," + itemName + "," + price + "," + calories + "," + quantity + "," + imageURL + "#" + previousCookieContent;
   }
 
+}
+
+//function to update basket icon with the item quantity in order
+function updateBasketIcon() {
+  let order = JSON.parse(localStorage.getItem('order')) || [];
+  let basketIcon = document.getElementById('basketIcon');
+  let totalQuantity = order.reduce((total, item) => total + item.quantity, 0);
+  basketIcon.textContent = `🛒 ${totalQuantity}`;
 }
 
 //function ro remove menu item from the order
@@ -388,7 +416,7 @@ function applyFilter() {
     let searchTerm = document.getElementById('searchTerm').value.toLowerCase();
     let maxCalories = parseInt(document.getElementById('maxCalories').value) || 0;
     let maxPrice = parseFloat(document.getElementById('maxPrice').value) || 0;
-    let allergens = allergenStringToArray(document.getElementById('excludedAllergens').value);
+    let allergens = getAllergenList();
     fetchMenuWithFilter(searchTerm, maxPrice, maxCalories, allergens);
 }
 
