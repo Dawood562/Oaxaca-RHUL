@@ -13,16 +13,15 @@ function initBasketData() {
     let basketCookies = "";
     let basketEmpty = true;
     splitCookies.forEach(cookie => {
-        if(cookie.indexOf("basket=") >= 0){
+        if (cookie.indexOf("basket=") >= 0) {
             basketCookies = cookie.split("basket=")[1].split("#");
-            if(basketCookies.length > 1){
+            if (basketCookies.length > 1) {
                 basketEmpty = false;
             }
-            
         }
     })
 
-    if (basketEmpty){
+    if (basketEmpty) {
         console.log("Basket is empty!");
         return;
     }
@@ -36,12 +35,12 @@ function initBasketData() {
                 name: splitData[1],
                 price: splitData[2],
                 calories: splitData[3],
-                quantity: splitData[4]
+                quantity: splitData[4],
+                imageURL: splitData[5] // Add the imageURL property
             }
             basketData.push(itemData)
         }
     });
-
 }
 
 // Called when page is initialised and initialises websocket connection
@@ -81,19 +80,35 @@ function showConfirmationSection() {
 
 function showOrdersToPage() {
     let orderStore = document.getElementById("orderHeading");
-    basketData.forEach(itemData => {
-        let item = document.createElement('li');
-        item.className = "orderPageItem";
-        item.innerHTML = `
-            <div class='orderItemEntry'>
-            <label class='orderPageItemData'>${itemData.name}</label>
-            <label class='orderPageItemData'>quantity: ${itemData.quantity}</label>
-            <label class='orderPageItemData'>Calories: ${Number(itemData.calories) * Number(itemData.quantity)} kcal</label>
-            <label class='orderPageItemData'>Price: £${(Number(itemData.price) * Number(itemData.quantity)).toFixed(2)}</label>
-            <button class="removeButton" onclick='removeOrderFromList(`+ itemData.id + `)'><i class = "fa fa-trash"></i></button>
-            <div>`
-        orderStore.appendChild(item);
-    });
+
+    if (basketData.length === 0) {
+        let emptyMessage = document.createElement('div');
+        emptyMessage.innerHTML = `
+            <p>Nothing here.</p>
+            <button onclick="location.href='menu.html'">Start Shopping</button>
+        `;
+        emptyMessage.style.textAlign = 'center';
+        emptyMessage.style.marginTop = '2rem';
+        emptyMessage.style.fontWeight = '500';
+        orderStore.appendChild(emptyMessage);
+    } else {
+        basketData.forEach(itemData => {
+            let item = document.createElement('div'); // Change to 'div' instead of 'li'
+            item.className = "orderPageItem";
+            item.innerHTML = `
+                <div class='orderItemEntry'>
+                    <img src="http://localhost:4444/image/${itemData.imageURL}" alt="${itemData.name}" class="orderItemImage">
+                    <div class="orderItemDetails">
+                        <label class='orderPageItemData'>${itemData.name}</label>
+                        <label class='orderPageItemData'>Quantity: ${itemData.quantity}</label>
+                        <label class='orderPageItemData'>Calories: ${Number(itemData.calories) * Number(itemData.quantity)} kcal</label>
+                        <label class='orderPageItemData'>Price: £${(Number(itemData.price) * Number(itemData.quantity)).toFixed(2)}</label>
+                        <button class="removeButton" value="Remove" onclick='removeOrderFromList(${itemData.id})'><i class="fa fa-trash"></i></button>
+                    </div>
+                </div>`;
+            orderStore.appendChild(item);
+        });
+    }
 }
 
 function removeOrderFromList(id) {
@@ -196,7 +211,7 @@ function submitOrder() {
         });
 }
 
-function replaceWithOrderStatus(){
+function replaceWithOrderStatus() {
     let orderList = document.getElementById("orderHeading");
     let submissionNotification = document.createElement('div');
     submissionNotification.innerHTML = `
@@ -206,15 +221,15 @@ function replaceWithOrderStatus(){
     orderList.appendChild(submissionNotification);
 }
 
-async function refreshOrderStatus(){
-    if(orderID < 0){
+async function refreshOrderStatus() {
+    if (orderID < 0) {
         console.error("Cannot refresh order with no order id!")
         return;
     }
     let response = await fetch(`http://localhost:4444/status/${orderID}`, {
         method: 'GET',
     }).then((res) => res.text()).then((data) => {
-        console.log("Retrieved status of: "+data);
+        console.log("Retrieved status of: " + data);
         document.getElementById("orderStatus").innerHTML = data;
     });
 }
