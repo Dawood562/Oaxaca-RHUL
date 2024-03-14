@@ -4,17 +4,15 @@
     box-sizing: border-box;
 }
 
-body {
-    line-height: 1.5;
+header {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    font-size: 1.2rem;
+    padding: 1rem;
 }
 
-strong {
-    font-size: 1.25rem;
+body {
+    line-height: 1.5;
+    min-height: 100vh;
+    font-size: 1.2rem;
 }
 
 main {
@@ -43,14 +41,19 @@ nav ul li a {
 }
 
 .hero {
-    max-width: 31.25rem;
+    transform: translateY(15%);
+    max-width: 100%;
     padding: 3.125rem;
-    text-align: center;
+    text-align: left;
 }
 
 .hero h1 {
-    font-size: 2.5rem;
+    font-size: 3rem;
     margin-bottom: 1rem;
+}
+
+.hero p {
+    font-size: 1.5rem;
 }
 
 .menu-container {
@@ -60,6 +63,7 @@ nav ul li a {
 }
 
 .menu-btn {
+    text-align: center;
     display: inline-block;
     width: 20vh;
     padding: 0.8rem 1.5rem;
@@ -72,11 +76,11 @@ nav ul li a {
 }
 
 .dropdown {
+    text-align: center;
     display: none;
     position: absolute;
-    top: 100%;
-    left: 50%;
     transform: translateX(-50%);
+    transform: translateY(-1%);
     min-width: 100%;
     background-color: #4a3731;
     z-index: 1;

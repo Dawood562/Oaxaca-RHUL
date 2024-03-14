@@ -22,7 +22,7 @@ main {
 #orderSidebar {
   font-size: 1rem;
   background-color: #fff;
-  padding: 2rem;
+  padding: 1.5rem;
   border-radius: 0.625rem;
   box-shadow: 0 0.25rem 0.375rem rgba(0, 0, 0, 0.1);
   width: 18.75rem;
@@ -82,4 +82,36 @@ input[type="text"] {
 
 #payButton {
   background-color: green;
+}
+
+.orderPageItem {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.orderItemEntry {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.orderItemImage {
+  width: 20%;
+  object-fit: cover;
+  border-radius: 0.625rem;
+  margin-right: 1rem;
+}
+
+.orderItemDetails {
+  flex-grow: 1;
+}
+
+.orderPageItemData {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.removeButton {
+  font-size: 500px;
 }
