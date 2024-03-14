@@ -142,6 +142,16 @@ func BroadcastToKitchen(m string) {
 	}
 }
 
+// Broadcast a message to all customers
+func BroadcastToCustomers(m string) {
+	customers.Lock()
+	defer customers.Unlock()
+	for _, u := range customers.users {
+		c, _ := u.(Customer)
+		c.ws.WriteMessage(websocket.TextMessage, []byte(m))
+	}
+}
+
 // NewConnection registers a new connection to the system given its websocket connection.
 // Returns the User that has been registered.
 // Returns an error if one arises during communication.
