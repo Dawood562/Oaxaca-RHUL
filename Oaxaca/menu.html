@@ -29,7 +29,17 @@
     <main>
         <div class="filter-container">
             <input type="text" id="searchTerm" placeholder="Search">
-            <input type="text" id="excludedAllergens" placeholder="Exclude Allergens">
+            <p>Allergens to exclude:</p>
+
+            <div class="excludedAllergens">
+            <input type="checkbox" id="glutenAllergen" placeholder="Exclude Allergens" >
+            <label for="glutenAllergen">Gluten</label>
+            <input type="checkbox" id="dairyAllergen" placeholder="Exclude Allergens" >
+            <label for="dairyAllergen">Dairy</label> <br>
+            <input type="checkbox" id="nutAllergen" placeholder="Exclude Allergens" >
+            <label for="nutAllergen">Nuts</label>
+            </div>
+
             <div class="filter-options">
                 <div class="filter-option">
                     <label for="maxCalories">Max Calories:</label>
