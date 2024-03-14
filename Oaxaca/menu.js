@@ -19,7 +19,7 @@ async function refreshMenu() {
 async function fetchMenuWithFilter(searchTerm, maxPrice, maxCalories, excludedAllergens) {
     let allergenString = "";
     excludedAllergens.forEach(item => {
-        allergenString += item.name + ",";
+        allergenString += item + ",";
     })
     await fetch("http://localhost:4444/menu?" + new URLSearchParams({
         searchTerm: searchTerm,
@@ -106,6 +106,7 @@ async function refreshEditMenu() {
         });
     })
 }
+
 
 function closeEdit(id) {
     document.getElementById(`itemName${id}`).style.display = "inline";
@@ -249,6 +250,26 @@ async function addMenuItem() {
     }
 }
 
+function getAllergenList() {
+    let labels = [];
+    let allergens = [];
+    document.querySelectorAll('.excludedAllergens > label').forEach(item => {
+        labels.push(item);
+    });
+    document.querySelectorAll('.excludedAllergens > input[type="checkbox"]').forEach(item => {
+        if(item.checked) {
+            // Find label matching this item
+            let id = item.id;
+            labels.forEach(label => {
+                if(label.htmlFor === id) {
+                    allergens.push(label.innerHTML);
+                }
+            });
+        }
+    });
+    return allergens;
+}
+
 function allergenStringToArray(input) {
     return input.split(",").map(item => {
         return {
@@ -388,7 +409,7 @@ function applyFilter() {
     let searchTerm = document.getElementById('searchTerm').value.toLowerCase();
     let maxCalories = parseInt(document.getElementById('maxCalories').value) || 0;
     let maxPrice = parseFloat(document.getElementById('maxPrice').value) || 0;
-    let allergens = allergenStringToArray(document.getElementById('excludedAllergens').value);
+    let allergens = getAllergenList();
     fetchMenuWithFilter(searchTerm, maxPrice, maxCalories, allergens);
 }
 
