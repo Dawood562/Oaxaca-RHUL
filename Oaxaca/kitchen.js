@@ -63,14 +63,14 @@ function createOrder(order) {
     let items = order.items.map((x) => x.itemId.itemName);
     let itemsStr = "";
     for (var item of items) {
-        itemsStr += item + ", "
+        itemsStr += item + ", ";
     }
-    return `<tr>
+    return `<tr data-order-id="${order.orderId}">
         <td>${order.tableNumber}</td>
         <td>${new Date(order.orderTime).toLocaleTimeString()}</td>
         <td>${itemsStr.substring(0, itemsStr.length - 2)}</td>
         <td>${order.status}</td>
-        <td><button onclick="completeOrder(${order.id})">Complete Order</td>
+        <td><button onclick="completeOrder(${order.orderId})">Complete Order</td>
     </tr>`;
 }
 
@@ -78,20 +78,52 @@ function confirmOrder(id) {
     fetch("http://localhost:4444/confirm/" + id, {
         method: "PATCH"
     })
-        .then((res) => {
-            if (!res.ok) {
-                alert("Failed to confirm order!");
-            }
-        })
+    .then((res) => {
+        if (!res.ok) {
+            alert("Failed to confirm order!");
+        }
+    })
 }
 
 function cancelOrder(id) {
     fetch("http://localhost:4444/cancel/" + id, {
         method: "PATCH"
     })
-        .then((res) => {
-            if (!res.ok) {
-                alert("Failed to cancel order!");
+    .then((res) => {
+        if (!res.ok) {
+            alert("Failed to cancel order!");
+        }
+    })
+}
+//change order to status to ready on waiter page.
+async function completeOrder(orderId) {
+
+    try {
+        let response = await fetch(`http://localhost:4444/ready/${orderId}`,{
+            method:"PATCH"
+        });
+        if (response.ok) {
+            console.log(`Ready request for order ${orderId} successful`);
+            let row = document.querySelector(`[data-order-id="${orderId}"]`);
+            if (row) {
+                row.querySelector('td:nth-child(4)').textContent = 'Ready';
+                row.querySelector('td:nth-child(5) button').disabled = true;
+                alert(`Order ${orderId} is ready.`);
             }
-        })
+
+            
+        } else if (response.status === 404) {
+            console.log(`Order ${orderId} not found.`);
+        } else if (response.status === 409) {
+            console.log(`Status for order ${orderId} has already been changed to ready.`);
+            alert(`Status for order ${orderId} has already been changed to ready.`)
+        } else {
+            console.error(`Failed to change order status to ready ${orderId}. Status: ${response.status}`);
+        }
+    } catch (error) {
+        console.error(`Error while changing order status ${orderId}: ${error}`);
+        console.log()
+        
+
+    }
 }
