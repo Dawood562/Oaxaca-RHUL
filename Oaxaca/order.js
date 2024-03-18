@@ -3,7 +3,7 @@ var sockInit = false
 var basketData = []
 
 document.addEventListener('DOMContentLoaded', e => {
-    initTableNo();
+    //initTableNo();
     initBasketData()
     showOrdersToPage();
 })
@@ -75,7 +75,7 @@ function initSock(tableNo) {
     })
 
     sock.addEventListener("message", e => handleMessages(e))
-    document.cookie = "username=table".concat(tableno); // Set "username" entry to table number
+    document.cookie = "username=table".concat(tableNo); // Set "username" entry to table number
 }
 
 function closeSock() {
@@ -183,13 +183,13 @@ function removeOrderFromCookie(id) {
 var orderID = -1;
 function submitOrder() {
 
+    let tableNum = Number(document.getElementById('tableNumber').value);
+
     try {
         x = sock.readyState;
     } catch (e) {
         initSock(tableNum);
     }
-
-    let tableNum = Number(document.getElementById('tableNumber').value);
 
     if (basketData.length == 0) {
         alert('Your basket is empty. Add items before submitting your order.');
