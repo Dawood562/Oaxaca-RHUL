@@ -30,7 +30,10 @@ function getWaiterIdFromCookies(){
     cookieData.split(";").forEach(cookie => {
         indexOfParam = cookie.indexOf("=");
         if (cookie.indexOf("waiterID") >= 0) {
-            thing = Number(cookie.substring(indexOfParam+1, cookie.length));
+            let idk = cookie.substring(indexOfParam+1, cookie.length);
+            if(idk.length > 0){
+                thing = Number(idk);
+            }
         }
     })
     return thing;
@@ -38,9 +41,16 @@ function getWaiterIdFromCookies(){
 
 async function registerWaiter() {
     getUserNameFromCookies();
+    waiterID = getWaiterIdFromCookies();
 
     if(waiterUsername.length <= 0){
         console.log("WAITER NOT REGISTERED! INVALID USERNAME: {"+waiterUsername+"}");
+        return;
+    }
+
+    if(waiterID >= 0){
+        console.error("Waiter ID already registered in cookies")
+        refreshOrders();
         return;
     }
 
