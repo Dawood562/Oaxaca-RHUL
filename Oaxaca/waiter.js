@@ -58,7 +58,7 @@ function storeWaiterID(){
 }
 
 // On leaving waiter page
-window.onbeforeunload = removeWaiter;
+//window.onbeforeunload = removeWaiter;
 
 async function removeWaiter(){
     const response = await fetch("http://localhost:4444/remove_waiter",{
