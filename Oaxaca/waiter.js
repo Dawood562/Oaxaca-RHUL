@@ -72,6 +72,13 @@ async function removeWaiter(){
     })
 }
 
+function logWaiterOut(){
+    removeWaiter();
+    alert("Waiter logged out!");
+    document.cookie="waiterID=";
+    document.location.href = "staff.html";
+}
+
 function initSock() {
     sock = new WebSocket("ws://localhost:4444/notifications");
     sock.onerror = function (event) {
