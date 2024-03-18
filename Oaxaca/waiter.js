@@ -23,6 +23,19 @@ function getUserNameFromCookies() {
     })
 }
 
+// Returns waiter id from cookies if exists. If not then returns -1
+function getWaiterIdFromCookies(){
+    let thing = -1;
+    let cookieData = document.cookie;
+    cookieData.split(";").forEach(cookie => {
+        indexOfParam = cookie.indexOf("=");
+        if (cookie.indexOf("waiterID") >= 0) {
+            thing = Number(cookie.substring(indexOfParam+1, cookie.length));
+        }
+    })
+    return thing;
+}
+
 async function registerWaiter() {
     getUserNameFromCookies();
 
