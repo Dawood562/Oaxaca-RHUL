@@ -148,7 +148,9 @@ func BroadcastToCustomers(m string) {
 	defer customers.Unlock()
 	for _, u := range customers.users {
 		c, _ := u.(Customer)
-		c.ws.WriteMessage(websocket.TextMessage, []byte(m))
+		if c.ws != nil {
+			c.ws.WriteMessage(websocket.TextMessage, []byte(m))
+		}
 	}
 }
 
