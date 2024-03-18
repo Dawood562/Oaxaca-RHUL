@@ -110,12 +110,14 @@ input[type="text"] {
 }
 
 .orderPageItemDataN {
+  transform: translateY(-1.75rem);
   text-align: left;
   display: block;
   margin-bottom: 0.5rem;
 }
 
 .orderPageItemDataC {
+  transform: translateY(-1.75rem);
   text-align: left;
   color: #555555;
   font-size: 0.9rem;
@@ -124,6 +126,7 @@ input[type="text"] {
 }
 
 .orderPageItemDataP {
+  transform: translateY(-1.75rem);
   text-align: left;
   font-size: 1.25rem;
   display: block;
@@ -131,14 +134,16 @@ input[type="text"] {
 }
 
 .orderPageItemDataQ {
-  text-align: left;
-  font-size: 1.25rem;
-  display: block;
+  transform: translate(30rem, -8.25rem);
+  gap: 5%;
+  text-align: middle;
+  width: 20%;
+  font-size: 1.5rem;
+  display: flex;
   margin-bottom: 0.5rem;
 }
 
 .removeButton {
-  color: #fff;
   border: none;
   padding: 0.5rem;
   border-radius: 50%;
