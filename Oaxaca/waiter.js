@@ -10,7 +10,6 @@ var deliveredBlacklist = [];
 document.addEventListener('DOMContentLoaded', e => {
     registerWaiter();
     initSock(); // This should be called within register waiter after registering waiter
-
 });
 
 function getUserNameFromCookies() {
@@ -25,18 +24,8 @@ function getUserNameFromCookies() {
 
 // Returns waiter id from cookies if exists. If not then returns -1
 function getWaiterIdFromCookies(){
-    let thing = -1;
-    let cookieData = document.cookie;
-    cookieData.split(";").forEach(cookie => {
-        indexOfParam = cookie.indexOf("=");
-        if (cookie.indexOf("waiterID") >= 0) {
-            let idk = cookie.substring(indexOfParam+1, cookie.length);
-            if(idk.length > 0){
-                thing = Number(idk);
-            }
-        }
-    })
-    return thing;
+    let storedID = sessionStorage.getItem("waiterID");
+    return storedID;
 }
 
 async function registerWaiter() {
@@ -48,7 +37,7 @@ async function registerWaiter() {
         return;
     }
 
-    if(waiterID >= 0){
+    if(waiterID > 0){
         console.error("Waiter ID already registered in cookies")
         refreshOrders();
         return;
@@ -73,11 +62,12 @@ async function registerWaiter() {
 
 function storeWaiterID(){
     if(waiterID < 0){
+        sessionStorage.setItem("waiterID", -1);
         console.error("Cannot store waiter id - id is null")
         return;
     }
 
-    document.cookie = "waiterID="+waiterID;
+    sessionStorage.setItem("waiterID", waiterID);
 }
 
 // On leaving waiter page
