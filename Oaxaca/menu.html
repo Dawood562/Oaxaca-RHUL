@@ -15,11 +15,11 @@
     <header>
         <nav>
             <div class="logo"><a href="index.html"><img src="logo.svg" alt="Oaxaca Logo"></a></img></div>
-            <div id="basket-quantity"><label>🛒 0</label></div>
+            <div id="basket-quantity">🛒</div>
             <div class="menu-icon">
               <a>&#9776;</a>
               <div class="floating-window">
-                <a href="order.html">My Basket</a>
+                <a href="order.html">Basket</a>
                 <a href="staff.html">Staff</a>
               </div>
             </div>
@@ -29,21 +29,22 @@
     <main>
         <div class="filter-container">
             <input type="text" id="searchTerm" placeholder="Search">
-            
+            <br>
             <div class="filter-options">
                 <div class="filter-option">
-                    <label for="maxCalories">Max Calories:</label>
+                    <label for="maxCalories">Calories:</label>
                     <input type="range" id="maxCalories" min="0" max="2000" step="50" value="0"
                     oninput="document.getElementById('maxCaloriesValue').textContent = this.value">
                     <span id="maxCaloriesValue">0</span>
                 </div>
+                <br>
                 <div class="filter-option">
-                    <label for="maxPrice">Max Price:</label>
+                    <label for="maxPrice">Price:</label>
                     <input type="range" id="maxPrice" min="0" max="200" step="1" value="0"
                     oninput="document.getElementById('maxPriceValue').textContent = this.value">
                     <span id="maxPriceValue">0</span>
                 </div>
-                <p>Don't show dishes containing:</p>
+                <br>
                 <div class="excludedAllergens">
                     <input type="checkbox" id="glutenAllergen">
                     <label for="glutenAllergen">Gluten</label>
