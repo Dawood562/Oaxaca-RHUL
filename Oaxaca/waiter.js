@@ -42,9 +42,19 @@ async function registerWaiter() {
     }).then(resp => resp.json()).then(data => {
         console.log(data)
         waiterID = Number(data.id);
+        storeWaiterID();
         refreshOrders();
     })
 
+}
+
+function storeWaiterID(){
+    if(waiterID < 0){
+        console.error("Cannot store waiter id - id is null")
+        return;
+    }
+
+    document.cookie = "waiterID="+waiterID;
 }
 
 // On leaving waiter page
