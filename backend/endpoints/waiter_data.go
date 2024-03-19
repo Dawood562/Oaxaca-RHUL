@@ -2,7 +2,9 @@ package endpoints
 
 import (
 	"errors"
+	"fmt"
 	"strconv"
+	"teamproject/database"
 )
 
 var activeWaiters []WaiterData
@@ -35,11 +37,40 @@ func RemoveWaiterData(waiter WaiterData) error {
 	for index, w := range activeWaiters {
 		// If requested waiter is in active waiter list then remove it
 		if waiter.ID == w.ID {
+			ReAllocateTableNumbers(w)
 			activeWaiters = append(activeWaiters[:index], activeWaiters[index+1:]...)
+
 			return nil
 		}
 	}
 	return errors.New("DID NOT FIND WAITER WITH PROVIDED ID TO REMOVE")
+}
+
+func ReAllocateTableNumbers(waiter WaiterData) error {
+	if len(activeWaiters) <= 1 {
+		fmt.Println("No active waiters")
+		// If no waiters available add to queue
+
+		// for each table number assigned to the waiter
+		for _, wtn := range waiter.TableNumber {
+			fmt.Println("Waiters table number:" + strconv.Itoa(int(wtn)))
+			o, err := database.FetchOrders(false)
+			if err != nil {
+				return err
+			}
+			// Get orders and check where the assigned table number equals the fetched order table number
+			for _, ord := range o {
+				fmt.Println("Retrieved order table number:" + strconv.Itoa(int(ord.TableNumber)))
+				if ord.TableNumber == wtn {
+					fmt.Println("Added order to queue...")
+					AddOrderToQueue(*ord)
+				}
+			}
+		}
+	} else {
+		fmt.Println("Waiters active!")
+	}
+	return nil
 }
 
 // Gets waiter by provided id or if no waiter provided then gets all waiters

@@ -74,6 +74,7 @@ function storeWaiterID(){
 //window.onbeforeunload = removeWaiter;
 
 async function removeWaiter(){
+    sessionStorage.setItem("waiterID", -1);
     const response = await fetch("http://localhost:4444/remove_waiter",{
         method:"POST",
         headers:{
