@@ -75,7 +75,7 @@ func ReAllocateTableNumbers(waiter WaiterData) error {
 			ordersPerWaiter = 1
 		}
 		// For all other waiters except provided waiter
-		// Add first n/m orders to each waiter and increment counter where n = numbers of orders, m = number of waiters (not including provided one)
+		// Add proportional number of orders to each of current active waiters
 		for wi, wait := range activeWaiters {
 			if leftPointer < len(waiter.TableNumber) {
 				if wait.ID != waiter.ID {

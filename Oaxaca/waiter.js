@@ -4,8 +4,8 @@ var waiterID = -1
 var waiterUsername = "";
 // When a waiter confirms or cancels an order that order is added to this list
 // and checked to make sure a waiter does not duplicate confirm an order
-var cancelConfirmBlacklist = [];
-var deliveredBlacklist = [];
+// var cancelConfirmBlacklist = [];
+// var deliveredBlacklist = [];
 var orderList = [];
 
 document.addEventListener('DOMContentLoaded', e => {
@@ -209,8 +209,6 @@ async function notifyCancellation(orderId) {
         if (response.ok) {
             console.log(`Cancellation request for order ${orderId} successful`);
 
-            cancelConfirmBlacklist.push(orderId);
-
         } else if (response.status === 404) {
             console.log(`Order ${orderId} not found.`);
             alert(`Order ${orderId} not found.`);
@@ -251,9 +249,6 @@ async function notifyConfirmation(orderId) {
         if (response.ok) {
             console.log(`Confirmation request for order ${orderId} successful`);
 
-            // Add order id to blacklist
-            cancelConfirmBlacklist.push(orderId);
-
         } else if (response.status === 404) {
             console.log(`Order ${orderId} not found.`);
             alert(`Order ${orderId} not found.`);
@@ -287,7 +282,6 @@ async function notifyDelivered(orderId){
         });
         if(response.ok){
             console.log(`Successfully marked order ${orderId} as delivered`);
-            deliveredBlacklist.push(orderId);
         }else{
             console.error("Failed to mark as delivered:");
             console.log(response);
