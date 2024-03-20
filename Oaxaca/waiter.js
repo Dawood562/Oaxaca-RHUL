@@ -199,10 +199,6 @@ async function notifyCancellation(orderId) {
         return console.error("SOCKET NOT INITIALIZED - CANNOT NOTIFY CANCELLATION");
     }
 
-    if(cancelConfirmBlacklist.includes(orderId)){
-        return console.error("Order already confirmed/cancelled");
-    }
-
     console.log(`Sending cancellation request for order ${orderId}`);
 
     try {
@@ -276,12 +272,13 @@ async function notifyConfirmation(orderId) {
 
 async function notifyDelivered(orderId){
 
-    if (!cancelConfirmBlacklist.includes(orderId)){
-        return console.error("Cannot mark order as delivered if not confirmed!");
-    }
-
-    if (deliveredBlacklist.includes(orderId)){
-        return console.error("Already marked as delivered!");
+    for(let i = 0; i < orderList.length; i++){
+        if(orderList[i].orderId == orderId){
+            if (orderList[i].status == "Delivered"){
+                refreshOrders();
+                return console.error("Order already marked delivered");
+            }
+        }
     }
 
     try{
