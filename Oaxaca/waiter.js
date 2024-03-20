@@ -269,6 +269,10 @@ async function notifyDelivered(orderId){
 
     for(let i = 0; i < orderList.length; i++){
         if(orderList[i].orderId == orderId){
+            if (orderList[i].status == "Awaiting Confirmation"){
+                alert("Cannot mark order that has not been prepared as delivered!");
+                return;
+            }
             if (orderList[i].status == "Delivered"){
                 refreshOrders();
                 return console.error("Order already marked delivered");
