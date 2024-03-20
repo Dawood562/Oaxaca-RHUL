@@ -69,6 +69,24 @@ func ReAllocateTableNumbers(waiter WaiterData) error {
 		}
 	} else {
 		fmt.Println("Waiters active!")
+		counter := 0
+		ordersToAllocate := len(waiter.TableNumber) / (len(activeWaiters) - 1)
+		if ordersToAllocate < 1 {
+			ordersToAllocate = 1
+		}
+		// For all other waiters except provided waiter
+		// Add first n/m orders to each waiter and increment counter where n = numbers of orders, m = number of waiters (not including provided one)
+		for wi, wait := range activeWaiters {
+			if wait.ID != waiter.ID {
+				for j := 0; j < ordersToAllocate; j++ {
+					if counter < len(waiter.TableNumber) {
+						activeWaiters[wi].TableNumber = append(activeWaiters[wi].TableNumber, waiter.TableNumber[counter])
+						counter++
+					}
+				}
+			}
+		}
+		BroadcastToWaiters("NEW")
 	}
 	return nil
 }
