@@ -6,6 +6,7 @@ var waiterUsername = "";
 // and checked to make sure a waiter does not duplicate confirm an order
 var cancelConfirmBlacklist = [];
 var deliveredBlacklist = [];
+var orderList = [];
 
 document.addEventListener('DOMContentLoaded', e => {
     registerWaiter();
@@ -165,6 +166,7 @@ async function refreshOrders() {
         "waiterId": waiterID
     }));
     let data = await response.json();
+    orderList = data;
 
     for (var order of data) {
         if (order.status !== 'Cancelled') {
@@ -234,8 +236,13 @@ async function notifyConfirmation(orderId) {
         return console.error("SOCKET NOT INITIALIZED - CANNOT NOTIFY CONFIRMATION");
     }
 
-    if(cancelConfirmBlacklist.includes(orderId)){
-        return console.error("Order already confirmed/cancelled");
+    for(let i = 0; i < orderList.length; i++){
+        if(orderList[i].orderId == orderId){
+            if (orderList[i].status == "Preparing"){
+                refreshOrders();
+                return console.error("Order already confirmed/cancelled");
+            }
+        }
     }
 
     console.log(`Sending confirmation request for order ${orderId}`);
