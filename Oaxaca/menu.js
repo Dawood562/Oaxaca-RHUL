@@ -487,3 +487,8 @@ function goToOrderPage() {
     console.log("!");
     window.location.href = "order.html";
 }
+
+function clearBasket(){
+    document.cookie = "basket=";
+    updateBasketQuantity()
+}
