@@ -97,7 +97,12 @@ function handleMessages(e) {
 
 // Notifies backend a customer needs help
 function sendHelp() {
-    sock.send("HELP")
+    try{
+        sock.send("HELP");
+    }catch(error){
+        alert("Cannot call waiter if no table number has been provided");
+    }
+    
 }
 
 function showConfirmationSection() {
