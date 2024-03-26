@@ -9,6 +9,26 @@ function initMenuAll() {
     }
 
     refreshMenu();
+
+    // Hides the "Edit Menu" button if the user is not signed in
+
+    // Get the username from the cookies (taken from waiter.js)
+    let cookieData = document.cookie;
+    let username = "";
+    cookieData.split(";").forEach(cookie => {
+        indexOfParam = cookie.indexOf("=");
+        if (cookie.substring(0, indexOfParam).indexOf("username") != -1) {
+            username = cookie.substring(indexOfParam + 1, cookie.length);
+        }
+    })
+    
+
+    if (username != "" && username.substring(0, 5) != "table") {
+        // Do nothing
+    } else {
+        let editButton = document.getElementById("editButton");
+        editButton.style.display = "none";
+    }
 }
 
 // Refreshes the menu with no filter
