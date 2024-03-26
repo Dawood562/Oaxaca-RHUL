@@ -65,8 +65,26 @@ function createMenuItem(id, itemName, imageURL, price, calories, allergens) {
             <p id="priceContext${id}" class="editMenuContext">£</p><input style="display: none" id='priceEditPrompt${id}' placeholder="Price" class='editMenuItemPrompt' type='text'>
             <label class='MenuItemCalories' id="itemCalories${id}">${calories} kcal</label>
             <label class='MenuItemAllergens' id="itemAllergens${id}"><br><b>Allergens:</b><br>${renderAllergens(allergens)}</label>
-            <input style="display: none" id='caloriesEditPrompt${id}' class='editMenuItemPrompt' type='text' placeholder="Calories"><p id="caloriesContext${id}" class="editMenuContext">kcal</p>
-            <input style="display: none; max-width:90%" id='allergensEditPrompt${id}' class='editMenuItemPrompt' type='text' placeholder="Allergens">
+            <input style="display: none" id='caloriesEditPrompt${id}' class='editMenuItemPrompt' type='text' placeholder="Calories"><p id="caloriesContext${id}" class="editMenuContext">kcal</p><br>
+            <div id="allergensEditPrompt${id}" style="display: none">
+                <input type="checkbox" id="glutenAllergen${id}">
+                <label for="glutenAllergen${id}">Gluten</label>
+
+                <input type="checkbox" id="dairyAllergen${id}">
+                <label for="dairyAllergen${id}">Dairy</label><br>
+
+                <input type="checkbox" id="nutAllergen${id}">
+                <label for="nutAllergen${id}">Nuts</label>
+
+                <input type="checkbox" id="eggAllergen${id}">
+                <label for="eggAllergen${id}">Eggs</label><br>
+
+                <input type="checkbox" id="crustaceanAllergen${id}">
+                <label for="crustaceanAllergen${id}">Crustaceans</label>
+
+                <input type="checkbox" id="fishAllergen${id}">
+                <label for="fishAllergen${id}">Fish</label>
+            </div>
         </div>
         <button id='addItem${id}' + class='addBasketButton' onclick='addToBasket(${id}, "${itemName}", ${price}, ${calories}, "${imageURL}")'>Add to Basket</button>
         <button index="${id}" id="editItem${id}" style="display: none" class="editMenuItemButton">Edit</button>
@@ -174,11 +192,21 @@ function editMenuForItem(id) {
 
         document.getElementById(`itemAllergens${id}`).style.display = "none";
         document.getElementById(`allergensEditPrompt${id}`).style.display = "inline";
-        let allergens = "";
-        item.allergens.forEach(allergen => {
-            allergens += allergen.name + ", ";
+
+        document.querySelectorAll(`#allergensEditPrompt${id} > input[type='checkbox']`).forEach((checkbox) => {
+            // Find the label for this allergen
+            Array.from(document.querySelectorAll(`#allergensEditPrompt${id} > label`)).some((label) => {
+                if(label.htmlFor === checkbox.id) {
+                    let allergen = label.innerHTML;
+                    if(item.allergens.some((x) => x.name === allergen)) {
+                        // The allergen box is checked
+                        checkbox.checked = true;
+                    }
+                    return true;
+                }
+                return false;
+            });
         });
-        document.getElementById(`allergensEditPrompt${id}`).value = allergens.substring(0, allergens.length - 2);
 
         document.getElementById(`itemPrice${id}`).style.display = "none";
         document.getElementById(`priceEditPrompt${id}`).style.display = "inline";
@@ -213,7 +241,12 @@ async function submitMenuEdit(id) {
     let name = document.getElementById(`nameEditPrompt${id}`).value;
     let itemPrice = parseFloat(document.getElementById(`priceEditPrompt${id}`).value);
     let itemCalories = parseInt(document.getElementById(`caloriesEditPrompt${id}`).value);
-    let allergens = allergenStringToArray(document.getElementById(`allergensEditPrompt${id}`).value)
+    var allergens = [];
+    document.querySelectorAll(`#allergensEditPrompt${id} > input[type='checkbox']`).forEach((checkbox) => {
+        if(checkbox.checked) {
+            allergens.push({name: Array.from(document.querySelectorAll(`#allergensEditPrompt${id} > label`)).find((label) => label.htmlFor === checkbox.id).innerHTML});
+        }
+    })
     let newImage = document.getElementById(`imageEditPrompt${id}`).files[0];
 
     let imageURL;
@@ -252,7 +285,12 @@ async function addMenuItem() {
     let image = document.getElementById("newItemFileUpload").files[0];
     let priceValue = parseFloat(document.getElementById("newItemPriceField").value);
     let caloriesValue = parseInt(document.getElementById("newItemCaloriesField").value);
-    let allergens = document.getElementById("newItemAllergensField").value;
+    var allergens = [];
+    document.querySelectorAll(`#newItemAllergens > input[type='checkbox']`).forEach((checkbox) => {
+        if(checkbox.checked) {
+            allergens.push({name: Array.from(document.querySelectorAll(`#newItemAllergens > label`)).find((label) => label.htmlFor === checkbox.id).innerHTML});
+        }
+    })
     // Check that the user included an image
     if(image == null) {
         alert("Please upload an image for the item");
@@ -260,7 +298,7 @@ async function addMenuItem() {
     }
 
     let imageURL = await uploadImage(image);
-    let result = await addItemToDB(nameValue, imageURL, priceValue, caloriesValue, allergenStringToArray(allergens));
+    let result = await addItemToDB(nameValue, imageURL, priceValue, caloriesValue, allergens);
 
     if (result >= 0) {
         await refreshEditMenu();
@@ -285,16 +323,6 @@ function getAllergenList() {
         }
     });
     return allergens;
-}
-
-function allergenStringToArray(input) {
-    return input.split(",").map(item => {
-        return {
-            name: item.trim()
-        }
-    }).filter((item) => {
-        return item.name.length > 0
-    });
 }
 
 async function uploadImage(image) {
