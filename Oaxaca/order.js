@@ -100,9 +100,19 @@ function sendHelp() {
     try{
         sock.send("HELP");
     }catch(error){
-        alert("Cannot call waiter if no table number has been provided");
+        let providedTableNum = Number(prompt("Enter table number"));
+        sendHelpOverTempSocket(providedTableNum);
     }
-    
+}
+
+function sendHelpOverTempSocket(tableNo){
+    let sock = new WebSocket("ws://localhost:4444/notifications");
+    sock.addEventListener("open", e => {
+        // WE NEED TO ADD A WAY TO GET USERS TABLE NUMBER
+        sock.send("CUSTOMER:".concat(tableNo));
+        sock.send("HELP");
+        sock.close();
+    })
 }
 
 function showConfirmationSection() {
