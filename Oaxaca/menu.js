@@ -241,7 +241,12 @@ async function submitMenuEdit(id) {
     let name = document.getElementById(`nameEditPrompt${id}`).value;
     let itemPrice = parseFloat(document.getElementById(`priceEditPrompt${id}`).value);
     let itemCalories = parseInt(document.getElementById(`caloriesEditPrompt${id}`).value);
-    let allergens = allergenStringToArray(document.getElementById(`allergensEditPrompt${id}`).value)
+    var allergens = [];
+    document.querySelectorAll(`#allergensEditPrompt${id} > input[type='checkbox']`).forEach((checkbox) => {
+        if(checkbox.checked) {
+            allergens.push({name: Array.from(document.querySelectorAll(`#allergensEditPrompt${id} > label`)).find((label) => label.htmlFor === checkbox.id).innerHTML});
+        }
+    })
     let newImage = document.getElementById(`imageEditPrompt${id}`).files[0];
 
     let imageURL;
