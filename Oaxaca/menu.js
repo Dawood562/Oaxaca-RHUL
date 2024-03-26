@@ -285,7 +285,12 @@ async function addMenuItem() {
     let image = document.getElementById("newItemFileUpload").files[0];
     let priceValue = parseFloat(document.getElementById("newItemPriceField").value);
     let caloriesValue = parseInt(document.getElementById("newItemCaloriesField").value);
-    let allergens = document.getElementById("newItemAllergensField").value;
+    var allergens = [];
+    document.querySelectorAll(`#newItemAllergens > input[type='checkbox']`).forEach((checkbox) => {
+        if(checkbox.checked) {
+            allergens.push({name: Array.from(document.querySelectorAll(`#newItemAllergens > label`)).find((label) => label.htmlFor === checkbox.id).innerHTML});
+        }
+    })
     // Check that the user included an image
     if(image == null) {
         alert("Please upload an image for the item");
@@ -293,7 +298,7 @@ async function addMenuItem() {
     }
 
     let imageURL = await uploadImage(image);
-    let result = await addItemToDB(nameValue, imageURL, priceValue, caloriesValue, allergenStringToArray(allergens));
+    let result = await addItemToDB(nameValue, imageURL, priceValue, caloriesValue, allergens);
 
     if (result >= 0) {
         await refreshEditMenu();
@@ -318,16 +323,6 @@ function getAllergenList() {
         }
     });
     return allergens;
-}
-
-function allergenStringToArray(input) {
-    return input.split(",").map(item => {
-        return {
-            name: item.trim()
-        }
-    }).filter((item) => {
-        return item.name.length > 0
-    });
 }
 
 async function uploadImage(image) {

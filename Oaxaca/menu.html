@@ -83,7 +83,25 @@
                     <label>Calories:</label>
                     <input type='text' id='newItemCaloriesField'><br><br>
                     <label>Allergens:</label>
-                    <input type='text' id='newItemAllergensField'><br><br>
+                    <div id="newItemAllergens">
+                        <input type="checkbox" id="newItemGlutenAllergen">
+                        <label for="newItemGlutenAllergen">Gluten</label>
+        
+                        <input type="checkbox" id="newItemDairyAllergen">
+                        <label for="newItemDairyAllergen">Dairy</label><br>
+        
+                        <input type="checkbox" id="newItemNutAllergen">
+                        <label for="newItemNutAllergen">Nuts</label>
+        
+                        <input type="checkbox" id="newItemEggAllergen">
+                        <label for="newItemEggAllergen">Eggs</label><br>
+        
+                        <input type="checkbox" id="newItemCrustaceanAllergen">
+                        <label for="newItemCrustaceanAllergen">Crustaceans</label>
+        
+                        <input type="checkbox" id="newItemFishAllergen">
+                        <label for="newItemFishAllergen">Fish</label>
+                    </div>
                     <button onclick='addMenuItem()'>Add Item</button>
                 </p>
             </div>
