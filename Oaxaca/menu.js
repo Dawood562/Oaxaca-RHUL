@@ -65,8 +65,26 @@ function createMenuItem(id, itemName, imageURL, price, calories, allergens) {
             <p id="priceContext${id}" class="editMenuContext">£</p><input style="display: none" id='priceEditPrompt${id}' placeholder="Price" class='editMenuItemPrompt' type='text'>
             <label class='MenuItemCalories' id="itemCalories${id}">${calories} kcal</label>
             <label class='MenuItemAllergens' id="itemAllergens${id}"><br><b>Allergens:</b><br>${renderAllergens(allergens)}</label>
-            <input style="display: none" id='caloriesEditPrompt${id}' class='editMenuItemPrompt' type='text' placeholder="Calories"><p id="caloriesContext${id}" class="editMenuContext">kcal</p>
-            <input style="display: none; max-width:90%" id='allergensEditPrompt${id}' class='editMenuItemPrompt' type='text' placeholder="Allergens">
+            <input style="display: none" id='caloriesEditPrompt${id}' class='editMenuItemPrompt' type='text' placeholder="Calories"><p id="caloriesContext${id}" class="editMenuContext">kcal</p><br>
+            <div id="allergensEditPrompt${id}" style="display: none">
+                <input type="checkbox" id="glutenAllergen${id}">
+                <label for="glutenAllergen${id}">Gluten</label>
+
+                <input type="checkbox" id="dairyAllergen${id}">
+                <label for="dairyAllergen${id}">Dairy</label><br>
+
+                <input type="checkbox" id="nutAllergen${id}">
+                <label for="nutAllergen${id}">Nuts</label>
+
+                <input type="checkbox" id="eggAllergen${id}">
+                <label for="eggAllergen${id}">Eggs</label><br>
+
+                <input type="checkbox" id="crustaceanAllergen${id}">
+                <label for="crustaceanAllergen${id}">Crustaceans</label>
+
+                <input type="checkbox" id="fishAllergen${id}">
+                <label for="fishAllergen${id}">Fish</label>
+            </div>
         </div>
         <button id='addItem${id}' + class='addBasketButton' onclick='addToBasket(${id}, "${itemName}", ${price}, ${calories}, "${imageURL}")'>Add to Basket</button>
         <button index="${id}" id="editItem${id}" style="display: none" class="editMenuItemButton">Edit</button>
@@ -174,11 +192,21 @@ function editMenuForItem(id) {
 
         document.getElementById(`itemAllergens${id}`).style.display = "none";
         document.getElementById(`allergensEditPrompt${id}`).style.display = "inline";
-        let allergens = "";
-        item.allergens.forEach(allergen => {
-            allergens += allergen.name + ", ";
+
+        document.querySelectorAll(`#allergensEditPrompt${id} > input[type='checkbox']`).forEach((checkbox) => {
+            // Find the label for this allergen
+            Array.from(document.querySelectorAll(`#allergensEditPrompt${id} > label`)).some((label) => {
+                if(label.htmlFor === checkbox.id) {
+                    let allergen = label.innerHTML;
+                    if(item.allergens.some((x) => x.name === allergen)) {
+                        // The allergen box is checked
+                        checkbox.checked = true;
+                    }
+                    return true;
+                }
+                return false;
+            });
         });
-        document.getElementById(`allergensEditPrompt${id}`).value = allergens.substring(0, allergens.length - 2);
 
         document.getElementById(`itemPrice${id}`).style.display = "none";
         document.getElementById(`priceEditPrompt${id}`).style.display = "inline";
