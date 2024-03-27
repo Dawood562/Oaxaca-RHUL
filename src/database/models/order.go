@@ -2,6 +2,7 @@ package models
 
 import "time"
 
+// Order represents one order in the restaurant system.
 type Order struct {
 	ID          uint        `json:"orderId" gorm:"primarykey;autoincrement"`
 	Time        time.Time   `json:"orderTime" gorm:"default:CURRENT_TIMESTAMP"`

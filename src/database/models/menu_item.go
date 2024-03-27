@@ -1,5 +1,7 @@
+// Package models contains the data models for each type stored in the database.
 package models
 
+// MenuItem represents one item in the restaurant menu.
 type MenuItem struct {
 	ID          uint       `json:"itemId" gorm:"primarykey;autoincrement"`
 	Name        string     `json:"itemName" gorm:"unique"`
