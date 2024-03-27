@@ -7,15 +7,39 @@ window.onload = function () {
         let un = document.getElementById("UN").value;
         let pw = document.getElementById("PW").value;
         // TODO: Authenticate the user using values un and pw
-
-        document.getElementById('loginbox').style.visibility = "hidden";
-        document.getElementById('kitchen-button').style.visibility = "visible";
-        document.getElementById('waiter-button').style.visibility = "visible";
+        if (authUser(un, pw)) {
+            closeLoginBox();
+            showNavButtons();
+        }
     })
+    checkIfLoggedIn();
 }
+// Skip login dialogue if already logged in
+function checkIfLoggedIn() {
+    // Grab username
+    let username = "";
+    let cookieData = document.cookie;
+    cookieData.split(";").forEach(cookie => {
+        indexOfParam = cookie.indexOf("=");
+        if (cookie.substring(0, indexOfParam).indexOf("username") != -1) {
+            username = cookie.substring(indexOfParam + 1, cookie.length);
+        }
+    })
+
+    if (username.length >= 1) {
+        closeLoginBox();
+        showNavButtons();
+    }
+}
+
 
 function closeLoginBox() {
     document.getElementById('loginbox').style.display = 'none';
+}
+
+function showNavButtons() {
+    document.getElementById('kitchen-button').style.visibility = "visible";
+    document.getElementById('waiter-button').style.visibility = "visible";
 }
 
 function storeAccDetails() {
@@ -30,8 +54,11 @@ function storeAccDetails() {
 }
 
 function authUser(un, pw) {
+    if (un.length >= 1) {
+        return true;
+    }
     // Add authentication (not in spec)
-    return true;
+    return false;
 }
 
 function goToKitchen() {
