@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#375EAB">
+
+  <title>database - Go Documentation Server</title>
+
+<link type="text/css" rel="stylesheet" href="database_files/style.css">
+
+<script>window.initFuncs = [];</script>
+<script src="database_files/jquery.js" defer="defer"></script>
+
+
+
+<script>var goVersion = "go1.21.8";</script>
+<script src="database_files/godocs.js" defer="defer"></script>
+</head>
+<body>
+
+<div id="lowframe" style="position: fixed; bottom: 0; left: 0; height: 0; width: 100%; border-top: thin solid grey; background-color: white; overflow: auto;">
+...
+</div><!-- #lowframe -->
+
+<div id="topbar" class="wide"><div class="container">
+<div class="top-heading" id="heading-wide"><a href="http://localhost:8080/pkg/">Go Documentation Server</a></div>
+<div class="top-heading" id="heading-narrow"><a href="http://localhost:8080/pkg/">GoDoc</a></div>
+<a href="#" id="menu-button"><span id="menu-button-arrow">▽</span></a>
+<form method="GET" action="/search">
+<div id="menu" style="min-width: 60px;">
+
+<span class="search-box"><input type="search" id="search" name="q" placeholder="Search" aria-label="Search" required=""><button type="submit"><span><!-- magnifying glass: --><svg width="24" height="24" viewBox="0 0 24 24"><title>submit search</title><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path><path d="M0 0h24v24H0z" fill="none"></path></svg></span></button></span>
+</div>
+</form>
+
+</div></div>
+
+
+
+<div id="page" class="wide" style="outline: 0px;" tabindex="-1">
+<div class="container">
+
+
+  <h1>
+    Package database
+    <span class="text-muted"></span>
+  </h1>
+
+
+
+
+
+
+
+<div id="nav"></div>
+
+
+<!--
+	Copyright 2009 The Go Authors. All rights reserved.
+	Use of this source code is governed by a BSD-style
+	license that can be found in the LICENSE file.
+-->
+<!--
+	Note: Static (i.e., not template-generated) href and id
+	attributes start with "pkg-" to make it impossible for
+	them to conflict with generated attributes (some of which
+	correspond to Go identifiers).
+-->
+
+	<script>
+	document.ANALYSIS_DATA = null;
+	document.CALLGRAPH = null;
+	</script>
+
+	
+		
+		<div id="short-nav">
+			<dl>
+			<dd><code>import "database"</code></dd>
+			</dl>
+			<dl>
+			<dd><a href="#pkg-overview" class="overviewLink">Overview</a></dd>
+			<dd><a href="#pkg-index" class="indexLink">Index</a></dd>
+			
+			
+				<dd><a href="#pkg-subdirectories">Subdirectories</a></dd>
+			
+			</dl>
+		</div>
+		<!-- The package's Name is printed as title by the top-level template -->
+		<div id="pkg-overview" class="toggleVisible">
+			<div class="collapsed">
+				<h2 class="toggleButton" title="Click to show Overview section">Overview ▹</h2>
+			</div>
+			<div class="expanded">
+				<h2 class="toggleButton" title="Click to hide Overview section">Overview ▾</h2>
+				<p>Package database provides functions for interacting with the 
+PostgreSQL database. This package uses structs from the models package 
+to represent data. The
+endpoints package is expected to provide data in this format, and this 
+package will process it into an SQL query appropriate for the 
+interaction. Data is
+returned in structs from the models package. Errors are returned by 
+functions in this package if there is a database error, or if the 
+provided data causes
+a database conflict.
+
+				
+			</p></div>
+		</div>
+
+		<div id="pkg-index" class="toggleVisible">
+		<div class="collapsed">
+			<h2 class="toggleButton" title="Click to show Index section">Index ▹</h2>
+		</div>
+		<div class="expanded">
+			<h2 class="toggleButton" title="Click to hide Index section">Index ▾</h2>
+
+		<!-- Table of contents for API; must be named manual-nav to turn off auto nav. -->
+			<div id="manual-nav">
+			<dl>
+			
+				<dd><a href="#pkg-constants">Constants</a></dd>
+			
+			
+				<dd><a href="#pkg-variables">Variables</a></dd>
+			
+			
+				
+				<dd><a href="#AddItem">func AddItem(item *models.MenuItem) error</a></dd>
+			
+				
+				<dd><a href="#AddOrder">func AddOrder(item *models.Order) error</a></dd>
+			
+				
+				<dd><a href="#CancelOrder">func CancelOrder(id uint) error</a></dd>
+			
+				
+				<dd><a href="#ConfirmOrder">func ConfirmOrder(id uint) error</a></dd>
+			
+				
+				<dd><a href="#DeliverOrder">func DeliverOrder(id uint) error</a></dd>
+			
+				
+				<dd><a href="#EditItem">func EditItem(item *models.MenuItem) error</a></dd>
+			
+				
+				<dd><a href="#FetchItem">func FetchItem(id int) (models.MenuItem, error)</a></dd>
+			
+				
+				<dd><a href="#FetchOrders">func FetchOrders(confirmed bool) ([]*models.Order, error)</a></dd>
+			
+				
+				<dd><a href="#GetOrderStatus">func GetOrderStatus(id uint) (string, error)</a></dd>
+			
+				
+				<dd><a href="#OrderPaid">func OrderPaid(id uint) (bool, error)</a></dd>
+			
+				
+				<dd><a href="#PayOrder">func PayOrder(id uint) error</a></dd>
+			
+				
+				<dd><a href="#QueryMenu">func QueryMenu(filter *MenuFilter) []models.MenuItem</a></dd>
+			
+				
+				<dd><a href="#ReadyOrder">func ReadyOrder(id uint) error</a></dd>
+			
+				
+				<dd><a href="#RemoveItem">func RemoveItem(id uint) error</a></dd>
+			
+				
+				<dd><a href="#RemoveOrder">func RemoveOrder(id uint) error</a></dd>
+			
+			
+				
+				<dd><a href="#MenuFilter">type MenuFilter</a></dd>
+				
+				
+			
+			
+			</dl>
+			</div><!-- #manual-nav -->
+
+		
+
+		
+			<h3>Package files</h3>
+			<p>
+			<span style="font-size:90%">
+			
+				<a href="http://localhost:8080/src/database/database.go">database.go</a>
+			
+				<a href="http://localhost:8080/src/database/menu_filter.go">menu_filter.go</a>
+			
+				<a href="http://localhost:8080/src/database/menu_items.go">menu_items.go</a>
+			
+				<a href="http://localhost:8080/src/database/orders.go">orders.go</a>
+			
+			</span>
+			</p>
+		
+		</div><!-- .expanded -->
+		</div><!-- #pkg-index -->
+
+		
+
+		
+			<h2 id="pkg-constants">Constants <a class="permalink" href="#pkg-constants">¶</a></h2>
+			
+				
+				<pre>const (
+    <span id="StatusAwaitingConfirmation">StatusAwaitingConfirmation</span> <a href="http://localhost:8080/pkg/builtin/#string">string</a> = "Awaiting Confirmation"
+    <span id="StatusPreparing">StatusPreparing</span>            <a href="http://localhost:8080/pkg/builtin/#string">string</a> = "Preparing"
+    <span id="StatusReady">StatusReady</span>                <a href="http://localhost:8080/pkg/builtin/#string">string</a> = "Ready"
+    <span id="StatusDelivered">StatusDelivered</span>            <a href="http://localhost:8080/pkg/builtin/#string">string</a> = "Delivered"
+    <span id="StatusCancelled">StatusCancelled</span>            <a href="http://localhost:8080/pkg/builtin/#string">string</a> = "Cancelled"
+)</pre>
+			
+		
+		
+			<h2 id="pkg-variables">Variables <a class="permalink" href="#pkg-variables">¶</a></h2>
+			
+				
+				<pre>var (
+    <span id="ErrOrderNotFound">ErrOrderNotFound</span>         <a href="http://localhost:8080/pkg/builtin/#error">error</a> = <a href="http://localhost:8080/pkg/errors/">errors</a>.<a href="http://localhost:8080/pkg/errors/#New">New</a>("order not found")
+    <span id="ErrOrderAlreadyPaid">ErrOrderAlreadyPaid</span>      <a href="http://localhost:8080/pkg/builtin/#error">error</a> = <a href="http://localhost:8080/pkg/errors/">errors</a>.<a href="http://localhost:8080/pkg/errors/#New">New</a>("order already paid for")
+    <span id="ErrOrderAlreadyConfirmed">ErrOrderAlreadyConfirmed</span> <a href="http://localhost:8080/pkg/builtin/#error">error</a> = <a href="http://localhost:8080/pkg/errors/">errors</a>.<a href="http://localhost:8080/pkg/errors/#New">New</a>("order already confirmed")
+    <span id="ErrOrderAlreadyCancelled">ErrOrderAlreadyCancelled</span> <a href="http://localhost:8080/pkg/builtin/#error">error</a> = <a href="http://localhost:8080/pkg/errors/">errors</a>.<a href="http://localhost:8080/pkg/errors/#New">New</a>("order already cancelled")
+    <span id="ErrOrderAlreadyReady">ErrOrderAlreadyReady</span>     <a href="http://localhost:8080/pkg/builtin/#error">error</a> = <a href="http://localhost:8080/pkg/errors/">errors</a>.<a href="http://localhost:8080/pkg/errors/#New">New</a>("order already ready")
+    <span id="ErrOrderAlreadyDelivered">ErrOrderAlreadyDelivered</span> <a href="http://localhost:8080/pkg/builtin/#error">error</a> = <a href="http://localhost:8080/pkg/errors/">errors</a>.<a href="http://localhost:8080/pkg/errors/#New">New</a>("order already delivered")
+)</pre>
+			
+		
+		
+			
+			
+			<h2 id="AddItem">func <a href="http://localhost:8080/src/database/menu_items.go?s=215:256#L2">AddItem</a>
+				<a class="permalink" href="#AddItem">¶</a>
+				
+				
+			</h2>
+			<pre>func AddItem(item *<a href="http://localhost:8080/pkg/teamproject/database/models/">models</a>.<a href="http://localhost:8080/pkg/teamproject/database/models/#MenuItem">MenuItem</a>) <a href="http://localhost:8080/pkg/builtin/#error">error</a></pre>
+			<p>AddItem adds the given item to the database.
+Returns an error if there is a problem adding the item.
+Item names must be unique.
+
+			
+			
+
+		
+			
+			
+			</p><h2 id="AddOrder">func <a href="http://localhost:8080/src/database/orders.go?s=221:260#L1">AddOrder</a>
+				<a class="permalink" href="#AddOrder">¶</a>
+				
+				
+			</h2>
+			<pre>func AddOrder(item *<a href="http://localhost:8080/pkg/teamproject/database/models/">models</a>.<a href="http://localhost:8080/pkg/teamproject/database/models/#Order">Order</a>) <a href="http://localhost:8080/pkg/builtin/#error">error</a></pre>
+			<p>AddOrder adds the given order to the database.
+Returns an error if an order exists with status != "Delivered" for the same table number.
+
+			
+			
+
+		
+			
+			
+			</p><h2 id="CancelOrder">func <a href="http://localhost:8080/src/database/orders.go?s=3353:3384#L107">CancelOrder</a>
+				<a class="permalink" href="#CancelOrder">¶</a>
+				
+				
+			</h2>
+			<pre>func CancelOrder(id <a href="http://localhost:8080/pkg/builtin/#uint">uint</a>) <a href="http://localhost:8080/pkg/builtin/#error">error</a></pre>
+			<p>CancelOrder cancels the given order. Returns an error if the order does not exist or is already cancelled.
+
+			
+			
+
+		
+			
+			
+			</p><h2 id="ConfirmOrder">func <a href="http://localhost:8080/src/database/orders.go?s=2911:2943#L89">ConfirmOrder</a>
+				<a class="permalink" href="#ConfirmOrder">¶</a>
+				
+				
+			</h2>
+			<pre>func ConfirmOrder(id <a href="http://localhost:8080/pkg/builtin/#uint">uint</a>) <a href="http://localhost:8080/pkg/builtin/#error">error</a></pre>
+			<p>ConfirmOrder confirms the given order. Returns an error if the order does not exist or is already confirmed.
+
+			
+			
+
+		
+			
+			
+			</p><h2 id="DeliverOrder">func <a href="http://localhost:8080/src/database/orders.go?s=4375:4407#L149">DeliverOrder</a>
+				<a class="permalink" href="#DeliverOrder">¶</a>
+				
+				
+			</h2>
+			<pre>func DeliverOrder(id <a href="http://localhost:8080/pkg/builtin/#uint">uint</a>) <a href="http://localhost:8080/pkg/builtin/#error">error</a></pre>
+			<p>DeliverOrder marks the given order as deliered. Returns an error 
+if the order does not exist or is already delivered or cancelled.
+
+			
+			
+
+		
+			
+			
+			</p><h2 id="EditItem">func <a href="http://localhost:8080/src/database/menu_items.go?s=442:484#L9">EditItem</a>
+				<a class="permalink" href="#EditItem">¶</a>
+				
+				
+			</h2>
+			<pre>func EditItem(item *<a href="http://localhost:8080/pkg/teamproject/database/models/">models</a>.<a href="http://localhost:8080/pkg/teamproject/database/models/#MenuItem">MenuItem</a>) <a href="http://localhost:8080/pkg/builtin/#error">error</a></pre>
+			<p>EditItem edits the given item with new information.
+Returns an error if the item doesn't exist or the edit causes a conflict.
+
+			
+			
+
+		
+			
+			
+			</p><h2 id="FetchItem">func <a href="http://localhost:8080/src/database/menu_items.go?s=2586:2633#L71">FetchItem</a>
+				<a class="permalink" href="#FetchItem">¶</a>
+				
+				
+			</h2>
+			<pre>func FetchItem(id <a href="http://localhost:8080/pkg/builtin/#int">int</a>) (<a href="http://localhost:8080/pkg/teamproject/database/models/">models</a>.<a href="http://localhost:8080/pkg/teamproject/database/models/#MenuItem">MenuItem</a>, <a href="http://localhost:8080/pkg/builtin/#error">error</a>)</pre>
+			<p>FetchItem retrieves an item with the given ID from the databse.
+Returns an error if the item can't be found.
+
+			
+			
+
+		
+			
+			
+			</p><h2 id="FetchOrders">func <a href="http://localhost:8080/src/database/orders.go?s=1255:1312#L29">FetchOrders</a>
+				<a class="permalink" href="#FetchOrders">¶</a>
+				
+				
+			</h2>
+			<pre>func FetchOrders(confirmed <a href="http://localhost:8080/pkg/builtin/#bool">bool</a>) ([]*<a href="http://localhost:8080/pkg/teamproject/database/models/">models</a>.<a href="http://localhost:8080/pkg/teamproject/database/models/#Order">Order</a>, <a href="http://localhost:8080/pkg/builtin/#error">error</a>)</pre>
+			<p>FetchOrders returns a slice of orders.
+If confirmed is true, only returns orders which have been marked as confirmed.
+Returns an error if there is an error retrieving the data.
+
+			
+			
+
+		
+			
+			
+			</p><h2 id="GetOrderStatus">func <a href="http://localhost:8080/src/database/orders.go?s=2530:2574#L75">GetOrderStatus</a>
+				<a class="permalink" href="#GetOrderStatus">¶</a>
+				
+				
+			</h2>
+			<pre>func GetOrderStatus(id <a href="http://localhost:8080/pkg/builtin/#uint">uint</a>) (<a href="http://localhost:8080/pkg/builtin/#string">string</a>, <a href="http://localhost:8080/pkg/builtin/#error">error</a>)</pre>
+			<p>GetOrderStatus returns the Status field of the given order. Returns an error if the order does not exist.
+
+			
+			
+
+		
+			
+			
+			</p><h2 id="OrderPaid">func <a href="http://localhost:8080/src/database/orders.go?s=1755:1792#L43">OrderPaid</a>
+				<a class="permalink" href="#OrderPaid">¶</a>
+				
+				
+			</h2>
+			<pre>func OrderPaid(id <a href="http://localhost:8080/pkg/builtin/#uint">uint</a>) (<a href="http://localhost:8080/pkg/builtin/#bool">bool</a>, <a href="http://localhost:8080/pkg/builtin/#error">error</a>)</pre>
+			<p>OrderPaid returns true if the order with the given ID has been paid for, returns error if that order does not exist
+
+			
+			
+
+		
+			
+			
+			</p><h2 id="PayOrder">func <a href="http://localhost:8080/src/database/orders.go?s=2150:2178#L57">PayOrder</a>
+				<a class="permalink" href="#PayOrder">¶</a>
+				
+				
+			</h2>
+			<pre>func PayOrder(id <a href="http://localhost:8080/pkg/builtin/#uint">uint</a>) <a href="http://localhost:8080/pkg/builtin/#error">error</a></pre>
+			<p>PayOrder updates the payment status of the given order, returns an error if that order cannot be found or is already paid for
+
+			
+			
+
+		
+			
+			
+			</p><h2 id="QueryMenu">func <a href="http://localhost:8080/src/database/menu_items.go?s=1316:1368#L37">QueryMenu</a>
+				<a class="permalink" href="#QueryMenu">¶</a>
+				
+				
+			</h2>
+			<pre>func QueryMenu(filter *<a href="#MenuFilter">MenuFilter</a>) []<a href="http://localhost:8080/pkg/teamproject/database/models/">models</a>.<a href="http://localhost:8080/pkg/teamproject/database/models/#MenuItem">MenuItem</a></pre>
+			<p>QueryMenu returns the menu items from the database as a slice
+If filter is provided, the returned item slice will be filtered as such
+
+			
+			
+
+		
+			
+			
+			</p><h2 id="ReadyOrder">func <a href="http://localhost:8080/src/database/orders.go?s=3804:3834#L125">ReadyOrder</a>
+				<a class="permalink" href="#ReadyOrder">¶</a>
+				
+				
+			</h2>
+			<pre>func ReadyOrder(id <a href="http://localhost:8080/pkg/builtin/#uint">uint</a>) <a href="http://localhost:8080/pkg/builtin/#error">error</a></pre>
+			<p>ReadyOrder marks the given order as ready for delivery. Returns an
+ error if the order is cancelled, already ready or already delivered.
+
+			
+			
+
+		
+			
+			
+			</p><h2 id="RemoveItem">func <a href="http://localhost:8080/src/database/menu_items.go?s=936:966#L24">RemoveItem</a>
+				<a class="permalink" href="#RemoveItem">¶</a>
+				
+				
+			</h2>
+			<pre>func RemoveItem(id <a href="http://localhost:8080/pkg/builtin/#uint">uint</a>) <a href="http://localhost:8080/pkg/builtin/#error">error</a></pre>
+			<p>RemoveItem removes an item from the menu with the given id
+Returns an error if the item could not be removed
+
+			
+			
+
+		
+			
+			
+			</p><h2 id="RemoveOrder">func <a href="http://localhost:8080/src/database/orders.go?s=832:863#L15">RemoveOrder</a>
+				<a class="permalink" href="#RemoveOrder">¶</a>
+				
+				
+			</h2>
+			<pre>func RemoveOrder(id <a href="http://localhost:8080/pkg/builtin/#uint">uint</a>) <a href="http://localhost:8080/pkg/builtin/#error">error</a></pre>
+			<p>RemoveOrder removes the order with the given ID from the database.
+Returns an error if no orders exist with that ID.
+
+			
+			
+
+		
+		
+			
+			
+			</p><h2 id="MenuFilter">type <a href="http://localhost:8080/src/database/menu_filter.go?s=20:217#L1">MenuFilter</a>
+				<a class="permalink" href="#MenuFilter">¶</a>
+				
+				
+			</h2>
+			
+			<pre>type MenuFilter struct {
+<span id="MenuFilter.SearchTerm"></span>    SearchTerm  <a href="http://localhost:8080/pkg/builtin/#string">string</a>   `json:"searchTerm"`
+<span id="MenuFilter.MaxCalories"></span>    MaxCalories <a href="http://localhost:8080/pkg/builtin/#int">int</a>      `json:"maxCalories"`
+<span id="MenuFilter.MaxPrice"></span>    MaxPrice    <a href="http://localhost:8080/pkg/builtin/#float32">float32</a>  `json:"maxPrice"`
+<span id="MenuFilter.Allergens"></span>    Allergens   []<a href="http://localhost:8080/pkg/builtin/#string">string</a> `json:"allergens"`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+	
+
+	
+
+
+
+
+
+	
+	
+		<h2 id="pkg-subdirectories">Subdirectories <a class="permalink" href="#pkg-subdirectories">¶</a></h2>
+	
+	<div class="pkg-dir">
+		<table>
+			<tbody><tr>
+				<th class="pkg-name">Name</th>
+				<th class="pkg-synopsis">Synopsis</th>
+			</tr>
+
+			
+			<tr>
+				<td colspan="2"><a href="http://localhost:8080/pkg/">..</a></td>
+			</tr>
+			
+
+			
+				<tr>
+				
+					<td class="pkg-name" style="padding-left: 0px;">
+						<a href="http://localhost:8080/pkg/database/models/">models</a>
+					</td>
+				
+					<td class="pkg-synopsis">
+						Package models contains the data models for each type stored in the database.
+					</td>
+				</tr>
+			
+		</tbody></table>
+	</div>
+
+
+
+<div id="footer">
+Build version go1.21.8.<br>
+Except as <a href="https://developers.google.com/site-policies#restrictions">noted</a>,
+the content of this page is licensed under the
+Creative Commons Attribution 3.0 License,
+and code is licensed under a <a href="http://localhost:8080/LICENSE">BSD license</a>.<br>
+<a href="https://golang.org/doc/tos.html">Terms of Service</a> |
+<a href="https://www.google.com/intl/en/policies/privacy/">Privacy Policy</a>
+</div>
+
+</div><!-- .container -->
+</div><!-- #page -->
+
+
+</body></html>

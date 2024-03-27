@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#375EAB">
+
+  <title>endpoints - Go Documentation Server</title>
+
+<link type="text/css" rel="stylesheet" href="endpoints_files/style.css">
+
+<script>window.initFuncs = [];</script>
+<script src="endpoints_files/jquery.js" defer="defer"></script>
+
+
+
+<script>var goVersion = "go1.21.8";</script>
+<script src="endpoints_files/godocs.js" defer="defer"></script>
+</head>
+<body>
+
+<div id="lowframe" style="position: fixed; bottom: 0; left: 0; height: 0; width: 100%; border-top: thin solid grey; background-color: white; overflow: auto;">
+...
+</div><!-- #lowframe -->
+
+<div id="topbar" class="wide"><div class="container">
+<div class="top-heading" id="heading-wide"><a href="http://localhost:8080/pkg/">Go Documentation Server</a></div>
+<div class="top-heading" id="heading-narrow"><a href="http://localhost:8080/pkg/">GoDoc</a></div>
+<a href="#" id="menu-button"><span id="menu-button-arrow">▽</span></a>
+<form method="GET" action="/search">
+<div id="menu" style="min-width: 60px;">
+
+<span class="search-box"><input type="search" id="search" name="q" placeholder="Search" aria-label="Search" required=""><button type="submit"><span><!-- magnifying glass: --><svg width="24" height="24" viewBox="0 0 24 24"><title>submit search</title><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path><path d="M0 0h24v24H0z" fill="none"></path></svg></span></button></span>
+</div>
+</form>
+
+</div></div>
+
+
+
+<div id="page" class="wide" style="outline: 0px;" tabindex="-1">
+<div class="container">
+
+
+  <h1>
+    Package endpoints
+    <span class="text-muted"></span>
+  </h1>
+
+
+
+
+
+
+
+<div id="nav"></div>
+
+
+<!--
+	Copyright 2009 The Go Authors. All rights reserved.
+	Use of this source code is governed by a BSD-style
+	license that can be found in the LICENSE file.
+-->
+<!--
+	Note: Static (i.e., not template-generated) href and id
+	attributes start with "pkg-" to make it impossible for
+	them to conflict with generated attributes (some of which
+	correspond to Go identifiers).
+-->
+
+	<script>
+	document.ANALYSIS_DATA = null;
+	document.CALLGRAPH = null;
+	</script>
+
+	
+		
+		<div id="short-nav">
+			<dl>
+			<dd><code>import "endpoints"</code></dd>
+			</dl>
+			<dl>
+			<dd><a href="#pkg-overview" class="overviewLink">Overview</a></dd>
+			<dd><a href="#pkg-index" class="indexLink">Index</a></dd>
+			
+			
+			</dl>
+		</div>
+		<!-- The package's Name is printed as title by the top-level template -->
+		<div id="pkg-overview" class="toggleVisible">
+			<div class="collapsed">
+				<h2 class="toggleButton" title="Click to show Overview section">Overview ▹</h2>
+			</div>
+			<div class="expanded">
+				<h2 class="toggleButton" title="Click to hide Overview section">Overview ▾</h2>
+				<p>Package endpoints contains a set of handlers that process 
+requests received by each endpoint in the API. The handlers filter data 
+for each endpoint and
+return appropriate HTTP errors if invalid data is given. Any interaction
+ with the database is done in the database package. Handlers return HTTP
+ errors
+if the called database handler returns an error.
+
+				
+			</p></div>
+		</div>
+
+		<div id="pkg-index" class="toggleVisible">
+		<div class="collapsed">
+			<h2 class="toggleButton" title="Click to show Index section">Index ▹</h2>
+		</div>
+		<div class="expanded">
+			<h2 class="toggleButton" title="Click to hide Index section">Index ▾</h2>
+
+		<!-- Table of contents for API; must be named manual-nav to turn off auto nav. -->
+			<div id="manual-nav">
+			<dl>
+			
+			
+			
+				
+				<dd><a href="#AddItem">func AddItem(c *fiber.Ctx) error</a></dd>
+			
+				
+				<dd><a href="#AddOrder">func AddOrder(c *fiber.Ctx) error</a></dd>
+			
+				
+				<dd><a href="#AddOrderToQueue">func AddOrderToQueue(order models.Order) error</a></dd>
+			
+				
+				<dd><a href="#AddTableNumber">func AddTableNumber(id uint, tableNumber uint) error</a></dd>
+			
+				
+				<dd><a href="#AddWaiterData">func AddWaiterData(waiter WaiterData) error</a></dd>
+			
+				
+				<dd><a href="#BroadcastToCustomers">func BroadcastToCustomers(m string)</a></dd>
+			
+				
+				<dd><a href="#BroadcastToKitchen">func BroadcastToKitchen(m string)</a></dd>
+			
+				
+				<dd><a href="#BroadcastToWaiters">func BroadcastToWaiters(m string)</a></dd>
+			
+				
+				<dd><a href="#Cancel">func Cancel(c *fiber.Ctx) error</a></dd>
+			
+				
+				<dd><a href="#ClearOrderQueue">func ClearOrderQueue()</a></dd>
+			
+				
+				<dd><a href="#ClearWaiterList">func ClearWaiterList()</a></dd>
+			
+				
+				<dd><a href="#Confirm">func Confirm(c *fiber.Ctx) error</a></dd>
+			
+				
+				<dd><a href="#Delivered">func Delivered(c *fiber.Ctx) error</a></dd>
+			
+				
+				<dd><a href="#EditItem">func EditItem(c *fiber.Ctx) error</a></dd>
+			
+				
+				<dd><a href="#FetchMenu">func FetchMenu(filter *database.MenuFilter) (string, error)</a></dd>
+			
+				
+				<dd><a href="#GetID">func GetID(c *fiber.Ctx) (uint, error)</a></dd>
+			
+				
+				<dd><a href="#GetOrders">func GetOrders(c *fiber.Ctx) error</a></dd>
+			
+				
+				<dd><a href="#GetQueuedOrders">func GetQueuedOrders() []models.Order</a></dd>
+			
+				
+				<dd><a href="#GetWaiter">func GetWaiter(waiter ...WaiterData) *[]WaiterData</a></dd>
+			
+				
+				<dd><a href="#HandleConnection">func HandleConnection(ws *websocket.Conn)</a></dd>
+			
+				
+				<dd><a href="#HandleMessage">func HandleMessage(m string, u User) error</a></dd>
+			
+				
+				<dd><a href="#IsAnyPendingOrders">func IsAnyPendingOrders() bool</a></dd>
+			
+				
+				<dd><a href="#Menu">func Menu(c *fiber.Ctx) error</a></dd>
+			
+				
+				<dd><a href="#Pay">func Pay(c *fiber.Ctx) error</a></dd>
+			
+				
+				<dd><a href="#ReAllocateTableNumbers">func ReAllocateTableNumbers(waiter WaiterData) error</a></dd>
+			
+				
+				<dd><a href="#Ready">func Ready(c *fiber.Ctx) error</a></dd>
+			
+				
+				<dd><a href="#RegisterWaiter">func RegisterWaiter(c *fiber.Ctx) error</a></dd>
+			
+				
+				<dd><a href="#RemoveItem">func RemoveItem(c *fiber.Ctx) error</a></dd>
+			
+				
+				<dd><a href="#RemoveWaiter">func RemoveWaiter(c *fiber.Ctx) error</a></dd>
+			
+				
+				<dd><a href="#RemoveWaiterData">func RemoveWaiterData(waiter WaiterData) error</a></dd>
+			
+				
+				<dd><a href="#SendToTable">func SendToTable(id uint, m string)</a></dd>
+			
+				
+				<dd><a href="#Status">func Status(c *fiber.Ctx) error</a></dd>
+			
+				
+				<dd><a href="#Upload">func Upload(c *fiber.Ctx) error</a></dd>
+			
+			
+				
+				<dd><a href="#APIOrder">type APIOrder</a></dd>
+				
+				
+			
+				
+				<dd><a href="#Customer">type Customer</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="#Customer.Remove">func (c Customer) Remove()</a></dd>
+				
+			
+				
+				<dd><a href="#Kitchen">type Kitchen</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="#Kitchen.Remove">func (k Kitchen) Remove()</a></dd>
+				
+			
+				
+				<dd><a href="#Registry">type Registry</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="#Registry.Append">func (r *Registry) Append(u User)</a></dd>
+				
+			
+				
+				<dd><a href="#RemoveWaiterStruct">type RemoveWaiterStruct</a></dd>
+				
+				
+			
+				
+				<dd><a href="#User">type User</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="#NewConnection">func NewConnection(ws *websocket.Conn) (User, error)</a></dd>
+				
+				
+			
+				
+				<dd><a href="#Waiter">type Waiter</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="#Waiter.Remove">func (w Waiter) Remove()</a></dd>
+				
+			
+				
+				<dd><a href="#WaiterAPI">type WaiterAPI</a></dd>
+				
+				
+			
+				
+				<dd><a href="#WaiterData">type WaiterData</a></dd>
+				
+				
+			
+				
+				<dd><a href="#WaiterResponse">type WaiterResponse</a></dd>
+				
+				
+			
+			
+			</dl>
+			</div><!-- #manual-nav -->
+
+		
+
+		
+			<h3>Package files</h3>
+			<p>
+			<span style="font-size:90%">
+			
+				<a href="http://localhost:8080/src/endpoints/add_item.go">add_item.go</a>
+			
+				<a href="http://localhost:8080/src/endpoints/add_order.go">add_order.go</a>
+			
+				<a href="http://localhost:8080/src/endpoints/add_waiter.go">add_waiter.go</a>
+			
+				<a href="http://localhost:8080/src/endpoints/cancel.go">cancel.go</a>
+			
+				<a href="http://localhost:8080/src/endpoints/confirm.go">confirm.go</a>
+			
+				<a href="http://localhost:8080/src/endpoints/delivered.go">delivered.go</a>
+			
+				<a href="http://localhost:8080/src/endpoints/edit_item.go">edit_item.go</a>
+			
+				<a href="http://localhost:8080/src/endpoints/menu.go">menu.go</a>
+			
+				<a href="http://localhost:8080/src/endpoints/notifications.go">notifications.go</a>
+			
+				<a href="http://localhost:8080/src/endpoints/order_queue.go">order_queue.go</a>
+			
+				<a href="http://localhost:8080/src/endpoints/orders.go">orders.go</a>
+			
+				<a href="http://localhost:8080/src/endpoints/pay.go">pay.go</a>
+			
+				<a href="http://localhost:8080/src/endpoints/ready.go">ready.go</a>
+			
+				<a href="http://localhost:8080/src/endpoints/remove_item.go">remove_item.go</a>
+			
+				<a href="http://localhost:8080/src/endpoints/remove_waiter.go">remove_waiter.go</a>
+			
+				<a href="http://localhost:8080/src/endpoints/status.go">status.go</a>
+			
+				<a href="http://localhost:8080/src/endpoints/upload.go">upload.go</a>
+			
+				<a href="http://localhost:8080/src/endpoints/util.go">util.go</a>
+			
+				<a href="http://localhost:8080/src/endpoints/waiter_data.go">waiter_data.go</a>
+			
+			</span>
+			</p>
+		
+		</div><!-- .expanded -->
+		</div><!-- #pkg-index -->
+
+		
+
+		
+		
+		
+			
+			
+			<h2 id="AddItem">func <a href="http://localhost:8080/src/endpoints/add_item.go?s=557:589#L4">AddItem</a>
+				<a class="permalink" href="#AddItem">¶</a>
+				
+				
+			</h2>
+			<pre>func AddItem(c *fiber.<a href="#Ctx">Ctx</a>) <a href="http://localhost:8080/pkg/builtin/#error">error</a></pre>
+			<p>AddItem is a callback for the API to add an item to the menu
+
+			
+			
+
+		
+			
+			
+			</p><h2 id="AddOrder">func <a href="http://localhost:8080/src/endpoints/add_order.go?s=411:444#L11">AddOrder</a>
+				<a class="permalink" href="#AddOrder">¶</a>
+				
+				
+			</h2>
+			<pre>func AddOrder(c *fiber.<a href="#Ctx">Ctx</a>) <a href="http://localhost:8080/pkg/builtin/#error">error</a></pre>
+			<p>AddOrder is a callback function for the API to add a new order to the database
+
+			
+			
+
+		
+			
+			
+			</p><h2 id="AddOrderToQueue">func <a href="http://localhost:8080/src/endpoints/order_queue.go?s=279:325#L6">AddOrderToQueue</a>
+				<a class="permalink" href="#AddOrderToQueue">¶</a>
+				
+				
+			</h2>
+			<pre>func AddOrderToQueue(order <a href="http://localhost:8080/pkg/teamproject/database/models/">models</a>.<a href="http://localhost:8080/pkg/teamproject/database/models/#Order">Order</a>) <a href="http://localhost:8080/pkg/builtin/#error">error</a></pre>
+			<p>Adds provided order to queue to be given to a waiter
+
+			
+			
+
+		
+			
+			
+			</p><h2 id="AddTableNumber">func <a href="http://localhost:8080/src/endpoints/waiter_data.go?s=3089:3141#L103">AddTableNumber</a>
+				<a class="permalink" href="#AddTableNumber">¶</a>
+				
+				
+			</h2>
+			<pre>func AddTableNumber(id <a href="http://localhost:8080/pkg/builtin/#uint">uint</a>, tableNumber <a href="http://localhost:8080/pkg/builtin/#uint">uint</a>) <a href="http://localhost:8080/pkg/builtin/#error">error</a></pre>
+			
+			
+			
+
+		
+			
+			
+			<h2 id="AddWaiterData">func <a href="http://localhost:8080/src/endpoints/waiter_data.go?s=408:451#L10">AddWaiterData</a>
+				<a class="permalink" href="#AddWaiterData">¶</a>
+				
+				
+			</h2>
+			<pre>func AddWaiterData(waiter <a href="#WaiterData">WaiterData</a>) <a href="http://localhost:8080/pkg/builtin/#error">error</a></pre>
+			<p>Add waiter to current waiter list
+Returns true if waiter is successfully added to list
+
+			
+			
+
+		
+			
+			
+			</p><h2 id="BroadcastToCustomers">func <a href="http://localhost:8080/src/endpoints/notifications.go?s=2978:3013#L136">BroadcastToCustomers</a>
+				<a class="permalink" href="#BroadcastToCustomers">¶</a>
+				
+				
+			</h2>
+			<pre>func BroadcastToCustomers(m <a href="http://localhost:8080/pkg/builtin/#string">string</a>)</pre>
+			<p>Broadcast a message to all customers
+
+			
+			
+
+		
+			
+			
+			</p><h2 id="BroadcastToKitchen">func <a href="http://localhost:8080/src/endpoints/notifications.go?s=2721:2754#L124">BroadcastToKitchen</a>
+				<a class="permalink" href="#BroadcastToKitchen">¶</a>
+				
+				
+			</h2>
+			<pre>func BroadcastToKitchen(m <a href="http://localhost:8080/pkg/builtin/#string">string</a>)</pre>
+			<p>BroadcastToKitchen sends m to all connected kitchen staff
+
+			
+			
+
+		
+			
+			
+			</p><h2 id="BroadcastToWaiters">func <a href="http://localhost:8080/src/endpoints/notifications.go?s=2134:2167#L100">BroadcastToWaiters</a>
+				<a class="permalink" href="#BroadcastToWaiters">¶</a>
+				
+				
+			</h2>
+			<pre>func BroadcastToWaiters(m <a href="http://localhost:8080/pkg/builtin/#string">string</a>)</pre>
+			<p>BroadcastToWaiters sends m to all connected waiters
+
+			
+			
+
+		
+			
+			
+			</p><h2 id="Cancel">func <a href="http://localhost:8080/src/endpoints/cancel.go?s=145:176#L1">Cancel</a>
+				<a class="permalink" href="#Cancel">¶</a>
+				
+				
+			</h2>
+			<pre>func Cancel(c *fiber.<a href="#Ctx">Ctx</a>) <a href="http://localhost:8080/pkg/builtin/#error">error</a></pre>
+			<p>Cancel is an API callback for cancelling a given order
+
+			
+			
+
+		
+			
+			
+			</p><h2 id="ClearOrderQueue">func <a href="http://localhost:8080/src/endpoints/order_queue.go?s=636:658#L25">ClearOrderQueue</a>
+				<a class="permalink" href="#ClearOrderQueue">¶</a>
+				
+				
+			</h2>
+			<pre>func ClearOrderQueue()</pre>
+			
+			
+			
+
+		
+			
+			
+			<h2 id="ClearWaiterList">func <a href="http://localhost:8080/src/endpoints/waiter_data.go?s=3397:3419#L113">ClearWaiterList</a>
+				<a class="permalink" href="#ClearWaiterList">¶</a>
+				
+				
+			</h2>
+			<pre>func ClearWaiterList()</pre>
+			
+			
+			
+
+		
+			
+			
+			<h2 id="Confirm">func <a href="http://localhost:8080/src/endpoints/confirm.go?s=146:178#L1">Confirm</a>
+				<a class="permalink" href="#Confirm">¶</a>
+				
+				
+			</h2>
+			<pre>func Confirm(c *fiber.<a href="#Ctx">Ctx</a>) <a href="http://localhost:8080/pkg/builtin/#error">error</a></pre>
+			<p>Confirm is an API callback for confirming a given order
+
+			
+			
+
+		
+			
+			
+			</p><h2 id="Delivered">func <a href="http://localhost:8080/src/endpoints/delivered.go?s=158:192#L1">Delivered</a>
+				<a class="permalink" href="#Delivered">¶</a>
+				
+				
+			</h2>
+			<pre>func Delivered(c *fiber.<a href="#Ctx">Ctx</a>) <a href="http://localhost:8080/pkg/builtin/#error">error</a></pre>
+			<p>Delivered is an API callback for marking a given order as delivered
+
+			
+			
+
+		
+			
+			
+			</p><h2 id="EditItem">func <a href="http://localhost:8080/src/endpoints/edit_item.go?s=196:229#L1">EditItem</a>
+				<a class="permalink" href="#EditItem">¶</a>
+				
+				
+			</h2>
+			<pre>func EditItem(c *fiber.<a href="#Ctx">Ctx</a>) <a href="http://localhost:8080/pkg/builtin/#error">error</a></pre>
+			<p>EditItem is a callback for the API to allow an item to be edited
+
+			
+			
+
+		
+			
+			
+			</p><h2 id="FetchMenu">func <a href="http://localhost:8080/src/endpoints/menu.go?s=1020:1079#L31">FetchMenu</a>
+				<a class="permalink" href="#FetchMenu">¶</a>
+				
+				
+			</h2>
+			<pre>func FetchMenu(filter *<a href="http://localhost:8080/pkg/teamproject/database/">database</a>.<a href="http://localhost:8080/pkg/teamproject/database/#MenuFilter">MenuFilter</a>) (<a href="http://localhost:8080/pkg/builtin/#string">string</a>, <a href="http://localhost:8080/pkg/builtin/#error">error</a>)</pre>
+			<p>FetchMenu returns the current restaurant menu as a JSON encoded string.
+filter is applied to the database query to filter results
+
+			
+			
+
+		
+			
+			
+			</p><h2 id="GetID">func <a href="http://localhost:8080/src/endpoints/util.go?s=177:215#L1">GetID</a>
+				<a class="permalink" href="#GetID">¶</a>
+				
+				
+			</h2>
+			<pre>func GetID(c *fiber.<a href="#Ctx">Ctx</a>) (<a href="http://localhost:8080/pkg/builtin/#uint">uint</a>, <a href="http://localhost:8080/pkg/builtin/#error">error</a>)</pre>
+			<p>GetID extracts the ID parameter from the fiber context. Returns an error if an invalid ID is given.
+
+			
+			
+
+		
+			
+			
+			</p><h2 id="GetOrders">func <a href="http://localhost:8080/src/endpoints/orders.go?s=202:236#L2">GetOrders</a>
+				<a class="permalink" href="#GetOrders">¶</a>
+				
+				
+			</h2>
+			<pre>func GetOrders(c *fiber.<a href="#Ctx">Ctx</a>) <a href="http://localhost:8080/pkg/builtin/#error">error</a></pre>
+			<p>GetOrders is an API callback for retrieving orders for a given waiter
+
+			
+			
+
+		
+			
+			
+			</p><h2 id="GetQueuedOrders">func <a href="http://localhost:8080/src/endpoints/order_queue.go?s=574:611#L21">GetQueuedOrders</a>
+				<a class="permalink" href="#GetQueuedOrders">¶</a>
+				
+				
+			</h2>
+			<pre>func GetQueuedOrders() []<a href="http://localhost:8080/pkg/teamproject/database/models/">models</a>.<a href="http://localhost:8080/pkg/teamproject/database/models/#Order">Order</a></pre>
+			
+			
+			
+
+		
+			
+			
+			<h2 id="GetWaiter">func <a href="http://localhost:8080/src/endpoints/waiter_data.go?s=2859:2909#L90">GetWaiter</a>
+				<a class="permalink" href="#GetWaiter">¶</a>
+				
+				
+			</h2>
+			<pre>func GetWaiter(waiter ...<a href="#WaiterData">WaiterData</a>) *[]<a href="#WaiterData">WaiterData</a></pre>
+			<p>Gets waiter by provided id or if no waiter provided then gets all waiters
+Returns nil if waiter id provided and none
+Returns list of waiters
+
+			
+			
+
+		
+			
+			
+			</p><h2 id="HandleConnection">func <a href="http://localhost:8080/src/endpoints/notifications.go?s=727:768#L36">HandleConnection</a>
+				<a class="permalink" href="#HandleConnection">¶</a>
+				
+				
+			</h2>
+			<pre>func HandleConnection(ws *<a href="http://localhost:8080/pkg/github.com/gofiber/contrib/websocket/">websocket</a>.<a href="http://localhost:8080/pkg/github.com/gofiber/contrib/websocket/#Conn">Conn</a>)</pre>
+			<p>HandleConnection spawns a handler to manage one websocket connection to the server
+
+			
+			
+
+		
+			
+			
+			</p><h2 id="HandleMessage">func <a href="http://localhost:8080/src/endpoints/notifications.go?s=1565:1607#L76">HandleMessage</a>
+				<a class="permalink" href="#HandleMessage">¶</a>
+				
+				
+			</h2>
+			<pre>func HandleMessage(m <a href="http://localhost:8080/pkg/builtin/#string">string</a>, u <a href="#User">User</a>) <a href="http://localhost:8080/pkg/builtin/#error">error</a></pre>
+			<p>Handle message processed the given message sent by the given user.
+Returns any errors created during handling.
+
+			
+			
+
+		
+			
+			
+			</p><h2 id="IsAnyPendingOrders">func <a href="http://localhost:8080/src/endpoints/order_queue.go?s=159:189#L1">IsAnyPendingOrders</a>
+				<a class="permalink" href="#IsAnyPendingOrders">¶</a>
+				
+				
+			</h2>
+			<pre>func IsAnyPendingOrders() <a href="http://localhost:8080/pkg/builtin/#bool">bool</a></pre>
+			<p>Returns true if any orders have been placed on queue
+
+			
+			
+
+		
+			
+			
+			</p><h2 id="Menu">func <a href="http://localhost:8080/src/endpoints/menu.go?s=244:273#L4">Menu</a>
+				<a class="permalink" href="#Menu">¶</a>
+				
+				
+			</h2>
+			<pre>func Menu(c *fiber.<a href="#Ctx">Ctx</a>) <a href="http://localhost:8080/pkg/builtin/#error">error</a></pre>
+			<p>Menu is an API callback for retrieving the menu from the database and returning it as a JSON string.
+
+			
+			
+
+		
+			
+			
+			</p><h2 id="Pay">func <a href="http://localhost:8080/src/endpoints/pay.go?s=147:175#L1">Pay</a>
+				<a class="permalink" href="#Pay">¶</a>
+				
+				
+			</h2>
+			<pre>func Pay(c *fiber.<a href="#Ctx">Ctx</a>) <a href="http://localhost:8080/pkg/builtin/#error">error</a></pre>
+			<p>Pay is an API callback for marking a given order as paid
+
+			
+			
+
+		
+			
+			
+			</p><h2 id="ReAllocateTableNumbers">func <a href="http://localhost:8080/src/endpoints/waiter_data.go?s=1252:1304#L39">ReAllocateTableNumbers</a>
+				<a class="permalink" href="#ReAllocateTableNumbers">¶</a>
+				
+				
+			</h2>
+			<pre>func ReAllocateTableNumbers(waiter <a href="#WaiterData">WaiterData</a>) <a href="http://localhost:8080/pkg/builtin/#error">error</a></pre>
+			
+			
+			
+
+		
+			
+			
+			<h2 id="Ready">func <a href="http://localhost:8080/src/endpoints/ready.go?s=150:180#L1">Ready</a>
+				<a class="permalink" href="#Ready">¶</a>
+				
+				
+			</h2>
+			<pre>func Ready(c *fiber.<a href="#Ctx">Ctx</a>) <a href="http://localhost:8080/pkg/builtin/#error">error</a></pre>
+			<p>Ready is an API callback for marking a given order as ready
+
+			
+			
+
+		
+			
+			
+			</p><h2 id="RegisterWaiter">func <a href="http://localhost:8080/src/endpoints/add_waiter.go?s=257:296#L8">RegisterWaiter</a>
+				<a class="permalink" href="#RegisterWaiter">¶</a>
+				
+				
+			</h2>
+			<pre>func RegisterWaiter(c *fiber.<a href="#Ctx">Ctx</a>) <a href="http://localhost:8080/pkg/builtin/#error">error</a></pre>
+			<p>RegisterWaiter is an API callback for registering a new waiter
+
+			
+			
+
+		
+			
+			
+			</p><h2 id="RemoveItem">func <a href="http://localhost:8080/src/endpoints/remove_item.go?s=173:208#L1">RemoveItem</a>
+				<a class="permalink" href="#RemoveItem">¶</a>
+				
+				
+			</h2>
+			<pre>func RemoveItem(c *fiber.<a href="#Ctx">Ctx</a>) <a href="http://localhost:8080/pkg/builtin/#error">error</a></pre>
+			<p>RemoveItem is an API callback for removing a given item by ID
+
+			
+			
+
+		
+			
+			
+			</p><h2 id="RemoveWaiter">func <a href="http://localhost:8080/src/endpoints/remove_waiter.go?s=191:228#L4">RemoveWaiter</a>
+				<a class="permalink" href="#RemoveWaiter">¶</a>
+				
+				
+			</h2>
+			<pre>func RemoveWaiter(c *fiber.<a href="#Ctx">Ctx</a>) <a href="http://localhost:8080/pkg/builtin/#error">error</a></pre>
+			<p>RemoveWaiter is an API callback for logging out a waiter
+
+			
+			
+
+		
+			
+			
+			</p><h2 id="RemoveWaiterData">func <a href="http://localhost:8080/src/endpoints/waiter_data.go?s=874:920#L26">RemoveWaiterData</a>
+				<a class="permalink" href="#RemoveWaiterData">¶</a>
+				
+				
+			</h2>
+			<pre>func RemoveWaiterData(waiter <a href="#WaiterData">WaiterData</a>) <a href="http://localhost:8080/pkg/builtin/#error">error</a></pre>
+			<p>Remove waiter according to id provided in filter waiter
+
+			
+			
+
+		
+			
+			
+			</p><h2 id="SendToTable">func <a href="http://localhost:8080/src/endpoints/notifications.go?s=2432:2467#L112">SendToTable</a>
+				<a class="permalink" href="#SendToTable">¶</a>
+				
+				
+			</h2>
+			<pre>func SendToTable(id <a href="http://localhost:8080/pkg/builtin/#uint">uint</a>, m <a href="http://localhost:8080/pkg/builtin/#string">string</a>)</pre>
+			<p>SendToTable sends a message to any customer websocket with the given table number
+
+			
+			
+
+		
+			
+			
+			</p><h2 id="Status">func <a href="http://localhost:8080/src/endpoints/status.go?s=172:203#L1">Status</a>
+				<a class="permalink" href="#Status">¶</a>
+				
+				
+			</h2>
+			<pre>func Status(c *fiber.<a href="#Ctx">Ctx</a>) <a href="http://localhost:8080/pkg/builtin/#error">error</a></pre>
+			<p>Status is an API callback for retrieving the status field of an order given by ID
+
+			
+			
+
+		
+			
+			
+			</p><h2 id="Upload">func <a href="http://localhost:8080/src/endpoints/upload.go?s=202:233#L4">Upload</a>
+				<a class="permalink" href="#Upload">¶</a>
+				
+				
+			</h2>
+			<pre>func Upload(c *fiber.<a href="#Ctx">Ctx</a>) <a href="http://localhost:8080/pkg/builtin/#error">error</a></pre>
+			<p>Upload is an API callback for uploading an image file for use in the menu
+
+			
+			
+
+		
+		
+			
+			
+			</p><h2 id="APIOrder">type <a href="http://localhost:8080/src/endpoints/add_order.go?s=125:327#L1">APIOrder</a>
+				<a class="permalink" href="#APIOrder">¶</a>
+				
+				
+			</h2>
+			
+			<pre>type APIOrder struct {
+<span id="APIOrder.TableNumber"></span>    TableNumber <a href="http://localhost:8080/pkg/builtin/#uint">uint</a>    `json:"tableNumber"`
+<span id="APIOrder.Bill"></span>    Bill        <a href="http://localhost:8080/pkg/builtin/#float64">float64</a> `json:"bill"`
+<span id="APIOrder.Items"></span>    Items       []struct {
+        Item  <a href="http://localhost:8080/pkg/builtin/#int">int</a>    `json:"item"`
+        Notes <a href="http://localhost:8080/pkg/builtin/#string">string</a> `json:"notes"`
+    } `json:"items"`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="Customer">type <a href="http://localhost:8080/src/endpoints/notifications.go?s=245:304#L9">Customer</a>
+				<a class="permalink" href="#Customer">¶</a>
+				
+				
+			</h2>
+			<p>Customers are identified by their table numbers
+
+			</p><pre>type Customer struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+				
+				<h3 id="Customer.Remove">func (Customer) <a href="http://localhost:8080/src/endpoints/notifications.go?s=5247:5273#L205">Remove</a>
+					<a class="permalink" href="#Customer.Remove">¶</a>
+					
+					
+				</h3>
+				<pre>func (c <a href="#Customer">Customer</a>) Remove()</pre>
+				<p>Remove removes this customer from the server register
+
+				
+				
+				
+			
+		
+			
+			
+			</p><h2 id="Kitchen">type <a href="http://localhost:8080/src/endpoints/notifications.go?s=437:480#L21">Kitchen</a>
+				<a class="permalink" href="#Kitchen">¶</a>
+				
+				
+			</h2>
+			<p>Kitchen staff are anonymous
+
+			</p><pre>type Kitchen struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+				
+				<h3 id="Kitchen.Remove">func (Kitchen) <a href="http://localhost:8080/src/endpoints/notifications.go?s=6639:6664#L256">Remove</a>
+					<a class="permalink" href="#Kitchen.Remove">¶</a>
+					
+					
+				</h3>
+				<pre>func (k <a href="#Kitchen">Kitchen</a>) Remove()</pre>
+				<p>Remove removes a kitchen connection from the server register
+
+				
+				
+				
+			
+		
+			
+			
+			</p><h2 id="Registry">type <a href="http://localhost:8080/src/endpoints/notifications.go?s=522:572#L26">Registry</a>
+				<a class="permalink" href="#Registry">¶</a>
+				
+				
+			</h2>
+			<p>Registry is a thread-safe slice type
+
+			</p><pre>type Registry struct {
+    <a href="http://localhost:8080/pkg/sync/">sync</a>.<a href="http://localhost:8080/pkg/sync/#Mutex">Mutex</a>
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+				
+				<h3 id="Registry.Append">func (*Registry) <a href="http://localhost:8080/src/endpoints/notifications.go?s=7003:7036#L271">Append</a>
+					<a class="permalink" href="#Registry.Append">¶</a>
+					
+					
+				</h3>
+				<pre>func (r *<a href="#Registry">Registry</a>) Append(u <a href="#User">User</a>)</pre>
+				<p>Append appends to a thread-safe registry
+
+				
+				
+				
+			
+		
+			
+			
+			</p><h2 id="RemoveWaiterStruct">type <a href="http://localhost:8080/src/endpoints/remove_waiter.go?s=74:129#L1">RemoveWaiterStruct</a>
+				<a class="permalink" href="#RemoveWaiterStruct">¶</a>
+				
+				
+			</h2>
+			
+			<pre>type RemoveWaiterStruct struct {
+<span id="RemoveWaiterStruct.ID"></span>    ID <a href="http://localhost:8080/pkg/builtin/#uint">uint</a> `json:"id"`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="User">type <a href="http://localhost:8080/src/endpoints/notifications.go?s=159:192#L4">User</a>
+				<a class="permalink" href="#User">¶</a>
+				
+				
+			</h2>
+			<p>Users can be removed from the server
+
+			</p><pre>type User interface {
+    Remove()
+}</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="NewConnection">func <a href="http://localhost:8080/src/endpoints/notifications.go?s=3396:3448#L150">NewConnection</a>
+					<a class="permalink" href="#NewConnection">¶</a>
+					
+					
+				</h3>
+				<pre>func NewConnection(ws *<a href="http://localhost:8080/pkg/github.com/gofiber/contrib/websocket/">websocket</a>.<a href="http://localhost:8080/pkg/github.com/gofiber/contrib/websocket/#Conn">Conn</a>) (<a href="#User">User</a>, <a href="http://localhost:8080/pkg/builtin/#error">error</a>)</pre>
+				<p>NewConnection registers a new connection to the system given its websocket connection.
+Returns the User that has been registered.
+Returns an error if one arises during communication.
+
+				
+				
+			
+
+			
+		
+			
+			
+			</p><h2 id="Waiter">type <a href="http://localhost:8080/src/endpoints/notifications.go?s=347:404#L15">Waiter</a>
+				<a class="permalink" href="#Waiter">¶</a>
+				
+				
+			</h2>
+			<p>Waiters are identified by their names
+
+			</p><pre>type Waiter struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+				
+				<h3 id="Waiter.Remove">func (Waiter) <a href="http://localhost:8080/src/endpoints/notifications.go?s=6107:6131#L236">Remove</a>
+					<a class="permalink" href="#Waiter.Remove">¶</a>
+					
+					
+				</h3>
+				<pre>func (w <a href="#Waiter">Waiter</a>) Remove()</pre>
+				<p>Remove removes a waiter from the server register
+
+				
+				
+				
+			
+		
+			
+			
+			</p><h2 id="WaiterAPI">type <a href="http://localhost:8080/src/endpoints/add_waiter.go?s=76:136#L1">WaiterAPI</a>
+				<a class="permalink" href="#WaiterAPI">¶</a>
+				
+				
+			</h2>
+			
+			<pre>type WaiterAPI struct {
+<span id="WaiterAPI.Username"></span>    Username <a href="http://localhost:8080/pkg/builtin/#string">string</a> `json:"username"`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="WaiterData">type <a href="http://localhost:8080/src/endpoints/waiter_data.go?s=115:313#L2">WaiterData</a>
+				<a class="permalink" href="#WaiterData">¶</a>
+				
+				
+			</h2>
+			
+			<pre>type WaiterData struct {
+<span id="WaiterData.ID"></span>    ID          <a href="http://localhost:8080/pkg/builtin/#uint">uint</a>   `json:"id"`
+<span id="WaiterData.Username"></span>    Username    <a href="http://localhost:8080/pkg/builtin/#string">string</a> `json:"waiterUsername"`
+<span id="WaiterData.TableNumber"></span>    TableNumber []<a href="http://localhost:8080/pkg/builtin/#uint">uint</a> `json:"tableNumber"` <span class="comment">// Array of table numbers that the waiter is attending</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="WaiterResponse">type <a href="http://localhost:8080/src/endpoints/add_waiter.go?s=138:189#L3">WaiterResponse</a>
+				<a class="permalink" href="#WaiterResponse">¶</a>
+				
+				
+			</h2>
+			
+			<pre>type WaiterResponse struct {
+<span id="WaiterResponse.ID"></span>    ID <a href="http://localhost:8080/pkg/builtin/#uint">uint</a> `json:"id"`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+	
+
+	
+
+
+
+
+
+
+
+<div id="footer">
+Build version go1.21.8.<br>
+Except as <a href="https://developers.google.com/site-policies#restrictions">noted</a>,
+the content of this page is licensed under the
+Creative Commons Attribution 3.0 License,
+and code is licensed under a <a href="http://localhost:8080/LICENSE">BSD license</a>.<br>
+<a href="https://golang.org/doc/tos.html">Terms of Service</a> |
+<a href="https://www.google.com/intl/en/policies/privacy/">Privacy Policy</a>
+</div>
+
+</div><!-- .container -->
+</div><!-- #page -->
+
+
+</body></html>
