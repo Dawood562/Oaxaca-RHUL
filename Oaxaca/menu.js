@@ -21,13 +21,12 @@ function initMenuAll() {
             username = cookie.substring(indexOfParam + 1, cookie.length);
         }
     })
-    
 
-    if (username != "" && username.substring(0, 5) != "table") {
-        // Do nothing
-    } else {
+    if (username.length <= 0) {
         let editButton = document.getElementById("editButton");
         editButton.style.display = "none";
+    } else {
+        // Do nothing
     }
 }
 
