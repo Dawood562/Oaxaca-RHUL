@@ -6,7 +6,8 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func Pay(c *fiber.Ctx) error {
+// Cancel is an API callback for cancelling a given order
+func Cancel(c *fiber.Ctx) error {
 	// Retrieve required ID arg
 	id, err := GetID(c)
 	if err != nil {
@@ -14,16 +15,18 @@ func Pay(c *fiber.Ctx) error {
 	}
 
 	// Attempt to pay for order
-	err = database.PayOrder(uint(id))
+	err = database.CancelOrder(uint(id))
 
 	if err != nil {
-		if err == database.ErrOrderAlreadyPaid {
+		if err == database.ErrOrderAlreadyCancelled {
 			return fiber.ErrConflict
 		}
 		return fiber.ErrNotFound
 	}
 
+	BroadcastToKitchen("CANCEL")
 	BroadcastToWaiters("REFRESH")
+	BroadcastToCustomers("REFRESH")
 
 	return nil
 }

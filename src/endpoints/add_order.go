@@ -17,7 +17,7 @@ type APIOrder struct {
 	} `json:"items"`
 }
 
-// Boiler plate code for AddOrder while db content isnt
+// AddOrder is a callback function for the API to add a new order to the database
 func AddOrder(c *fiber.Ctx) error {
 	c.Accepts("application/json")
 	order := APIOrder{}

@@ -10,7 +10,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-// Menu retrieves the menu from the database and represents it as a JSON string.
+// Menu is an API callback for retrieving the menu from the database and returning it as a JSON string.
 func Menu(c *fiber.Ctx) error {
 	// Check provided params
 	maxPrice, err := strconv.ParseFloat(c.Query("maxPrice"), 32)
