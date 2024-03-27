@@ -6,6 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+// Status is an API callback for retrieving the status field of an order given by ID
 func Status(c *fiber.Ctx) error {
 	// Retrieve required ID arg
 	id, err := GetID(c)

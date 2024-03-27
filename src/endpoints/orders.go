@@ -8,6 +8,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+// GetOrders is an API callback for retrieving orders for a given waiter
 func GetOrders(c *fiber.Ctx) error {
 	onlyConfirmed := c.Query("confirmed")
 	providedId := c.Query("waiterId")

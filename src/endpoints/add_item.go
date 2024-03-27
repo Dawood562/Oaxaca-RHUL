@@ -1,3 +1,6 @@
+// Package endpoints contains a set of handlers that process requests received by each endpoint in the API. The handlers filter data for each endpoint and
+// return appropriate HTTP errors if invalid data is given. Any interaction with the database is done in the database package. Handlers return HTTP errors
+// if the called database handler returns an error.
 package endpoints
 
 import (

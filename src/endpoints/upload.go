@@ -10,6 +10,7 @@ import (
 	"github.com/google/uuid"
 )
 
+// Upload is an API callback for uploading an image file for use in the menu
 func Upload(c *fiber.Ctx) error {
 	file, err := c.FormFile("file")
 	if err != nil {

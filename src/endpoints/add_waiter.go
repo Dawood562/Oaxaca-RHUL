@@ -14,7 +14,7 @@ type WaiterResponse struct {
 	ID uint `json:"id"`
 }
 
-// Registers waiter to waiter data structure
+// RegisterWaiter is an API callback for registering a new waiter
 func RegisterWaiter(c *fiber.Ctx) error {
 	c.Accepts("application/json")
 	waiter := WaiterAPI{}
