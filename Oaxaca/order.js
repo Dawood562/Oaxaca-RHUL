@@ -90,7 +90,7 @@ function handleMessages(e) {
         console.log("Connected to backend websocket")
     } else if (e.data == "OK") {
         console.log("Notification successfully received")
-    } else if (e.data == "REFRESH"){
+    } else if (e.data == "REFRESH") {
         refreshOrderStatus()
     } else {
         console.log(e) // Display entire message if something went wrong for debugging
@@ -146,12 +146,51 @@ function showOrdersToPage() {
                         <label class='orderPageItemDataP'>£${(Number(itemData.price) * Number(itemData.quantity)).toFixed(2)}</label>
                         <label class='orderPageItemDataC'>${Number(itemData.calories) * Number(itemData.quantity)} kcal</label>
                         <label class='orderPageItemDataQ'>Quantity: ${itemData.quantity}</label>
+                        <label class="orderPageItemDataQ">
+                            <button onclick="decreaseQuantity(${itemData.id})">-</button>
+                            <input type="text" value=${itemData.quantity} readonly>
+                            <button onclick="increaseQuantity(${itemData.id})">+</button>
+                        </label>
                     </div>
                     <button class="removeButton" onclick='removeOrderFromList(${itemData.id})'>Remove<i class="fa fa-trash"></i></button>
                 </div>`;
             orderStore.appendChild(item);
         });
     }
+}
+
+function decreaseQuantity(id) {
+    for (let i = 0; i < basketData.length; i++) {
+        if (basketData[i].id == id) {
+            if (basketData[i].quantity > 1) {
+                basketData[i].quantity--;
+                updateBasketCookie();
+                removeAllOrders();
+                showOrdersToPage();
+            }
+            break;
+        }
+    }
+}
+
+function increaseQuantity(id) {
+    for (let i = 0; i < basketData.length; i++) {
+        if (basketData[i].id == id) {
+            basketData[i].quantity++;
+            updateBasketCookie();
+            removeAllOrders();
+            showOrdersToPage();
+            break;
+        }
+    }
+}
+
+function updateBasketCookie() {
+    let newCookieData = "basket=";
+    basketData.forEach(item => {
+        newCookieData += `${item.id},${item.name},${item.price},${item.calories},${item.quantity},${item.imageURL}#`;
+    });
+    document.cookie = newCookieData;
 }
 
 function removeOrderFromList(id) {

@@ -48,25 +48,25 @@ async function fetchMenuWithFilter(searchTerm, maxPrice, maxCalories, excludedAl
     }), {
         method: "GET",
     })
-    .then((res) => {
-        if(res.ok) {
-            return res.json();
-        }
-        throw new Error("Server returned an error");
-    })
-    .then((data) => {
-        currentMenu = data;
-        renderMenu();
-    }).catch((error) => {
-        alert("Failed to apply filter: " + error);
-    });
+        .then((res) => {
+            if (res.ok) {
+                return res.json();
+            }
+            throw new Error("Server returned an error");
+        })
+        .then((data) => {
+            currentMenu = data;
+            renderMenu();
+        }).catch((error) => {
+            alert("Failed to apply filter: " + error);
+        });
 }
 
 function renderMenu() {
     document.getElementById("MenuItemGridLayout").innerHTML = "";
     currentMenu.forEach(element => {
-        if(element.itemName.length > 0 ){
-            document.getElementById("MenuItemGridLayout").innerHTML += createMenuItem(element.itemId ,element.itemName, element.imageURL, element.price, element.calories, element.allergens);
+        if (element.itemName.length > 0) {
+            document.getElementById("MenuItemGridLayout").innerHTML += createMenuItem(element.itemId, element.itemName, element.imageURL, element.price, element.calories, element.allergens);
         }
     });
 }
@@ -81,7 +81,7 @@ function createMenuItem(id, itemName, imageURL, price, calories, allergens) {
             <br><label style="display: none" for='imageEditPrompt${id}'>Image</label>
             <input style="display: none" type='file' id='imageEditPrompt${id}' class='editMenuItemPrompt'>
             <label class='MenuItemPrice' id="itemPrice${id}">£${price.toFixed(2)}</label><br>
-            <p id="priceContext${id}" class="editMenuContext">£</p><input style="display: none" id='priceEditPrompt${id}' placeholder="Price" class='editMenuItemPrompt' type='text'>
+            <p id="priceContext${id}" class="editMenuContext" style="display: none">£</p><input style="display: none" id='priceEditPrompt${id}' placeholder="Price" class='editMenuItemPrompt' type='text'>
             <label class='MenuItemCalories' id="itemCalories${id}">${calories} kcal</label>
             <label class='MenuItemAllergens' id="itemAllergens${id}"><br><b>Allergens:</b><br>${renderAllergens(allergens)}</label>
             <input style="display: none" id='caloriesEditPrompt${id}' class='editMenuItemPrompt' type='text' placeholder="Calories"><p id="caloriesContext${id}" class="editMenuContext">kcal</p><br>
@@ -114,7 +114,7 @@ function createMenuItem(id, itemName, imageURL, price, calories, allergens) {
 }
 
 function renderAllergens(allergens) {
-    if(allergens.length === 0) {
+    if (allergens.length === 0) {
         return "None";
     }
     let formatter = new Intl.ListFormat("en", {
@@ -176,7 +176,7 @@ function editMenu() {
         editMode = true;
     } else {
         editMode = false;
-        if(currentEdit !== -1) {
+        if (currentEdit !== -1) {
             closeEdit(currentEdit);
         }
         document.getElementById("menuEditSection").style.display = "none";
@@ -200,7 +200,7 @@ function editMenu() {
 
 function editMenuForItem(id) {
     let item = getMenuItemById(id);
-    if(currentEdit === -1) {
+    if (currentEdit === -1) {
         // Replace name with name tag and checkbox
         document.getElementById(`itemName${id}`).style.display = "none";
         document.getElementById(`nameEditPrompt${id}`).style.display = "inline";
@@ -282,7 +282,7 @@ async function submitMenuEdit(id) {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                itemId: id, 
+                itemId: id,
                 itemName: name,
                 imageURL: imageURL,
                 price: itemPrice,
@@ -311,7 +311,7 @@ async function addMenuItem() {
         }
     })
     // Check that the user included an image
-    if(image == null) {
+    if (image == null) {
         alert("Please upload an image for the item");
         return;
     }
@@ -331,11 +331,11 @@ function getAllergenList() {
         labels.push(item);
     });
     document.querySelectorAll('.excludedAllergens > input[type="checkbox"]').forEach(item => {
-        if(item.checked) {
+        if (item.checked) {
             // Find label matching this item
             let id = item.id;
             labels.forEach(label => {
-                if(label.htmlFor === id) {
+                if (label.htmlFor === id) {
                     allergens.push(label.innerHTML);
                 }
             });
@@ -353,10 +353,10 @@ async function uploadImage(image) {
         method: "POST",
         body: data,
     })
-    .then((res) => res.text())
-    .then((filename) => {
-        resultFilename = filename;
-    }).catch(() => alert("Failed to upload image"));
+        .then((res) => res.text())
+        .then((filename) => {
+            resultFilename = filename;
+        }).catch(() => alert("Failed to upload image"));
 
     return resultFilename;
 }
@@ -372,25 +372,25 @@ function deleteMenuItem(id) {
 
 // Add menu item
 async function addItemToDB(name, imageURL, _price, _calories, _allergens) {
-  try {
-    let response = await fetch("http://localhost:4444/add_item", {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        itemName: name,
-        imageURL: imageURL,
-        price: _price,
-        calories: _calories,
-        allergens: _allergens
-      })
-    })
-     return 0
-  } catch (error) {
-    console.error(error)
-     return -1
-  }
+    try {
+        let response = await fetch("http://localhost:4444/add_item", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                itemName: name,
+                imageURL: imageURL,
+                price: _price,
+                calories: _calories,
+                allergens: _allergens
+            })
+        })
+        return 0
+    } catch (error) {
+        console.error(error)
+        return -1
+    }
 }
 
 // Takes in name and returns id if found
@@ -423,67 +423,67 @@ async function removeItem(id) {
 // Stores menu items in basket using cookies
 // Cookie structure is CSV in form: id,itemName,price,calories,quantity
 function addToBasket(itemId, itemName, price, calories, imageURL) {
-  let quantity = 1;
+    let quantity = 1;
 
-  // This will work for now as we only store 1 type of cookie
-  let previousCookieContent = document.cookie.split("basket=")[1];
-  if (previousCookieContent == null) {
-    document.cookie = "basket="
-    previousCookieContent = document.cookie.split("basket=")[1];
-  }
-
-  let updated = false;
-  let i = -1;
-  let updatedIndex = -1;
-
-  // Check that item is not already in basket
-  previousCookieContent.split("#").forEach(element => {
-    i++;
-    let splitCookie = element.split(",")
-    // Item found in basket
-    if (splitCookie[0] == itemId) {
-        updated = true;
-        updatedIndex = i;
+    // This will work for now as we only store 1 type of cookie
+    let previousCookieContent = document.cookie.split("basket=")[1];
+    if (previousCookieContent == null) {
+        document.cookie = "basket="
+        previousCookieContent = document.cookie.split("basket=")[1];
     }
-  });
 
-  let splitCookieContent = previousCookieContent.split("#");
-  
-  if(updated){  
-    // Update quantity:
-    let toModify = splitCookieContent[updatedIndex].split(",");
-    toModify[4]++;
-    
-    let newCookie = "basket=";
-    let count = 0;
-    splitCookieContent.forEach(item => {
-        if(item.length > 0){
-            if(count == updatedIndex){
-                // Add toModify
-                newCookie+=toModify+"#";
-            }else{
-                // Add back original
-                newCookie+=item+"#";
-            }
+    let updated = false;
+    let i = -1;
+    let updatedIndex = -1;
+
+    // Check that item is not already in basket
+    previousCookieContent.split("#").forEach(element => {
+        i++;
+        let splitCookie = element.split(",")
+        // Item found in basket
+        if (splitCookie[0] == itemId) {
+            updated = true;
+            updatedIndex = i;
         }
-        count++;
-    })
-    document.cookie = newCookie;
-  }
-  else {
-    document.cookie = "basket=" + itemId + "," + itemName + "," + price + "," + calories + "," + quantity + "," + imageURL + "#" + previousCookieContent;
-  }
-  updateBasketQuantity();
+    });
+
+    let splitCookieContent = previousCookieContent.split("#");
+
+    if (updated) {
+        // Update quantity:
+        let toModify = splitCookieContent[updatedIndex].split(",");
+        toModify[4]++;
+
+        let newCookie = "basket=";
+        let count = 0;
+        splitCookieContent.forEach(item => {
+            if (item.length > 0) {
+                if (count == updatedIndex) {
+                    // Add toModify
+                    newCookie += toModify + "#";
+                } else {
+                    // Add back original
+                    newCookie += item + "#";
+                }
+            }
+            count++;
+        })
+        document.cookie = newCookie;
+    }
+    else {
+        document.cookie = "basket=" + itemId + "," + itemName + "," + price + "," + calories + "," + quantity + "," + imageURL + "#" + previousCookieContent;
+    }
+    updateBasketQuantity();
 }
 
 //function ro remove menu item from the order
 function removeFromOrder(itemName) {
-  let order = JSON.parse(localStorage.getItem('order')) || [];
-  const itemIndex = order.findIndex(item => item.itemName === itemName);
-  if (itemIndex >= 0) {
-    order.splice(itemIndex, 1);
-    localStorage.setItem('order', JSON.stringify(order));
-  }
+    let order = JSON.parse(localStorage.getItem('order')) || [];
+    const itemIndex = order.findIndex(item => item.itemName === itemName);
+    if (itemIndex >= 0) {
+        order.splice(itemIndex, 1);
+        localStorage.setItem('order', JSON.stringify(order));
+    }
 }
 
 function applyFilter() {
@@ -494,21 +494,21 @@ function applyFilter() {
     fetchMenuWithFilter(searchTerm, maxPrice, maxCalories, allergens);
 }
 
-function getCookieQuantity(){
+function getCookieQuantity() {
     // if basket cookie doesnt exist, create it
-    if(document.cookie.indexOf("basket=") < 0){
+    if (document.cookie.indexOf("basket=") < 0) {
         document.cookie = "basket="
     }
 
     let cookies = document.cookie.split(";");
     let basketCookie = "";
     // Find cookie with basket data
-    for(let i = 0; i < cookies.length; i++){
-        if(cookies[i].indexOf("basket=") >= 0){
+    for (let i = 0; i < cookies.length; i++) {
+        if (cookies[i].indexOf("basket=") >= 0) {
             basketCookie = cookies[i].split("basket=")[1];
         }
     }
-    if(basketCookie.length <= 0){
+    if (basketCookie.length <= 0) {
         return 0
     }
 
@@ -517,17 +517,17 @@ function getCookieQuantity(){
     let basketQuantity = basketSplit.length;
 
     // if basket seperator causes extra empty basket then subtract 1
-    if(basketSplit[basketSplit.length-1].length <= 0){
+    if (basketSplit[basketSplit.length - 1].length <= 0) {
         basketQuantity--;
     }
     return basketQuantity;
 }
 
 // Updates basket quantity
-function updateBasketQuantity(){
+function updateBasketQuantity() {
     let basketIcon = document.getElementById("basket-quantity");
     let currentBasketQuantity = getCookieQuantity();
-    basketIcon.innerHTML = "🛒 "+currentBasketQuantity;
+    basketIcon.innerHTML = "🛒 " + currentBasketQuantity;
 }
 
 function goToOrderPage() {

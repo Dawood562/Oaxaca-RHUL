@@ -15,51 +15,52 @@
     <header>
         <nav>
             <div class="logo"><a href="index.html"><img src="logo.svg" alt="Oaxaca Logo"></a></img></div>
-            <div id="basket-quantity"><label>🛒 0</label></div>
+            <div id="basket-quantity">🛒</div>
             <div class="menu-icon">
-              <a>&#9776;</a>
-              <div class="floating-window">
-                <a href="order.html">My Basket</a>
-                <a href="staff.html">Staff</a>
-              </div>
+                <a>&#9776;</a>
+                <div class="floating-window">
+                    <a href="order.html">Basket</a>
+                    <a href="staff.html">Staff</a>
+                </div>
             </div>
-          </nav>
+        </nav>
     </header>
 
     <main>
         <div class="filter-container">
             <input type="text" id="searchTerm" placeholder="Search">
-            
+            <br>
             <div class="filter-options">
                 <div class="filter-option">
-                    <label for="maxCalories">Max Calories:</label>
+                    <label for="maxCalories">Calories:</label>
                     <input type="range" id="maxCalories" min="0" max="2000" step="50" value="0"
-                    oninput="document.getElementById('maxCaloriesValue').textContent = this.value">
+                        oninput="document.getElementById('maxCaloriesValue').textContent = this.value">
                     <span id="maxCaloriesValue">0</span>
                 </div>
+                <br>
                 <div class="filter-option">
-                    <label for="maxPrice">Max Price:</label>
+                    <label for="maxPrice">Price:</label>
                     <input type="range" id="maxPrice" min="0" max="200" step="1" value="0"
-                    oninput="document.getElementById('maxPriceValue').textContent = this.value">
+                        oninput="document.getElementById('maxPriceValue').textContent = this.value">
                     <span id="maxPriceValue">0</span>
                 </div>
-                <p>Don't show dishes containing:</p>
+                <br>
                 <div class="excludedAllergens">
                     <input type="checkbox" id="glutenAllergen">
                     <label for="glutenAllergen">Gluten</label>
-    
+
                     <input type="checkbox" id="dairyAllergen">
                     <label for="dairyAllergen">Dairy</label><br>
-    
+
                     <input type="checkbox" id="nutAllergen">
                     <label for="nutAllergen">Nuts</label>
-    
+
                     <input type="checkbox" id="eggAllergen">
                     <label for="eggAllergen">Eggs</label><br>
-    
+
                     <input type="checkbox" id="crustaceanAllergen">
                     <label for="crustaceanAllergen">Crustaceans</label>
-    
+
                     <input type="checkbox" id="fishAllergen">
                     <label for="fishAllergen">Fish</label>
                 </div>
@@ -72,16 +73,16 @@
 
         <div id="menuEditSection" style="display: none">
             <div id='newItemDiv'>
-                <h3>Add new menu item:</h3>
+                <h3>Add New Item:</h3>
                 <p>
                     <label>Name:</label>
-                    <input type='text' id='newItemNameField'><br><br>
-                    <label>Upload Image</label><br><br>
-                    <input type='file' id='newItemFileUpload'><br><br>
+                    <input type='text' id='newItemNameField'><br>
+                    <label>Upload Image</label>
+                    <input type='file' id='newItemFileUpload'><br>
                     <label>Price:</label>
-                    <input type='text' id='newItemPriceField'><br><br>
+                    <input type='text' id='newItemPriceField'><br>
                     <label>Calories:</label>
-                    <input type='text' id='newItemCaloriesField'><br><br>
+                    <input type='text' id='newItemCaloriesField'><br>
                     <label>Allergens:</label>
                     <div id="newItemAllergens">
                         <input type="checkbox" id="newItemGlutenAllergen">
