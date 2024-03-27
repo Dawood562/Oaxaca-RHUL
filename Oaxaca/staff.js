@@ -21,8 +21,17 @@ function closeLoginBox() {
 function storeAccDetails() {
     document.cookie = "username="; // Clear username entry
     let enteredUsername = document.getElementById("UN").value;
+    let enteredPassword = document.getElementById("PW").value;
+    if (!authUser(enteredUsername, enteredPassword)) {
+        return;
+    }
     document.cookie = "username=" + enteredUsername;
     console.log("Cookies: " + document.cookie);
+}
+
+function authUser(un, pw) {
+    // Add authentication (not in spec)
+    return true;
 }
 
 function goToKitchen() {
