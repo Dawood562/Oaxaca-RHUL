@@ -12,6 +12,7 @@ import (
 	"gorm.io/gorm"
 )
 
+// Globally available database instance
 var db *gorm.DB
 
 var (
@@ -32,10 +33,11 @@ const (
 )
 
 func init() {
+	// Fetch the database auth credentials
 	dbUsername, dbName, dbPassword := fetchDBAuth()
 	url := "postgres://" + dbUsername + ":" + dbPassword + "@db:5432/" + dbName
-	conn, err := gorm.Open(postgres.Open(url), &gorm.Config{})
-	db = conn
+	// Connect to database and store reference to it
+	db, err := gorm.Open(postgres.Open(url), &gorm.Config{})
 	if err != nil {
 		log.Fatal(err)
 	} else {
