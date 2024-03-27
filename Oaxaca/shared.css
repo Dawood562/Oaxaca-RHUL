@@ -78,3 +78,22 @@ nav {
 .floating-window a:hover {
     background-color: #eeeeee;
 }
+
+button {
+    padding: 0.5em 1em;
+    background-color: #4a3731;
+    color: #ffffff;
+    border: none;
+    border-radius: 0.3125em;
+    cursor: pointer;
+    font-size: 0.9em;
+}
+
+button:hover {
+    background-color: #5e4a42;
+}
+
+#logoutButton{
+    margin-left:auto;
+    margin-right: 1%;
+}

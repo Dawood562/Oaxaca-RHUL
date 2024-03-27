@@ -23,6 +23,12 @@ function notifyService() {
     sock.send("SERVICE");
 }
 
+function logChefOut(){
+    alert("Chef logged out!");
+    document.cookie = "username=";
+    document.location.href = "staff.html";
+}
+
 function handleMessages(e) {
     console.log(e)
     if (e.data == "WELCOME") {
