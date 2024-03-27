@@ -12,6 +12,7 @@ window.onload = function () {
             showNavButtons();
         }
     })
+    
     checkIfLoggedIn();
 }
 // Skip login dialogue if already logged in
@@ -27,8 +28,12 @@ function checkIfLoggedIn() {
     })
 
     if (username.length >= 1) {
-        closeLoginBox();
-        showNavButtons();
+        if (sessionStorage.getItem("waiterID") != -1) {
+            goToWaiter();
+        } else {
+            closeLoginBox();
+            showNavButtons();
+        }
     }
 }
 
