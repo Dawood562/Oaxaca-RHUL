@@ -9,11 +9,10 @@ document.addEventListener('DOMContentLoaded', e => {
 function initSock() {
     sock = new WebSocket("ws://localhost:4444/notifications")
     sock.onerror = function (event) {
-        // If unsuccessfully connected
-        alert("Unsuccessfully to connect to backend websocket 🖥️🔥");
+        // If there was an error while connecting
+        alert("Unable to connect to backend websocket 🖥️🔥");
     }
     sock.addEventListener("open", e => {
-        // WE NEED TO ADD A WAY TO GET USERS TABLE NUMBER
         sock.send("KITCHEN");
     })
     sock.addEventListener("message", e => handleMessages(e));
