@@ -90,7 +90,7 @@ async function removeWaiter(){
 function logWaiterOut(){
     removeWaiter();
     alert("Waiter logged out!");
-    document.cookie="waiterID=";
+    document.cookie = "username=";
     document.location.href = "staff.html";
 }
 
