@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#375EAB">
+
+  <title>models - Go Documentation Server</title>
+
+<link type="text/css" rel="stylesheet" href="models_files/style.css">
+
+<script>window.initFuncs = [];</script>
+<script src="models_files/jquery.js" defer="defer"></script>
+
+
+
+<script>var goVersion = "go1.21.8";</script>
+<script src="models_files/godocs.js" defer="defer"></script>
+</head>
+<body>
+
+<div id="lowframe" style="position: fixed; bottom: 0; left: 0; height: 0; width: 100%; border-top: thin solid grey; background-color: white; overflow: auto;">
+...
+</div><!-- #lowframe -->
+
+<div id="topbar" class="wide"><div class="container">
+<div class="top-heading" id="heading-wide"><a href="http://localhost:8080/pkg/">Go Documentation Server</a></div>
+<div class="top-heading" id="heading-narrow"><a href="http://localhost:8080/pkg/">GoDoc</a></div>
+<a href="#" id="menu-button"><span id="menu-button-arrow">▽</span></a>
+<form method="GET" action="/search">
+<div id="menu" style="min-width: 60px;">
+
+<span class="search-box"><input type="search" id="search" name="q" placeholder="Search" aria-label="Search" required=""><button type="submit"><span><!-- magnifying glass: --><svg width="24" height="24" viewBox="0 0 24 24"><title>submit search</title><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path><path d="M0 0h24v24H0z" fill="none"></path></svg></span></button></span>
+</div>
+</form>
+
+</div></div>
+
+
+
+<div id="page" class="wide" style="outline: 0px;" tabindex="-1">
+<div class="container">
+
+
+  <h1>
+    Package models
+    <span class="text-muted"></span>
+  </h1>
+
+
+
+
+
+
+
+<div id="nav"></div>
+
+
+<!--
+	Copyright 2009 The Go Authors. All rights reserved.
+	Use of this source code is governed by a BSD-style
+	license that can be found in the LICENSE file.
+-->
+<!--
+	Note: Static (i.e., not template-generated) href and id
+	attributes start with "pkg-" to make it impossible for
+	them to conflict with generated attributes (some of which
+	correspond to Go identifiers).
+-->
+
+	<script>
+	document.ANALYSIS_DATA = null;
+	document.CALLGRAPH = null;
+	</script>
+
+	
+		
+		<div id="short-nav">
+			<dl>
+			<dd><code>import "database/models"</code></dd>
+			</dl>
+			<dl>
+			<dd><a href="#pkg-overview" class="overviewLink">Overview</a></dd>
+			<dd><a href="#pkg-index" class="indexLink">Index</a></dd>
+			
+			
+			</dl>
+		</div>
+		<!-- The package's Name is printed as title by the top-level template -->
+		<div id="pkg-overview" class="toggleVisible">
+			<div class="collapsed">
+				<h2 class="toggleButton" title="Click to show Overview section">Overview ▹</h2>
+			</div>
+			<div class="expanded">
+				<h2 class="toggleButton" title="Click to hide Overview section">Overview ▾</h2>
+				<p>Package models contains the data models for each type stored in the database.
+
+				
+			</p></div>
+		</div>
+
+		<div id="pkg-index" class="toggleVisible">
+		<div class="collapsed">
+			<h2 class="toggleButton" title="Click to show Index section">Index ▹</h2>
+		</div>
+		<div class="expanded">
+			<h2 class="toggleButton" title="Click to hide Index section">Index ▾</h2>
+
+		<!-- Table of contents for API; must be named manual-nav to turn off auto nav. -->
+			<div id="manual-nav">
+			<dl>
+			
+			
+			
+			
+				
+				<dd><a href="#Allergen">type Allergen</a></dd>
+				
+				
+			
+				
+				<dd><a href="#MenuItem">type MenuItem</a></dd>
+				
+				
+			
+				
+				<dd><a href="#Order">type Order</a></dd>
+				
+				
+			
+				
+				<dd><a href="#OrderItem">type OrderItem</a></dd>
+				
+				
+			
+			
+			</dl>
+			</div><!-- #manual-nav -->
+
+		
+
+		
+			<h3>Package files</h3>
+			<p>
+			<span style="font-size:90%">
+			
+				<a href="http://localhost:8080/src/database/models/allergen.go">allergen.go</a>
+			
+				<a href="http://localhost:8080/src/database/models/menu_item.go">menu_item.go</a>
+			
+				<a href="http://localhost:8080/src/database/models/order.go">order.go</a>
+			
+				<a href="http://localhost:8080/src/database/models/order_item.go">order_item.go</a>
+			
+			</span>
+			</p>
+		
+		</div><!-- .expanded -->
+		</div><!-- #pkg-index -->
+
+		
+
+		
+		
+		
+		
+			
+			
+			<h2 id="Allergen">type <a href="http://localhost:8080/src/database/models/allergen.go?s=83:240#L1">Allergen</a>
+				<a class="permalink" href="#Allergen">¶</a>
+				
+				
+			</h2>
+			<p>Allergen represents one named allergen belonging to a MenuItem.
+
+			</p><pre>type Allergen struct {
+<span id="Allergen.ID"></span>    ID     <a href="http://localhost:8080/pkg/builtin/#uint">uint</a>     `gorm:"primarykey" json:"-"`
+<span id="Allergen.Item"></span>    Item   <a href="#MenuItem">MenuItem</a> `json:"-"`
+<span id="Allergen.ItemID"></span>    ItemID <a href="http://localhost:8080/pkg/builtin/#uint">uint</a>     `json:"-"`
+<span id="Allergen.Name"></span>    Name   <a href="http://localhost:8080/pkg/builtin/#string">string</a>   `json:"name"`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="MenuItem">type <a href="http://localhost:8080/src/database/models/menu_item.go?s=153:590#L1">MenuItem</a>
+				<a class="permalink" href="#MenuItem">¶</a>
+				
+				
+			</h2>
+			<p>MenuItem represents one item in the restaurant menu.
+
+			</p><pre>type MenuItem struct {
+<span id="MenuItem.ID"></span>    ID          <a href="http://localhost:8080/pkg/builtin/#uint">uint</a>       `json:"itemId" gorm:"primarykey;autoincrement"`
+<span id="MenuItem.Name"></span>    Name        <a href="http://localhost:8080/pkg/builtin/#string">string</a>     `json:"itemName" gorm:"unique"`
+<span id="MenuItem.ImageURL"></span>    ImageURL    <a href="http://localhost:8080/pkg/builtin/#string">string</a>     `json:"imageURL"`
+<span id="MenuItem.Description"></span>    Description <a href="http://localhost:8080/pkg/builtin/#string">string</a>     `json:"itemDescription"`
+<span id="MenuItem.Price"></span>    Price       <a href="http://localhost:8080/pkg/builtin/#float64">float64</a>    `json:"price"`
+<span id="MenuItem.Calories"></span>    Calories    <a href="http://localhost:8080/pkg/builtin/#float64">float64</a>    `json:"calories"`
+<span id="MenuItem.Allergens"></span>    Allergens   []<a href="#Allergen">Allergen</a> `json:"allergens" gorm:"foreignKey:ItemID;constraint:OnDelete:CASCADE,OnUpdate:CASCADE"`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="Order">type <a href="http://localhost:8080/src/database/models/order.go?s=87:574#L1">Order</a>
+				<a class="permalink" href="#Order">¶</a>
+				
+				
+			</h2>
+			<p>Order represents one order in the restaurant system.
+
+			</p><pre>type Order struct {
+<span id="Order.ID"></span>    ID          <a href="http://localhost:8080/pkg/builtin/#uint">uint</a>        `json:"orderId" gorm:"primarykey;autoincrement"`
+<span id="Order.Time"></span>    Time        <a href="http://localhost:8080/pkg/time/">time</a>.<a href="http://localhost:8080/pkg/time/#Time">Time</a>   `json:"orderTime" gorm:"default:CURRENT_TIMESTAMP"`
+<span id="Order.TableNumber"></span>    TableNumber <a href="http://localhost:8080/pkg/builtin/#uint">uint</a>        `json:"tableNumber"`
+<span id="Order.Bill"></span>    Bill        <a href="http://localhost:8080/pkg/builtin/#float64">float64</a>     `json:"bill"`
+<span id="Order.Status"></span>    Status      <a href="http://localhost:8080/pkg/builtin/#string">string</a>      `json:"status" gorm:"default:Awaiting Confirmation"`
+<span id="Order.Paid"></span>    Paid        <a href="http://localhost:8080/pkg/builtin/#bool">bool</a>        `json:"paid" gorm:"default:false"`
+<span id="Order.Items"></span>    Items       []<a href="#OrderItem">OrderItem</a> `json:"items" gorm:"constraint:OnDelete:CASCADE,OnUpdate:CASCADE"`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="OrderItem">type <a href="http://localhost:8080/src/database/models/order_item.go?s=71:325#L1">OrderItem</a>
+				<a class="permalink" href="#OrderItem">¶</a>
+				
+				
+			</h2>
+			<p>OrderItem represents an item belonging to an order.
+
+			</p><pre>type OrderItem struct {
+<span id="OrderItem.ID"></span>    ID        <a href="http://localhost:8080/pkg/builtin/#uint">uint</a> `gorm:"primarykey"`
+<span id="OrderItem.OrderID"></span>    OrderID   <a href="http://localhost:8080/pkg/builtin/#uint">uint</a> `json:"orderId"`
+<span id="OrderItem.ItemRefer"></span>    ItemRefer <a href="http://localhost:8080/pkg/builtin/#uint">uint</a>
+<span id="OrderItem.Item"></span>    Item      <a href="#MenuItem">MenuItem</a> `json:"itemId" gorm:"foreignkey:ItemRefer;constraint:OnDelete:CASCADE,OnUpdate:CASCADE"`
+<span id="OrderItem.Notes"></span>    Notes     <a href="http://localhost:8080/pkg/builtin/#string">string</a>   `json:"notes"`
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+	
+
+	
+
+
+
+
+
+
+
+<div id="footer">
+Build version go1.21.8.<br>
+Except as <a href="https://developers.google.com/site-policies#restrictions">noted</a>,
+the content of this page is licensed under the
+Creative Commons Attribution 3.0 License,
+and code is licensed under a <a href="http://localhost:8080/LICENSE">BSD license</a>.<br>
+<a href="https://golang.org/doc/tos.html">Terms of Service</a> |
+<a href="https://www.google.com/intl/en/policies/privacy/">Privacy Policy</a>
+</div>
+
+</div><!-- .container -->
+</div><!-- #page -->
+
+
+</body></html>
