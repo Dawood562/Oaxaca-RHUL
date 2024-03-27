@@ -6,6 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+// Delivered is an API callback for marking a given order as delivered
 func Delivered(c *fiber.Ctx) error {
 	// Retrieve required ID arg
 	id, err := GetID(c)

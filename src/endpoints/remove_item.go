@@ -7,6 +7,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+// RemoveItem is an API callback for removing a given item by ID
 func RemoveItem(c *fiber.Ctx) error {
 	id, err := strconv.ParseInt(c.Query("itemId"), 10, 32)
 	if err != nil {

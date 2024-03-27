@@ -6,6 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+// Ready is an API callback for marking a given order as ready
 func Ready(c *fiber.Ctx) error {
 	id, err := GetID(c)
 	if err != nil {

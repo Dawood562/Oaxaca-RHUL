@@ -6,6 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+// Pay is an API callback for marking a given order as paid
 func Pay(c *fiber.Ctx) error {
 	// Retrieve required ID arg
 	id, err := GetID(c)

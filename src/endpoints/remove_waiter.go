@@ -10,6 +10,7 @@ type RemoveWaiterStruct struct {
 	ID uint `json:"id"`
 }
 
+// RemoveWaiter is an API callback for logging out a waiter
 func RemoveWaiter(c *fiber.Ctx) error {
 	c.Accepts("application/json")
 	waiterToRemove := RemoveWaiterStruct{}

@@ -6,6 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+// Cancel is an API callback for cancelling a given order
 func Cancel(c *fiber.Ctx) error {
 	// Retrieve required ID arg
 	id, err := GetID(c)

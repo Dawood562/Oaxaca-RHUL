@@ -6,6 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+// Confirm is an API callback for confirming a given order
 func Confirm(c *fiber.Ctx) error {
 	// Retrieve required ID arg
 	id, err := GetID(c)
