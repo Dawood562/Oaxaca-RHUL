@@ -3,27 +3,29 @@ var sockInit = false
 var basketData = []
 
 document.addEventListener('DOMContentLoaded', e => {
-    //initTableNo();
+    initTableNo();
     initBasketData()
     showOrdersToPage();
 })
 
 function initTableNo() {
     // Retrieve table number from cookies
-    tableNo = null;
+    tableNo = "";
     let cookieData = document.cookie;
     cookieData.split(";").forEach(cookie => {
         indexOfParam = cookie.indexOf("=");
-        if (cookie.substring(0, indexOfParam).indexOf("username") != -1 && cookie.substring(indexOfParam, cookie.length).indexOf("table") != -1) {
-            tableNo = cookie.substring(indexOfParam + 6, cookie.length);
+        if (cookie.substring(0, indexOfParam).indexOf("tableNo") != -1) {
+            tableNo = cookie.substring(indexOfParam + 1, cookie.length);
         }
     })
 
-    if (tableNo != null) {
+    if (tableNo.length >= 1) {
         tableNoField = document.getElementById("tableNumber");
         tableNoField.value = tableNo;
         tableNoField.setAttribute('readonly', true);
         initSock(tableNo);
+    } else {
+
     }
 }
 
@@ -75,7 +77,7 @@ function initSock(tableNo) {
     })
 
     sock.addEventListener("message", e => handleMessages(e))
-    document.cookie = "username=table".concat(tableNo); // Set "username" entry to table number
+    document.cookie = "tableNo=".concat(tableNo); // Set "tableNo" entry to table number
 }
 
 function closeSock() {
