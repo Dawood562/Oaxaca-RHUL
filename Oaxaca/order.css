@@ -97,7 +97,8 @@ input[type="text"] {
 }
 
 .orderItemImage {
-  width: 20%;
+  width: 10em;
+  height: 10em;
   object-fit: cover;
   border-radius: 0.625rem;
   margin-right: 1rem;

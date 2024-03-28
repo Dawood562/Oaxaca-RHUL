@@ -41,7 +41,7 @@ body {
 .editMenuItemPrompt {
     font-size: large;
     background-color: #f0e8e0;
-    padding: 0.9375em;
+    padding: 0.25em;
     border: none;
     border-radius: 0.625em;
     margin-bottom: 0.625em;
@@ -117,7 +117,7 @@ button:hover {
 .menu-grid {
     flex: 1;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(25%, 1fr));
+    grid-template-columns: 30% 30% 30%;
     gap: 5em;
     padding: 0.25em;
     margin: 2em 1em 0 1em;
@@ -125,6 +125,7 @@ button:hover {
 
 .MenuItemDiv {
     width: 100%;
+    max-height: 40em;
     background-color: #ffffff;
     border-radius: 1.25em;
     padding: 0.5em;
@@ -138,8 +139,7 @@ button:hover {
 
 .MenuItemImg {
     width: 90%;
-    height: auto;
-    max-height: 40%;
+    height: 40%;
     object-fit: cover;
     border-radius: 1.25em;
     margin-bottom: 0.5em;

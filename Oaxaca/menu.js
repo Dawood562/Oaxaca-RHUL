@@ -84,7 +84,7 @@ function createMenuItem(id, itemName, imageURL, price, calories, allergens) {
             <p id="priceContext${id}" class="editMenuContext" style="display: none">£</p><input style="display: none" id='priceEditPrompt${id}' placeholder="Price" class='editMenuItemPrompt' type='text'>
             <label class='MenuItemCalories' id="itemCalories${id}">${calories} kcal</label>
             <label class='MenuItemAllergens' id="itemAllergens${id}"><br><b>Allergens:</b><br>${renderAllergens(allergens)}</label>
-            <input style="display: none" id='caloriesEditPrompt${id}' class='editMenuItemPrompt' type='text' placeholder="Calories"><p id="caloriesContext${id}" class="editMenuContext">kcal</p><br>
+            <input style="display: none" id='caloriesEditPrompt${id}' class='editMenuItemPrompt' type='text' placeholder="Calories"><p id="caloriesContext${id}" style="display: none" class="editMenuContext">kcal</p><br>
             <div id="allergensEditPrompt${id}" style="display: none">
                 <input type="checkbox" id="glutenAllergen${id}">
                 <label for="glutenAllergen${id}">Gluten</label>
