@@ -11,7 +11,7 @@ import (
 func AddOrder(item *models.Order) error {
 	// Check that there are no open orders with that table number already
 	var count int64
-	db.Model(&models.Order{}).Where("status != ? AND table_number = ?", "Complete", item.TableNumber).Count(&count)
+	db.Model(&models.Order{}).Where("status NOT IN ? AND table_number = ?", []string{StatusDelivered, StatusCancelled}, item.TableNumber).Count(&count)
 	if count > 0 {
 		return fmt.Errorf("there is already an open order for table %d", item.TableNumber)
 	}
