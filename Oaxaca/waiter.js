@@ -162,9 +162,7 @@ async function refreshOrders() {
                             <th></th>
                             <th></th>
                         </tr>`;
-    let response = await fetch("http://localhost:4444/orders?" + new URLSearchParams({
-        "waiterId": waiterID
-    }));
+    let response = await fetch("http://localhost:4444/orders?");
     let data = await response.json();
     orderList = data;
 
