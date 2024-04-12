@@ -7,7 +7,7 @@ if %ERRORLEVEL% neq 0 goto ProcessError
 goto End
 
 :ProcessError
-python -m http.server
+py -m http.server
 
 :End
 pause
